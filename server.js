@@ -18,10 +18,19 @@ app.get("/webhook", (req, res) => {
 });
 
 app.post("/webhook", (req, res) => {
-  console.log("Mensaje recibido:", JSON.stringify(req.body));
+  const message =
+    req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+
+  if (message) {
+    const texto = message.text?.body;
+    const numero = message.from;
+
+    console.log("📱 Número:", numero);
+    console.log("💬 Mensaje:", texto);
+  }
+
   res.sendStatus(200);
 });
-
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
