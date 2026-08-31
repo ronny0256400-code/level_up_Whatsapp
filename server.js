@@ -30,8 +30,12 @@ const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const SPREADSHEET_ID =
   "1geYhn1AtyV0n75MtaX1Zo1ka4qEEKtTrbiTkViLswR0";
 
+const googleCredentials = JSON.parse(
+  process.env.GOOGLE_SERVICE_ACCOUNT_JSON
+);
+
 const auth = new google.auth.GoogleAuth({
-  keyFile: "/etc/secrets/google-service-account.json",
+  credentials: googleCredentials,
   scopes: [
     "https://www.googleapis.com/auth/spreadsheets.readonly",
   ],
