@@ -1,4 +1,9 @@
 const express = require("express");
+const OpenAI = require("openai");
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
 const app = express();
 
@@ -49,13 +54,37 @@ app.post("/webhook", async (req, res) => {
     console.log("Número:", from);
     console.log("Mensaje:", text);
 
-    if (text) {
+if (text) {
 
-      const respuesta = `Hola 👋 Gracias por escribir a Level Up Store.
+    const aiResponse = await openai.responses.create({
 
-Recibimos tu mensaje: "${text}"
+        model: "gpt-4o-mini",
 
-En breve te atenderemos. 🛒💻`;
+        instructions: `
+
+Eres el asistente virtual de Level Up Store.
+
+Tu trabajo es atender clientes por WhatsApp de manera amable,
+
+profesional y natural.
+
+Pregunta qué producto está buscando el cliente y ayúdalo con
+
+información sobre productos, precios, disponibilidad y envíos.
+
+No inventes precios ni disponibilidad.
+
+Si no tienes la información, indica que un asesor puede confirmarla.
+
+Responde siempre en español y de forma breve, como una conversación de WhatsApp.
+
+`,
+
+        input: text
+
+    });
+
+    const respuesta = aiResponse.output_text;
 
       const response = await fetch(
         `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
