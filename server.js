@@ -46,7 +46,7 @@ const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 // =====================================================
 
 const SPREADSHEET_ID =
-  "1geYhn1AtyV0n75MtaX1Zo1ka4qEEKtTrbiTkViLswR0";
+  "1uQ-YrSQR10-6mBkFWckx2KhHQJTIn4FfjAZ0XIaQg0g";
 
 const googleCredentials = JSON.parse(
   process.env.GOOGLE_SERVICE_ACCOUNT_JSON
@@ -55,7 +55,7 @@ const googleCredentials = JSON.parse(
 const auth = new google.auth.GoogleAuth({
   credentials: googleCredentials,
   scopes: [
-    "https://www.googleapis.com/auth/spreadsheets.readonly",
+    "https://www.googleapis.com/auth/spreadsheets",
   ],
 });
 
