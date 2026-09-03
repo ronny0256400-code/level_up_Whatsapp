@@ -20,6 +20,90 @@ app.use(express.json());
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+// ============================================================
+// TRANSCRIBIR AUDIO DE WHATSAPP
+// ============================================================
+
+async function transcribirAudio(mediaId) {
+  try {
+    console.log("🎤 Obteniendo audio de WhatsApp:", mediaId);
+
+    // 1. Obtener la URL temporal del audio desde Meta
+    const mediaResponse = await fetch(
+      `https://graph.facebook.com/v23.0/${mediaId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+        },
+      }
+    );
+
+    if (!mediaResponse.ok) {
+      const errorTexto = await mediaResponse.text();
+      throw new Error(
+        `Error obteniendo información del audio: ${mediaResponse.status} ${errorTexto}`
+      );
+    }
+
+    const mediaData = await mediaResponse.json();
+
+    console.log("🔗 URL del audio obtenida");
+
+    // 2. Descargar el archivo de audio
+    const audioResponse = await fetch(mediaData.url, {
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+      },
+    });
+
+    if (!audioResponse.ok) {
+      const errorTexto = await audioResponse.text();
+      throw new Error(
+        `Error descargando audio: ${audioResponse.status} ${errorTexto}`
+      );
+    }
+
+    const audioBuffer = Buffer.from(await audioResponse.arrayBuffer());
+
+    console.log("📥 Audio descargado:", audioBuffer.length, "bytes");
+
+    // 3. Crear un archivo temporal
+    const fs = require("fs");
+    const path = require("path");
+    const os = require("os");
+
+    const extension = mediaData.mime_type?.includes("ogg")
+      ? ".ogg"
+      : ".audio";
+
+    const audioPath = path.join(
+      os.tmpdir(),
+      `whatsapp-${mediaId}${extension}`
+    );
+
+    fs.writeFileSync(audioPath, audioBuffer);
+
+    console.log("🎧 Enviando audio a OpenAI...");
+
+    // 4. Transcribir con OpenAI
+    const transcription = await openai.audio.transcriptions.create({
+    file: fs.createReadStream(audioPath),
+    model: "gpt-4o-mini-transcribe",
+    language: "es",
+});
+
+    // 5. Eliminar archivo temporal
+    fs.unlinkSync(audioPath);
+
+    console.log("📝 Transcripción:", transcription.text);
+
+    return transcription.text;
+
+  } catch (error) {
+    console.error("❌ Error transcribiendo audio:", error);
+    return null;
+  }
+}
 
 // =====================================================
 // CONFIGURACIÓN WHATSAPP
@@ -152,13 +236,61 @@ app.post("/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
-    // Solo procesamos mensajes de texto
-    if (message.type !== "text") {
-      return res.sendStatus(200);
-    }
+ const from = message.from;
 
-    const from = message.from;
-    const text = message.text?.body;
+let text = null;
+
+// ============================================================
+// MENSAJE DE TEXTO
+// ============================================================
+
+if (message.type === "text") {
+
+  text = message.text?.body;
+
+  console.log("⌨️ Mensaje de texto:", text);
+}
+
+
+// ============================================================
+// MENSAJE DE AUDIO
+// ============================================================
+
+else if (message.type === "audio") {
+
+  console.log("🎤 Audio recibido");
+
+  const mediaId = message.audio?.id;
+
+  if (!mediaId) {
+    console.log("❌ El audio no tiene media ID");
+    return res.sendStatus(200);
+  }
+
+  text = await transcribirAudio(mediaId);
+
+  if (!text) {
+
+    console.log("❌ No se pudo transcribir el audio");
+
+    // Por ahora simplemente confirmamos recepción
+    return res.sendStatus(200);
+  }
+
+  console.log("📝 Audio convertido a texto:", text);
+}
+
+
+// ============================================================
+// OTROS TIPOS DE MENSAJE
+// ============================================================
+
+else {
+
+  console.log("📦 Tipo de mensaje no compatible:", message.type);
+
+  return res.sendStatus(200);
+}
 
     console.log("Número:", from);
     console.log("Mensaje:", text);
