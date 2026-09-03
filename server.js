@@ -244,12 +244,12 @@ REGLAS DE CONVERSACIÓN:
 // MEMORIA DE CONVERSACIÓN
 // ================================================
 
-if (!conversation.historial) {
-    conversation.historial = [];
+if (!conversacion.historial) {
+    conversacion.historial = [];
 }
 
 // Guardamos el mensaje del cliente
-conversation.historial.push({
+conversacion.historial.push({
     role: "user",
     content: text
 });
@@ -263,7 +263,7 @@ const aiResponse = await openai.responses.create({
 
     instructions: instrucciones,
 
-    input: conversation.historial,
+    input: conversacion.historial,
 });
 
 // Obtener respuesta
@@ -272,7 +272,7 @@ const respuesta =
     "Disculpa, no pude procesar tu mensaje en este momento.";
 
 // Guardamos la respuesta de la IA
-conversation.historial.push({
+conversacion.historial.push({
     role: "assistant",
     content: respuesta
 });
