@@ -195,12 +195,35 @@ const sheets = google.sheets({
 async function obtenerStock() {
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: STOCK_SPREADSHEET_ID,
-    range: "'PAGINA DE STOCK'!B2:G20",
+    range: "'PAGINA DE STOCK'!B3:H100",
   });
 
   const rows = response.data.values || [];
 
-  return rows;
+  return rows.map((fila) => {
+    const [
+      producto = "",
+      capacidad = "",
+      stock = "",
+      precio = "",
+      activo = "",
+      actualizacion = "",
+      informacion = ""
+    ] = fila;
+
+    const disponible =
+      String(stock).trim() !== "0" &&
+      String(activo).trim().toUpperCase() === "SI";
+
+    return {
+      producto,
+      capacidad,
+      disponible,
+      precio,
+      informacion,
+      actualizacion
+    };
+  });
 }
 
 async function obtenerConversacion(numero) {
@@ -363,8 +386,15 @@ console.log("Memoria del cliente:", JSON.stringify(conversacion));
 
     // Convertimos las filas del Sheet en texto
     const stockTexto = stock
-      .map((fila) => fila.join(" | "))
-      .join("\n");
+  .map((item) => `
+PRODUCTO: ${item.producto}
+CAPACIDAD: ${item.capacidad}
+DISPONIBILIDAD: ${item.disponible ? "DISPONIBLE" : "NO DISPONIBLE"}
+PRECIO: ${item.precio}
+INFORMACIÓN DEL PRODUCTO:
+${item.informacion}
+`)
+  .join("\n-----------------------------\n");
 
     // =================================================
     // INSTRUCCIONES DEL ASISTENTE
@@ -421,6 +451,22 @@ No tenemos una fecha exacta para su reposición, pero esperamos
 tenerlo nuevamente pronto.
 
 Si deseas, puedo mostrarte otras opciones que tenemos disponibles."
+
+La información de cada producto se encuentra organizada por producto,
+capacidad, disponibilidad, precio e información del producto.
+
+La sección "INFORMACIÓN DEL PRODUCTO" contiene las características,
+descripción y detalles comerciales que puedes comunicar al cliente.
+
+Utiliza esa información para responder las preguntas del cliente sobre
+las características del equipo.
+
+No inventes características que no aparezcan en la información proporcionada.
+
+Si el cliente pregunta por una característica específica y esa
+característica no aparece en la información del producto, no la inventes.
+Indica que no tienes esa información disponible y ofrece ayudar con
+otra consulta.
 
 ==============================
 PROCESO DE VENTA
