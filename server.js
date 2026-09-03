@@ -4,6 +4,24 @@ const { google } = require("googleapis");
 
 const app = express();
 
+// ==========================================
+// MEMORIA DE CONVERSACIONES
+// ==========================================
+
+const conversaciones = new Map();
+
+function obtenerConversacion(numero) {
+  if (!conversaciones.has(numero)) {
+    conversaciones.set(numero, {
+      producto: null,
+      etapa: "inicio",
+      datosCliente: {},
+      confirmado: false
+    });
+  }
+
+  return conversaciones.get(numero);
+}
 app.use(express.json());
 
 // =====================================================
@@ -113,6 +131,9 @@ app.post("/webhook", async (req, res) => {
     if (!text) {
       return res.sendStatus(200);
     }
+    const conversacion = obtenerConversacion(from);
+
+console.log("Memoria del cliente:", JSON.stringify(conversacion));
 
     // =================================================
     // OBTENER INFORMACIÓN ACTUAL DEL STOCK
@@ -219,20 +240,45 @@ REGLAS DE CONVERSACIÓN:
     // CONSULTAR OPENAI
     // =================================================
 
-    const aiResponse = await openai.responses.create({
-      model: "gpt-4o-mini",
+// ================================================
+// MEMORIA DE CONVERSACIÓN
+// ================================================
 
-      instructions: instrucciones,
+if (!conversation.historial) {
+    conversation.historial = [];
+}
 
-      input: text,
-    });
+// Guardamos el mensaje del cliente
+conversation.historial.push({
+    role: "user",
+    content: text
+});
 
-    const respuesta =
-      aiResponse.output_text ||
-      "Disculpa, no pude procesar tu mensaje en este momento.";
+// ================================================
+// CONSULTAR OPENAI
+// ================================================
 
-    console.log("Respuesta de IA:", respuesta);
+const aiResponse = await openai.responses.create({
+    model: "gpt-4o-mini",
 
+    instructions: instrucciones,
+
+    input: conversation.historial,
+});
+
+// Obtener respuesta
+const respuesta =
+    aiResponse.output_text ||
+    "Disculpa, no pude procesar tu mensaje en este momento.";
+
+// Guardamos la respuesta de la IA
+conversation.historial.push({
+    role: "assistant",
+    content: respuesta
+});
+
+console.log("Respuesta de IA:", respuesta);
+    
     // =================================================
     // RESPONDER POR WHATSAPP
     // =================================================
