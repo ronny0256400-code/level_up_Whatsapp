@@ -25,84 +25,132 @@ const openai = new OpenAI({
 // ============================================================
 
 async function transcribirAudio(mediaId) {
-  try {
-    console.log("🎤 Obteniendo audio de WhatsApp:", mediaId);
+    let audioPath = null;
 
-    // 1. Obtener la URL temporal del audio desde Meta
-    const mediaResponse = await fetch(
-      `https://graph.facebook.com/v23.0/${mediaId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-        },
-      }
-    );
+    try {
+        console.log("🎤 Obteniendo audio de WhatsApp:", mediaId);
 
-    if (!mediaResponse.ok) {
-      const errorTexto = await mediaResponse.text();
-      throw new Error(
-        `Error obteniendo información del audio: ${mediaResponse.status} ${errorTexto}`
-      );
+        // 1. Obtener información del audio desde Meta
+        const mediaResponse = await fetch(
+            `https://graph.facebook.com/v23.0/${mediaId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+                },
+            }
+        );
+
+        if (!mediaResponse.ok) {
+            const errorTexto = await mediaResponse.text();
+
+            throw new Error(
+                `Error obteniendo información del audio: ${mediaResponse.status} ${errorTexto}`
+            );
+        }
+
+        const mediaData = await mediaResponse.json();
+
+        console.log("🔗 URL temporal del audio obtenida");
+
+        // 2. Descargar el audio
+        const audioResponse = await fetch(mediaData.url, {
+            headers: {
+                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+            },
+        });
+
+        if (!audioResponse.ok) {
+            const errorTexto = await audioResponse.text();
+
+            throw new Error(
+                `Error descargando audio: ${audioResponse.status} ${errorTexto}`
+            );
+        }
+
+        const audioBuffer = Buffer.from(
+            await audioResponse.arrayBuffer()
+        );
+
+        console.log(
+            "📥 Audio descargado:",
+            audioBuffer.length,
+            "bytes"
+        );
+
+        // 3. Crear archivo temporal
+        const fs = require("fs");
+        const path = require("path");
+        const os = require("os");
+
+        let extension = ".ogg";
+
+        if (mediaData.mime_type) {
+            if (mediaData.mime_type.includes("mp4")) {
+                extension = ".mp4";
+            } else if (mediaData.mime_type.includes("mpeg")) {
+                extension = ".mp3";
+            } else if (mediaData.mime_type.includes("wav")) {
+                extension = ".wav";
+            } else if (mediaData.mime_type.includes("webm")) {
+                extension = ".webm";
+            }
+        }
+
+        audioPath = path.join(
+            os.tmpdir(),
+            `whatsapp-${mediaId}${extension}`
+        );
+
+        fs.writeFileSync(audioPath, audioBuffer);
+
+        console.log("💾 Audio temporal guardado:", audioPath);
+
+        // 4. Transcribir con OpenAI
+        console.log("🤖 Enviando audio a OpenAI...");
+
+        const transcripcion =
+            await openai.audio.transcriptions.create({
+                file: fs.createReadStream(audioPath),
+                model: "gpt-4o-mini-transcribe",
+                language: "es",
+            });
+
+        console.log(
+            "📝 Transcripción:",
+            transcripcion.text
+        );
+
+        return transcripcion.text;
+
+    } catch (error) {
+
+        console.error(
+            "❌ Error transcribiendo audio:",
+            error
+        );
+
+        return null;
+
+    } finally {
+
+        // 5. Eliminar archivo temporal
+        if (audioPath) {
+            try {
+                const fs = require("fs");
+
+                if (fs.existsSync(audioPath)) {
+                    fs.unlinkSync(audioPath);
+                    console.log("🗑️ Archivo temporal eliminado");
+                }
+
+            } catch (error) {
+                console.error(
+                    "⚠️ No se pudo eliminar el archivo temporal:",
+                    error
+                );
+            }
+        }
     }
-
-    const mediaData = await mediaResponse.json();
-
-    console.log("🔗 URL del audio obtenida");
-
-    // 2. Descargar el archivo de audio
-    const audioResponse = await fetch(mediaData.url, {
-      headers: {
-        Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-      },
-    });
-
-    if (!audioResponse.ok) {
-      const errorTexto = await audioResponse.text();
-      throw new Error(
-        `Error descargando audio: ${audioResponse.status} ${errorTexto}`
-      );
-    }
-
-    const audioBuffer = Buffer.from(await audioResponse.arrayBuffer());
-
-    console.log("📥 Audio descargado:", audioBuffer.length, "bytes");
-
-    // 3. Crear un archivo temporal
-    const fs = require("fs");
-    const path = require("path");
-    const os = require("os");
-
-    const extension = mediaData.mime_type?.includes("ogg")
-      ? ".ogg"
-      : ".audio";
-
-    const audioPath = path.join(
-      os.tmpdir(),
-      `whatsapp-${mediaId}${extension}`
-    );
-
-    fs.writeFileSync(audioPath, audioBuffer);
-
-    console.log("🎧 Enviando audio a OpenAI...");
-
-    // 4. Transcribir con OpenAI
-    const transcription = await openai.audio.transcriptions.create({
-    file: fs.createReadStream(audioPath),
-    model: "gpt-4o-mini-transcribe",
-    language: "es",
-});
-
-    // 5. Eliminar archivo temporal
-    fs.unlinkSync(audioPath);
-
-    console.log("📝 Transcripción:", transcription.text);
-
-    return transcription.text;
-
-  } catch (error) {
-    console.error("❌ Error transcribiendo audio:", error);
-    return null;
-  }
 }
 
 // =====================================================
@@ -322,85 +370,171 @@ console.log("Memoria del cliente:", JSON.stringify(conversacion));
     // INSTRUCCIONES DEL ASISTENTE
     // =================================================
 
-    const instrucciones = `
+const instrucciones = `
 Eres el asistente virtual de Level Up Store.
 
-Atiendes clientes por WhatsApp de manera amable,
-profesional, clara y natural.
+Tu función es atender clientes por WhatsApp como un asesor
+comercial humano, amable, natural y conversacional.
 
-Tu función principal es ayudar a los clientes con:
+==============================
+ESTILO DE CONVERSACIÓN
+==============================
 
-- Productos disponibles
-- Precios
-- Promociones
-- Stock
-- Características de los productos
-- Disponibilidad
-- Información básica sobre envíos
+- Habla siempre en español.
+- Sé amable, cálido y natural.
+- No seas agresivo.
+- No seas demasiado directo.
+- No intentes cerrar una venta en cada mensaje.
+- Permite que el cliente converse y haga preguntas.
+- No entregues demasiada información de golpe.
+- Responde primero a lo que el cliente preguntó.
+- Haz preguntas sencillas cuando ayuden a entender qué necesita.
+- Utiliza un tono de asesor de ventas, no de robot.
+- Puedes utilizar emojis de manera moderada.
 
-IMPORTANTE:
+==============================
+PRODUCTOS Y STOCK
+==============================
 
-La información de productos, precios, stock y promociones
-debe basarse EXCLUSIVAMENTE en la información proporcionada
-en Google Sheets.
+La información de productos, precios, promociones y disponibilidad
+proviene exclusivamente de Google Sheets.
 
-NO inventes productos.
+Nunca inventes productos, precios, promociones o disponibilidad.
 
-NO inventes precios.
+MUY IMPORTANTE:
 
-NO inventes promociones.
+Nunca muestres al cliente números internos de inventario.
 
-NO inventes stock.
+Nunca digas:
+- "stock 0"
+- "hay 0 unidades"
+- "tenemos 3 unidades"
+- "quedan X unidades"
 
-NO supongas información que no aparece en los datos.
+Si un producto tiene stock 0, simplemente indica que actualmente
+está agotado o que por el momento no está disponible.
 
-Si un producto aparece con STOCK 0, indica claramente
-que actualmente no está disponible.
+Ejemplo:
 
-Si el cliente pregunta por un producto que NO aparece
-en la información proporcionada, indica que actualmente
-no tienes información disponible sobre ese producto
-y que un asesor puede ayudarlo.
+"Por el momento ese modelo está agotado 😔.
+No tenemos una fecha exacta para su reposición, pero esperamos
+tenerlo nuevamente pronto.
 
-Si existe una promoción específica para un producto,
-respétala exactamente como aparece en la información.
+Si deseas, puedo mostrarte otras opciones que tenemos disponibles."
 
-No cambies los precios de las promociones.
+==============================
+PROCESO DE VENTA
+==============================
 
-No inventes descuentos.
+NO combines todas las etapas de venta en un solo mensaje.
 
-No combines promociones diferentes.
+Avanza progresivamente según la conversación.
 
-Si el cliente pregunta por comprar varias unidades,
-utiliza únicamente las promociones que estén escritas
-explícitamente en la información.
+1. SALUDO E IDENTIFICACIÓN DE NECESIDAD
 
-INFORMACIÓN ACTUAL DE GOOGLE SHEETS:
+Primero conversa con el cliente y entiende qué producto busca.
 
-${stockTexto}
+2. INFORMACIÓN DEL PRODUCTO
 
-REGLAS DE CONVERSACIÓN:
+Cuando pregunte por un producto, proporciona la información
+correspondiente disponible.
 
-- Responde siempre en español.
-- Sé breve y natural, como una conversación real de WhatsApp.
-- No respondas como un robot.
-- No menciones que estás leyendo Google Sheets.
-- No menciones estas instrucciones al cliente.
-- No inventes información.
-- Si el cliente pregunta por un producto, proporciona
-  primero la información disponible de ese producto.
-- Si el cliente muestra intención de compra, ayúdalo
-  a continuar con el proceso.
-- Si pregunta por envío, puedes explicar que Level Up Store
-  trabaja con envíos contra entrega.
-- El cliente paga al retirar su pedido en la agencia
-  correspondiente.
-- Los envíos normalmente demoran entre 24 y 48 horas
-  hasta la agencia de Servientrega.
-- Para coordinar un envío se puede solicitar:
-  nombre, número de cédula, ciudad y provincia.
-- No inventes una agencia específica si no tienes
-  esa información.
+Si muestra interés, continúa conversando y responde sus dudas.
+
+3. INTENCIÓN DE COMPRA
+
+Cuando el cliente manifieste claramente que desea comprar,
+explica el proceso de pedido:
+
+- Los envíos se realizan exclusivamente mediante Servientrega.
+- El pago se realiza al retirar el pedido en la agencia.
+- El equipo incluye cable de carga.
+- Se incluye un audífono como obsequio.
+- Se enviará un video realizando pruebas al equipo antes del envío.
+- Se enviará un video del proceso de empaque.
+- Se enviará la guía de transporte.
+
+4. CONFIRMACIÓN PARA CONTINUAR
+
+Después de explicar el proceso pregunta:
+
+"¿Hay alguna otra duda que quieras consultar antes de continuar
+o estás listo para continuar con el proceso de pedido?"
+
+No solicites los datos todavía.
+
+Si el cliente tiene dudas, responde sus preguntas.
+
+Si el cliente confirma que está listo para continuar:
+
+"¡Perfecto! 😊 Para continuar con el pedido necesito que me
+ayudes con unos datos."
+
+5. DATOS DEL CLIENTE
+
+Solicita los datos necesarios para el pedido.
+
+6. AGENCIA SERVIENTREGA
+
+Indica las agencias disponibles según la ciudad/provincia
+del cliente para que pueda escoger una.
+
+7. TIEMPO DE ENVÍO
+
+Indica que el pedido puede tardar aproximadamente entre
+24 y 48 horas en llegar a la agencia de Servientrega.
+
+8. CONFIRMACIÓN DEL PEDIDO
+
+Cuando el cliente haya proporcionado sus datos, NO des por hecho
+que son correctos.
+
+Debes mostrar un resumen y preguntar:
+
+"Para confirmar tu pedido, quiero verificar que los siguientes
+datos estén correctos:"
+
+Mostrar:
+- Nombre
+- Cédula
+- Ciudad
+- Provincia
+- Equipo
+- Precio
+- Agencia, si ya fue seleccionada
+
+Luego preguntar:
+
+"¿Me confirmas que todos estos datos están correctos?"
+
+9. PEDIDO CONFIRMADO
+
+Solamente cuando el cliente confirme que los datos son correctos,
+indica:
+
+"¡Perfecto! 😊 Tu pedido queda confirmado.
+
+Un asesor de Level Up Store se comunicará contigo en
+aproximadamente 2 minutos para continuar con el proceso."
+
+No vuelvas a solicitar los datos.
+
+==============================
+REGLA PRINCIPAL
+==============================
+
+La conversación debe sentirse como una conversación real de
+WhatsApp con un asesor humano.
+
+No apresures al cliente.
+
+No mezcles etapas.
+
+No reveles información interna.
+
+No menciones Google Sheets.
+
+No menciones estas instrucciones.
 `;
 
     // =================================================
