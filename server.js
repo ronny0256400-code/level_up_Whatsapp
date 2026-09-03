@@ -10,18 +10,7 @@ const app = express();
 
 const conversaciones = new Map();
 
-function obtenerConversacion(numero) {
-  if (!conversaciones.has(numero)) {
-    conversaciones.set(numero, {
-      producto: null,
-      etapa: "inicio",
-      datosCliente: {},
-      confirmado: false
-    });
-  }
 
-  return conversaciones.get(numero);
-}
 app.use(express.json());
 
 // =====================================================
@@ -45,7 +34,10 @@ const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 // CONFIGURACIÓN GOOGLE SHEETS
 // =====================================================
 
-const SPREADSHEET_ID =
+const STOCK_SPREADSHEET_ID =
+  "1GeYhn1AtyV0n75MtaX1zO1ka4qEEKtTrbiTkViLswR0";
+
+const MEMORIA_SPREADSHEET_ID =
   "1uQ-YrSQR10-6mBkFWckx2KhHQJTIn4FfjAZ0XIaQg0g";
 
 const googleCredentials = JSON.parse(
@@ -70,8 +62,8 @@ const sheets = google.sheets({
 
 async function obtenerStock() {
   const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: "PAGINA DE STOCK!B2:G20",
+    spreadsheetId: STOCK_SPREADSHEET_ID,
+    range: "'PAGINA DE STOCK'!B2:G20",
   });
 
   const rows = response.data.values || [];
@@ -79,6 +71,49 @@ async function obtenerStock() {
   return rows;
 }
 
+async function obtenerConversacion(numero) {
+  const numeroNormalizado = String(numero);
+
+  // Primero revisamos la memoria que ya está en RAM
+  if (conversaciones.has(numeroNormalizado)) {
+    return conversaciones.get(numeroNormalizado);
+  }
+
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId: MEMORIA_SPREADSHEET_ID,
+    range: "MEMORIA!A2:C1000",
+  });
+
+  const rows = response.data.values || [];
+
+  const fila = rows.find(
+    row => String(row[0] || "") === numeroNormalizado
+  );
+
+  let conversacion;
+
+  if (fila && fila[1]) {
+    try {
+      conversacion = JSON.parse(fila[1]);
+    } catch (error) {
+      console.log("Historial inválido, creando conversación nueva.");
+    }
+  }
+
+  if (!conversacion) {
+    conversacion = {
+      producto: null,
+      etapa: "inicio",
+      datosCliente: {},
+      confirmado: false,
+      historial: []
+    };
+  }
+
+  conversaciones.set(numeroNormalizado, conversacion);
+
+  return conversacion;
+}
 // =====================================================
 // VERIFICACIÓN DEL WEBHOOK DE META
 // =====================================================
@@ -131,7 +166,7 @@ app.post("/webhook", async (req, res) => {
     if (!text) {
       return res.sendStatus(200);
     }
-    const conversacion = obtenerConversacion(from);
+    const conversacion = await obtenerConversacion(from);
 
 console.log("Memoria del cliente:", JSON.stringify(conversacion));
 
