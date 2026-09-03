@@ -35,7 +35,7 @@ const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 // =====================================================
 
 const STOCK_SPREADSHEET_ID =
-  "1GeYhn1AtyV0n75MtaX1zO1ka4qEEKtTrbiTkViLswR0";
+  "1geYhn1AtyV0n75MtaX1Zo1ka4qEEKtTrbiTkViLswR0";
 
 const MEMORIA_SPREADSHEET_ID =
   "1uQ-YrSQR10-6mBkFWckx2KhHQJTIn4FfjAZ0XIaQg0g";
