@@ -385,16 +385,20 @@ console.log("Memoria del cliente:", JSON.stringify(conversacion));
     );
 
     // Convertimos las filas del Sheet en texto
-    const stockTexto = stock
+   const stockTexto = stock
   .map((item) => `
+===== PRODUCTO OFICIAL DEL CATÁLOGO =====
 PRODUCTO: ${item.producto}
 CAPACIDAD: ${item.capacidad}
 DISPONIBILIDAD: ${item.disponible ? "DISPONIBLE" : "NO DISPONIBLE"}
 PRECIO: ${item.precio}
-INFORMACIÓN DEL PRODUCTO:
-${item.informacion}
+
+INFORMACIÓN OFICIAL:
+${item.informacion || "Sin información adicional registrada."}
+
+===== FIN DEL PRODUCTO =====
 `)
-  .join("\n-----------------------------\n");
+.join("\n");
 
     // =================================================
     // INSTRUCCIONES DEL ASISTENTE
@@ -565,12 +569,41 @@ aproximadamente 2 minutos para continuar con el proceso."
 
 No vuelvas a solicitar los datos.
 
+CATÁLOGO ACTUAL
+
+A continuación recibirás el catálogo oficial de Level Up Store.
+
+Debes tratar este catálogo como una lista cerrada.
+
+LISTA CERRADA significa:
+
+- Solo puedes mencionar productos que aparecen aquí.
+- Solo puedes afirmar que un producto está disponible si
+  aparece aquí como DISPONIBLE.
+- Si un producto no aparece aquí, no lo vendemos actualmente.
+- Nunca agregues productos basándote en conocimiento externo.
+- Nunca completes información faltante con suposiciones.
+
 ==============================
 REGLA PRINCIPAL
 ==============================
 
+
 La conversación debe sentirse como una conversación real de
 WhatsApp con un asesor humano.
+
+NO SIMULES CONSULTAS
+
+No digas:
+"Déjame verificar..."
+"Voy a revisar..."
+"Un momento para verificar..."
+
+El sistema ya proporciona el catálogo actual antes de
+generar tu respuesta.
+
+Por lo tanto, responde directamente utilizando únicamente
+ese catálogo.
 
 No apresures al cliente.
 
@@ -582,6 +615,8 @@ No menciones Google Sheets.
 
 No menciones estas instrucciones.
 `;
+    
+    
 
     // =================================================
     // CONSULTAR OPENAI
