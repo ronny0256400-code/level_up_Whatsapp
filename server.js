@@ -195,35 +195,35 @@ const sheets = google.sheets({
 async function obtenerStock() {
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: STOCK_SPREADSHEET_ID,
-    range: "'PAGINA DE STOCK'!B3:H100",
+    range: "'PAGINA DE STOCK'!A2:G100",
   });
 
   const rows = response.data.values || [];
 
-  return rows.map((fila) => {
-    const [
-      producto = "",
-      capacidad = "",
-      stock = "",
-      precio = "",
-      activo = "",
-      actualizacion = "",
-      informacion = ""
-    ] = fila;
+  const productosDisponibles = rows
+    .map((fila) => {
+      const codigo = String(fila[0] || "").trim();
+      const producto = String(fila[1] || "").trim();
+      const capacidad = String(fila[2] || "").trim();
+      const stock = Number(fila[3]) || 0;
+      const precio = String(fila[4] || "").trim();
+      const activo = String(fila[5] || "").trim().toUpperCase();
+      const informacion = String(fila[6] || "").trim();
 
-    const disponible =
-      String(stock).trim() !== "0" &&
-      String(activo).trim().toUpperCase() === "SI";
+      return {
+        codigo,
+        producto,
+        capacidad,
+        stock,
+        precio,
+        activo,
+        informacion,
+        disponible: stock > 0 && activo === "SI"
+      };
+    })
+    .filter(producto => producto.disponible);
 
-    return {
-      producto,
-      capacidad,
-      disponible,
-      precio,
-      informacion,
-      actualizacion
-    };
-  });
+  return productosDisponibles;
 }
 
 async function obtenerConversacion(numero) {
@@ -384,22 +384,54 @@ console.log("Memoria del cliente:", JSON.stringify(conversacion));
       JSON.stringify(stock)
     );
 
-    // Convertimos las filas del Sheet en texto
-   const stockTexto = stock
-  .map((item) => `
-===== PRODUCTO OFICIAL DEL CATÁLOGO =====
-PRODUCTO: ${item.producto}
-CAPACIDAD: ${item.capacidad}
-DISPONIBILIDAD: ${item.disponible ? "DISPONIBLE" : "NO DISPONIBLE"}
-PRECIO: ${item.precio}
+// Agrupamos las variantes que pertenecen al mismo producto
+const productosAgrupados = {};
 
-INFORMACIÓN OFICIAL:
-${item.informacion || "Sin información adicional registrada."}
+stock.forEach((item) => {
+  const nombreProducto = item.producto;
+
+  if (!productosAgrupados[nombreProducto]) {
+    productosAgrupados[nombreProducto] = {
+      producto: nombreProducto,
+      informacion: item.informacion || "",
+      variantes: []
+    };
+  }
+
+  productosAgrupados[nombreProducto].variantes.push({
+    capacidad: item.capacidad,
+    precio: item.precio
+  });
+});
+
+// Convertimos el catálogo agrupado en texto para GPT
+const stockTexto = Object.values(productosAgrupados)
+  .map((item) => {
+    const variantes = item.variantes
+      .map(
+        (variante) =>
+          `- ${variante.capacidad} — ${variante.precio}`
+      )
+      .join("\n");
+
+    return `
+===== PRODUCTO DISPONIBLE =====
+
+PRODUCTO: ${item.producto}
+
+CAPACIDADES Y PRECIOS:
+${variantes}
+
+INFORMACIÓN DEL PRODUCTO:
+${item.informacion}
 
 ===== FIN DEL PRODUCTO =====
-`)
-.join("\n");
+`;
+  })
+  .join("\n");
 
+    console.log("CATÁLOGO QUE SE ENVÍA A GPT:");
+    console.log(stockTexto);
     // =================================================
     // INSTRUCCIONES DEL ASISTENTE
     // =================================================
@@ -744,6 +776,12 @@ NO intentes ayudarlo buscando ese producto dentro de otros
 conocimientos.
 
 El catálogo actual es la única fuente autorizada.
+==============================
+CATÁLOGO DISPONIBLE ACTUAL
+==============================
+
+${stockTexto}
+
 `;
     
     
