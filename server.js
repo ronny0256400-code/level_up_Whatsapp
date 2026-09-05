@@ -161,6 +161,7 @@ const VERIFY_TOKEN = "levelup_verification_2026";
 
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+const ASESOR_WHATSAPP = process.env.ASESOR_WHATSAPP;
 
 // =====================================================
 // CONFIGURACIÓN GOOGLE SHEETS
@@ -288,6 +289,43 @@ app.get("/webhook", (req, res) => {
   return res.sendStatus(403);
 });
 
+// =====================================================
+// NOTIFICAR ASESOR
+// =====================================================
+
+async function notificarAsesor(mensaje) {
+    try {
+        const response = await fetch(
+            `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    messaging_product: "whatsapp",
+                    to: ASESOR_WHATSAPP,
+                    type: "text",
+                    text: {
+                        body: mensaje,
+                    },
+                }),
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error("❌ Error notificando al asesor:", data);
+            return;
+        }
+
+        console.log("📲 Notificación enviada al asesor");
+    } catch (error) {
+        console.error("❌ Error enviando notificación al asesor:", error);
+    }
+}
 // =====================================================
 // RECIBIR MENSAJES DE WHATSAPP
 // =====================================================
@@ -605,26 +643,31 @@ Indica que el pedido puede tardar aproximadamente entre
 
 8. CONFIRMACIÓN DEL PEDIDO
 
-Cuando el cliente haya proporcionado sus datos, NO des por hecho
-que son correctos.
+Cuando el cliente haya proporcionado sus datos, NO des por hecho que son correctos.
 
 Debes mostrar un resumen y preguntar:
 
-"Para confirmar tu pedido, quiero verificar que los siguientes
-datos estén correctos:"
+"Para confirmar tu pedido, quiero verificar que los siguientes datos estén correctos:"
 
 Mostrar:
+
 - Nombre
 - Cédula
 - Ciudad
 - Provincia
 - Equipo
 - Precio
-- Agencia, si ya fue seleccionada
 
 Luego preguntar:
 
 "¿Me confirmas que todos estos datos están correctos?"
+
+IMPORTANTE:
+
+- No incluyas ninguna agencia de Servientrega en este resumen.
+- El cliente NO necesita seleccionar una agencia en este momento.
+- Una vez que el cliente confirme que sus datos son correctos y desea continuar con la compra, indícale que un asesor de Level Up Store se encargará de ayudarlo a encontrar la agencia de Servientrega correspondiente según su ciudad y provincia.
+- No inventes ni proporciones nombres de agencias.
 
 9. PEDIDO CONFIRMADO
 
@@ -633,10 +676,15 @@ indica:
 
 "¡Perfecto! 😊 Tu pedido queda confirmado.
 
-Un asesor de Level Up Store se comunicará contigo en
-aproximadamente 2 minutos para continuar con el proceso y confirmar la gencia de a la que desea que se le realice el envio."
+Un asesor de Level Up Store se comunicará contigo en aproximadamente 2 minutos para continuar con el proceso y ayudarte a seleccionar la agencia de Servientrega correspondiente según tu ciudad y provincia."
 
-No vuelvas a solicitar los datos.
+No vuelvas a solicitar los datos del cliente.
+
+No solicites al cliente que busque la agencia por su cuenta.
+
+No proporciones ni inventes nombres de agencias.
+
+El asesor será quien se encargue de ayudar al cliente con la selección de la agencia correspondiente.
 
 CATÁLOGO ACTUAL
 
@@ -842,6 +890,46 @@ const aiResponse = await openai.responses.create({
 const respuesta =
     aiResponse.output_text ||
     "Disculpa, no pude procesar tu mensaje en este momento.";
+
+    // ========================================================
+// DETECTAR PEDIDO CONFIRMADO
+// ========================================================
+
+const ultimoMensajeAsistente = [...conversacion.historial]
+    .reverse()
+    .find((mensaje) => mensaje.role === "assistant");
+
+const textoCliente = (text || "").trim().toLowerCase();
+
+const confirmacionPositiva =
+    /^(sí|si)([,.]?\s*(confirmo|correcto|correcta|todo correcto|todos.*correctos|está bien|esta bien|así es|asi es))?[.!]?$/i.test(
+        textoCliente
+    );
+
+const estabaConfirmandoPedido =
+    ultimoMensajeAsistente?.content
+        ?.toLowerCase()
+        .includes("¿me confirmas que todos estos datos están correctos?");
+
+if (confirmacionPositiva && estabaConfirmandoPedido) {
+    console.log("✅ PEDIDO CONFIRMADO POR EL CLIENTE");
+
+    const notificacionPedido = `
+🔔 NUEVO PEDIDO CONFIRMADO
+
+📱 WhatsApp del cliente: ${from}
+
+📋 DATOS DEL PEDIDO:
+${ultimoMensajeAsistente.content}
+
+✅ El cliente confirmó los datos.
+
+🚚 Agencia de Servientrega:
+Pendiente de gestionar por el asesor.
+`;
+
+    await notificarAsesor(notificacionPedido);
+}
 
 // Guardamos la respuesta de la IA
 conversacion.historial.push({
