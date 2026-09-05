@@ -301,12 +301,24 @@ app.post("/webhook", async (req, res) => {
 
     const message =
       req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+// EVITAR MENSAJES DUPLICADOS DE WHATSAPP
+const messageId = message.id;
 
-    // Si no es un mensaje válido, respondemos OK
-    if (!message) {
-      return res.sendStatus(200);
-    }
+if (!messageId) {
+  return res.sendStatus(200);
+}
 
+if (!global.mensajesProcesados) {
+  global.mensajesProcesados = new Set();
+}
+
+if (global.mensajesProcesados.has(messageId)) {
+  console.log("⚠️ Mensaje duplicado ignorado:", messageId);
+  return res.sendStatus(200);
+}
+
+global.mensajesProcesados.add(messageId);
+ 
  const from = message.from;
 
 let text = null;
