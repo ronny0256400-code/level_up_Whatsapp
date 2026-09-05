@@ -891,7 +891,7 @@ const respuesta =
     aiResponse.output_text ||
     "Disculpa, no pude procesar tu mensaje en este momento.";
 
-    // ========================================================
+// ========================================================
 // DETECTAR PEDIDO CONFIRMADO
 // ========================================================
 
@@ -899,17 +899,32 @@ const ultimoMensajeAsistente = [...conversacion.historial]
     .reverse()
     .find((mensaje) => mensaje.role === "assistant");
 
-const textoCliente = (text || "").trim().toLowerCase();
-
+const textoCliente = (text || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+    
 const confirmacionPositiva =
-    /^(sí|si)([,.]?\s*(confirmo|correcto|correcta|todo correcto|todos.*correctos|está bien|esta bien|así es|asi es))?[.!]?$/i.test(
+    /^(si|confirmo|correcto|correcta|todo correcto|todos.*correctos|esta bien|asi es|exacto|exactamente)\b/i.test(
         textoCliente
     );
 
+const mensajeAnterior = (
+    ultimoMensajeAsistente?.content || ""
+)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
 const estabaConfirmandoPedido =
-    ultimoMensajeAsistente?.content
-        ?.toLowerCase()
-        .includes("¿me confirmas que todos estos datos están correctos?");
+    mensajeAnterior.includes("confirmas") &&
+    mensajeAnterior.includes("datos") &&
+    mensajeAnterior.includes("correctos");
+
+console.log("🔎 Confirmación positiva:", confirmacionPositiva);
+console.log("🔎 Estaba confirmando pedido:", estabaConfirmandoPedido);
+console.log("🔎 Último mensaje del asistente:", ultimoMensajeAsistente?.content);
 
 if (confirmacionPositiva && estabaConfirmandoPedido) {
     console.log("✅ PEDIDO CONFIRMADO POR EL CLIENTE");
@@ -930,14 +945,6 @@ Pendiente de gestionar por el asesor.
 
     await notificarAsesor(notificacionPedido);
 }
-
-// Guardamos la respuesta de la IA
-conversacion.historial.push({
-    role: "assistant",
-    content: respuesta
-});
-
-console.log("Respuesta de IA:", respuesta);
     
     // =================================================
     // RESPONDER POR WHATSAPP
