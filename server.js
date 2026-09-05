@@ -15,7 +15,7 @@ const conversaciones = new Map();
 app.use(express.json());
 
 // =====================================================
-// CONFIGURACIÓN OPENAI
+// CONFIGURACIÓN OPENAi
 // =====================================================
 
 const openai = new OpenAI({
