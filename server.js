@@ -299,8 +299,13 @@ app.post("/webhook", async (req, res) => {
       JSON.stringify(req.body)
     );
 
-    const message =
-      req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+ const message = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+
+// Si no es un mensaje real, ignorar el webhook
+if (!message) {
+  return res.sendStatus(200);
+}
+
 // EVITAR MENSAJES DUPLICADOS DE WHATSAPP
 const messageId = message.id;
 
