@@ -896,39 +896,31 @@ const respuesta =
 // DETECTAR PEDIDO CONFIRMADO
 // ========================================================
 
-const ultimoMensajeAsistente = [...conversacion.historial]
-    .reverse()
-    .find((mensaje) => mensaje.role === "assistant");
-
 const textoCliente = (text || "")
     .trim()
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
-    
+
 const confirmacionPositiva =
     /^(si|confirmo|correcto|correcta|todo correcto|todos.*correctos|esta bien|asi es|exacto|exactamente)\b/i.test(
         textoCliente
     );
 
-const mensajeAnterior = (
-    ultimoMensajeAsistente?.content || ""
-)
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+const respuestaConfirmaPedido =
+    respuesta.toLowerCase().includes("pedido queda confirmado");
 
-const estabaConfirmandoPedido =
-    mensajeAnterior.includes("confirmas") &&
-    mensajeAnterior.includes("datos") &&
-    mensajeAnterior.includes("correctos");
+console.log("🔎 Confirmación del cliente:", confirmacionPositiva);
+console.log("🔎 IA confirmó el pedido:", respuestaConfirmaPedido);
 
-console.log("🔎 Confirmación positiva:", confirmacionPositiva);
-console.log("🔎 Estaba confirmando pedido:", estabaConfirmandoPedido);
-console.log("🔎 Último mensaje del asistente:", ultimoMensajeAsistente?.content);
-
-if (confirmacionPositiva && estabaConfirmandoPedido) {
+if (
+    confirmacionPositiva &&
+    respuestaConfirmaPedido &&
+    !conversacion.confirmado
+) {
     console.log("✅ PEDIDO CONFIRMADO POR EL CLIENTE");
+
+    conversacion.confirmado = true;
 
     const notificacionPedido = `
 🔔 NUEVO PEDIDO CONFIRMADO
@@ -936,7 +928,7 @@ if (confirmacionPositiva && estabaConfirmandoPedido) {
 📱 WhatsApp del cliente: ${from}
 
 📋 DATOS DEL PEDIDO:
-${ultimoMensajeAsistente.content}
+${respuesta}
 
 ✅ El cliente confirmó los datos.
 
@@ -945,6 +937,8 @@ Pendiente de gestionar por el asesor.
 `;
 
     await notificarAsesor(notificacionPedido);
+
+    console.log("📲 Notificación enviada al asesor");
 }
     
     // =================================================
