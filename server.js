@@ -1351,7 +1351,7 @@ const textoCliente = (text || "")
     .replace(/[\u0300-\u036f]/g, "");
 
 const confirmacionPositiva =
-    /^(si|confirmo|correcto|correcta|todo correcto|todos.*correctos|esta bien|asi es|exacto|exactamente)\b/i.test(
+    /^(si|sí|confirmo|confirmado|correcto|correcta|correctísimo|correctisimo|perfecto|perfectamente|todo correcto|todos.*correctos|esta bien|está bien|asi es|así es|exacto|exactamente|de acuerdo)\b/i.test(
         textoCliente
     );
 
