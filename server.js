@@ -271,6 +271,51 @@ async function obtenerConversacion(numero) {
 
   return conversacion;
 }
+
+// ============================================================
+// GUARDAR CONVERSACIÓN EN MEMORIA
+// ============================================================
+
+async function guardarConversacion(numero, conversacion) {
+    try {
+        const numeroNormalizado = String(numero);
+
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID,
+            range: "MEMORIA!A2:C1000",
+        });
+
+        const rows = response.data.values || [];
+
+        const indiceFila = rows.findIndex(
+            row => String(row[0] || "") === numeroNormalizado
+        );
+
+        // Si el número ya existe, actualizamos esa fila.
+        // Si no existe, creamos una nueva.
+        const fila = indiceFila >= 0
+            ? indiceFila + 2
+            : rows.length + 2;
+
+        await sheets.spreadsheets.values.update({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID,
+            range: `MEMORIA!A${fila}:C${fila}`,
+            valueInputOption: "RAW",
+            requestBody: {
+                values: [[
+                    numeroNormalizado,
+                    JSON.stringify(conversacion),
+                    new Date().toISOString()
+                ]]
+            }
+        });
+
+        console.log("💾 Conversación guardada en MEMORIA:", numeroNormalizado);
+
+    } catch (error) {
+        console.error("❌ Error guardando conversación en MEMORIA:", error);
+    }
+}
 // =====================================================
 // VERIFICACIÓN DEL WEBHOOK DE META
 // =====================================================
@@ -1144,6 +1189,7 @@ conversacion.historial.push({
     role: "user",
     content: text
 });
+    await guardarConversacion(from, conversacion);
 
 // ================================================
 // CONSULTAR OPENAI
@@ -1162,6 +1208,12 @@ const respuesta =
     aiResponse.output_text ||
     "Disculpa, no pude procesar tu mensaje en este momento.";
 
+conversacion.historial.push({
+    role: "assistant",
+    content: respuesta
+});
+
+await guardarConversacion(from, conversacion);
 // ========================================================
 // DETECTAR PEDIDO CONFIRMADO
 // ========================================================
@@ -1191,6 +1243,7 @@ if (
     console.log("✅ PEDIDO CONFIRMADO POR EL CLIENTE");
 
     conversacion.confirmado = true;
+  await guardarConversacion(from, conversacion);
 
     const notificacionPedido = `
 🔔 NUEVO PEDIDO CONFIRMADO
