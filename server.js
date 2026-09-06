@@ -1360,34 +1360,126 @@ const respuestaConfirmaPedido =
 
 console.log("🔎 Confirmación del cliente:", confirmacionPositiva);
 console.log("🔎 IA confirmó el pedido:", respuestaConfirmaPedido);
-
 if (
     confirmacionPositiva &&
     respuestaConfirmaPedido &&
     !conversacion.confirmado
 ) {
+
     console.log("✅ PEDIDO CONFIRMADO POR EL CLIENTE");
 
-    conversacion.confirmado = true;
-  await guardarConversacion(from, conversacion);
+    // ========================================================
+    // EXTRAER DATOS ESTRUCTURADOS DEL PEDIDO
+    // ========================================================
 
-    const notificacionPedido = `
+    const datosPedido = await extraerDatosPedido(conversacion);
+
+    if (datosPedido) {
+
+        // ====================================================
+        // GUARDAR DATOS DEL CLIENTE
+        // ====================================================
+
+        conversacion.datosCliente = {
+            nombre: datosPedido.nombre,
+            cedula: datosPedido.cedula,
+            telefono: datosPedido.telefono || from,
+            provincia: datosPedido.provincia,
+            ciudad: datosPedido.ciudad
+        };
+
+        // ====================================================
+        // CREAR PEDIDO
+        // ====================================================
+
+        conversacion.pedido = {
+            id: generarIdPedido(),
+
+            producto: datosPedido.producto,
+
+            variante: datosPedido.variante,
+
+            cantidad: datosPedido.cantidad || 1,
+
+            precio: datosPedido.precio,
+
+            confirmado: true,
+
+            guia: null,
+
+            estado: "confirmado",
+
+            fechaConfirmacion: new Date().toISOString(),
+
+            fechaEnvio: null,
+
+            fechaLlegada: null,
+
+            fechaRetiro: null,
+
+            fechaPago: null
+        };
+
+        // Mantener compatibilidad con la estructura actual
+        conversacion.confirmado = true;
+
+        // Guardar todo en MEMORIA
+        await guardarConversacion(from, conversacion);
+
+        console.log(
+            "💾 PEDIDO GUARDADO:",
+            JSON.stringify(conversacion.pedido)
+        );
+
+        // ====================================================
+        // NOTIFICACIÓN AL ASESOR
+        // ====================================================
+
+        const notificacionPedido = `
 🔔 NUEVO PEDIDO CONFIRMADO
 
-📱 WhatsApp del cliente: ${from}
+🆔 Pedido: ${conversacion.pedido.id}
 
-📋 DATOS DEL PEDIDO:
-${respuesta}
+👤 CLIENTE
+Nombre: ${datosPedido.nombre || "No disponible"}
+Cédula: ${datosPedido.cedula || "No disponible"}
+Teléfono: ${datosPedido.telefono || from}
 
-✅ El cliente confirmó los datos.
+📍 UBICACIÓN
+Provincia: ${datosPedido.provincia || "No disponible"}
+Ciudad: ${datosPedido.ciudad || "No disponible"}
 
-🚚 Agencia de Servientrega:
-Pendiente de gestionar por el asesor.
+📦 PEDIDO
+Producto: ${datosPedido.producto || "No disponible"}
+Variante: ${datosPedido.variante || "No especificada"}
+Cantidad: ${datosPedido.cantidad || 1}
+
+💵 VALOR
+$${datosPedido.precio ?? "No disponible"}
+
+🚚 ENVÍO
+Servientrega
+Envío: GRATIS
+Pago: CONTRAENTREGA
+
+🆔 GUÍA
+Pendiente
+
+📌 ACCIÓN PENDIENTE
+Gestionar agencia de Servientrega
+y continuar con el cliente.
 `;
 
-    await notificarAsesor(notificacionPedido);
+        await notificarAsesor(notificacionPedido);
 
-    console.log("📲 Notificación enviada al asesor");
+        console.log("📲 Notificación del pedido enviada al asesor");
+
+    } else {
+
+        console.error(
+            "❌ No se pudieron extraer los datos estructurados del pedido."
+        );
+    }
 }
     
     // =================================================
