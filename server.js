@@ -317,6 +317,87 @@ async function guardarConversacion(numero, conversacion) {
     }
 }
 
+async function actualizarGuiaPedido(idPedido, numeroGuia) {
+    try {
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID,
+            range: "MEMORIA!A2:C1000",
+        });
+
+        const rows = response.data.values || [];
+
+        for (let i = 0; i < rows.length; i++) {
+            const numeroCliente = String(rows[i][0] || "");
+            const historialGuardado = rows[i][1];
+
+            if (!historialGuardado) continue;
+
+            let conversacion;
+
+            try {
+                conversacion = JSON.parse(historialGuardado);
+            } catch (error) {
+                continue;
+            }
+
+            if (
+                !conversacion.pedido ||
+                conversacion.pedido.id !== idPedido
+            ) {
+                continue;
+            }
+
+            // Guardar guía
+            conversacion.pedido.guia = numeroGuia;
+
+            // Cambiar estado
+            conversacion.pedido.estado = "enviado";
+
+            // Registrar fecha de envío
+            conversacion.pedido.fechaEnvio = new Date().toISOString();
+
+            // Guardar cambios
+            await sheets.spreadsheets.values.update({
+                spreadsheetId: MEMORIA_SPREADSHEET_ID,
+                range: `MEMORIA!A${i + 2}:C${i + 2}`,
+                valueInputOption: "RAW",
+                requestBody: {
+                    values: [[
+                        numeroCliente,
+                        JSON.stringify(conversacion),
+                        new Date().toISOString()
+                    ]]
+                }
+            });
+
+            console.log("✅ GUÍA ACTUALIZADA");
+            console.log("🆔 Pedido:", idPedido);
+            console.log("🚚 Guía:", numeroGuia);
+            console.log("📱 Cliente:", numeroCliente);
+
+            return {
+                encontrado: true,
+                numeroCliente,
+                conversacion
+            };
+        }
+
+        console.log("❌ Pedido no encontrado:", idPedido);
+
+        return {
+            encontrado: false
+        };
+
+    } catch (error) {
+        console.error("❌ Error actualizando guía:", error);
+
+        return {
+            encontrado: false,
+            error: true
+        };
+    }
+}
+
 // ============================================================
 // EXTRAER DATOS ESTRUCTURADOS DEL PEDIDO CONFIRMADO
 // ============================================================
@@ -570,11 +651,82 @@ if (esAdministrador) {
         return res.sendStatus(200);
     }
 
-    console.log("🛠️ Comando administrativo detectado:", comandoAdmin);
+  console.log("🛠️ Comando administrativo detectado:", comandoAdmin);
 
-    // Por ahora solamente dejamos reconocido el comando.
-    // En el siguiente paso conectaremos cada comando con MEMORIA.
+const partesComando = comandoAdmin.split(/\s+/);
+
+const tipoComando = partesComando[0].toUpperCase();
+
+if (tipoComando === "GUIA") {
+
+    const idPedido = partesComando[1];
+    const numeroGuia = partesComando[2];
+
+    if (!idPedido || !numeroGuia) {
+        console.log("⚠️ Comando GUIA incompleto.");
+        return res.sendStatus(200);
+    }
+
+    console.log("🆔 ID pedido:", idPedido);
+    console.log("🚚 Número de guía:", numeroGuia);
+
+    const resultado = await actualizarGuiaPedido(
+        idPedido,
+        numeroGuia
+    );
+
+    if (!resultado.encontrado) {
+        console.log("❌ No se encontró el pedido.");
+        return res.sendStatus(200);
+    }
+
+    const pedido = resultado.conversacion.pedido;
+
+    const mensajeCliente = `
+📦 ¡Actualización de tu pedido!
+
+Tu pedido ya fue enviado mediante Servientrega. 🚚
+
+🆔 Pedido: ${pedido.id}
+🚚 Guía: ${pedido.guia}
+
+Podrás realizar el seguimiento con esta guía.
+
+¡Gracias por comprar en Level Up Store! 😊
+`;
+
+    const respuestaCliente = await fetch(
+        `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                messaging_product: "whatsapp",
+                to: resultado.numeroCliente,
+                type: "text",
+                text: {
+                    body: mensajeCliente
+                },
+            }),
+        }
+    );
+
+    const dataCliente = await respuestaCliente.json();
+
+    if (!respuestaCliente.ok) {
+        console.error(
+            "❌ Error enviando actualización al cliente:",
+            dataCliente
+        );
+    } else {
+        console.log("📲 Actualización enviada al cliente.");
+    }
+
     return res.sendStatus(200);
+}
 }
     
 
