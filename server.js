@@ -364,6 +364,48 @@ if (global.mensajesProcesados.has(messageId)) {
 global.mensajesProcesados.add(messageId);
  
  const from = message.from;
+    
+// ============================================================
+// IDENTIFICAR AL ADMINISTRADOR
+// ============================================================
+
+const numeroAdministrador = String(ASESOR_WHATSAPP || "")
+    .replace(/\D/g, "");
+
+const numeroRemitente = String(from || "")
+    .replace(/\D/g, "");
+
+const esAdministrador =
+    numeroRemitente === numeroAdministrador;
+
+if (esAdministrador) {
+    console.log("👤 Mensaje recibido del ADMINISTRADOR.");
+
+    // Solo procesar mensajes de texto del administrador
+    if (message.type !== "text") {
+        console.log("⚠️ Mensaje del administrador no es texto. Ignorado.");
+        return res.sendStatus(200);
+    }
+
+    const comandoAdmin = (message.text?.body || "").trim();
+
+    // Si el administrador escribe cualquier cosa que NO sea
+    // uno de nuestros comandos, el bot permanece completamente silencioso.
+    const esComandoAdmin =
+        /^(GUIA|LLEG[ÓO]|RETIRADO|PAGO)\b/i.test(comandoAdmin);
+
+    if (!esComandoAdmin) {
+        console.log("🤫 Mensaje del administrador sin comando. Ignorado.");
+        return res.sendStatus(200);
+    }
+
+    console.log("🛠️ Comando administrativo detectado:", comandoAdmin);
+
+    // Por ahora solamente dejamos reconocido el comando.
+    // En el siguiente paso conectaremos cada comando con MEMORIA.
+    return res.sendStatus(200);
+}
+    
 
 let text = null;
 
