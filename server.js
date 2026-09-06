@@ -316,6 +316,132 @@ async function guardarConversacion(numero, conversacion) {
         console.error("❌ Error guardando conversación en MEMORIA:", error);
     }
 }
+
+// ============================================================
+// EXTRAER DATOS ESTRUCTURADOS DEL PEDIDO CONFIRMADO
+// ============================================================
+
+async function extraerDatosPedido(conversacion) {
+    try {
+        const extractionResponse = await openai.responses.create({
+            model: "gpt-4o-mini",
+
+            instructions: `
+Extrae exclusivamente los datos del pedido confirmado
+a partir del historial de conversación proporcionado.
+
+IMPORTANTE:
+
+- Utiliza únicamente información que aparezca explícitamente
+  en la conversación.
+- No inventes datos.
+- No completes información faltante.
+- No cambies precios.
+- No cambies el producto.
+- No supongas una variante.
+- Si un dato no aparece claramente, devuelve null.
+- La cantidad debe ser la indicada en la conversación.
+- El precio debe ser el precio confirmado en el resumen final.
+
+Devuelve únicamente los datos estructurados solicitados.
+`,
+
+            input: conversacion.historial,
+
+            text: {
+                format: {
+                    type: "json_schema",
+                    name: "pedido_confirmado",
+                    strict: true,
+                    schema: {
+                        type: "object",
+                        properties: {
+
+                            nombre: {
+                                type: ["string", "null"]
+                            },
+
+                            cedula: {
+                                type: ["string", "null"]
+                            },
+
+                            telefono: {
+                                type: ["string", "null"]
+                            },
+
+                            provincia: {
+                                type: ["string", "null"]
+                            },
+
+                            ciudad: {
+                                type: ["string", "null"]
+                            },
+
+                            producto: {
+                                type: ["string", "null"]
+                            },
+
+                            variante: {
+                                type: ["string", "null"]
+                            },
+
+                            cantidad: {
+                                type: ["integer", "null"]
+                            },
+
+                            precio: {
+                                type: ["number", "null"]
+                            }
+                        },
+
+                        required: [
+                            "nombre",
+                            "cedula",
+                            "telefono",
+                            "provincia",
+                            "ciudad",
+                            "producto",
+                            "variante",
+                            "cantidad",
+                            "precio"
+                        ],
+
+                        additionalProperties: false
+                    }
+                }
+            }
+        });
+
+        const datos = JSON.parse(
+            extractionResponse.output_text
+        );
+
+        console.log(
+            "📦 Datos estructurados del pedido:",
+            JSON.stringify(datos)
+        );
+
+        return datos;
+
+    } catch (error) {
+
+        console.error(
+            "❌ Error extrayendo datos del pedido:",
+            error
+        );
+
+        return null;
+    }
+}
+
+// ============================================================
+// GENERAR ID ÚNICO DE PEDIDO
+// ============================================================
+
+function generarIdPedido() {
+    return `PED-${Date.now().toString(36).toUpperCase()}`;
+}
+
 // =====================================================
 // VERIFICACIÓN DEL WEBHOOK DE META
 // =====================================================
