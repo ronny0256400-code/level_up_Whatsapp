@@ -1233,6 +1233,53 @@ else {
 
 console.log("Memoria del cliente:", JSON.stringify(conversacion));
 
+// ============================================================
+// DETECTAR HORARIO DE RETIRO
+// ============================================================
+
+if (
+    conversacion.pedido &&
+    conversacion.pedido.seguimientoRetiro === true &&
+    !conversacion.pedido.fechaRetiroEstimada
+) {
+    console.log("🕐 Cliente en proceso de indicar horario de retiro.");
+
+    const horarioRetiro = await extraerHorarioRetiro(
+        conversacion,
+        text
+    );
+
+    if (
+        horarioRetiro &&
+        horarioRetiro.tieneHorario === true
+    ) {
+        conversacion.pedido.fechaRetiroEstimada =
+            horarioRetiro.fechaRetiroEstimada;
+
+        conversacion.pedido.horaRetiroEstimada =
+            horarioRetiro.horaRetiroEstimada;
+
+        await guardarConversacion(
+            from,
+            conversacion
+        );
+
+        console.log(
+            "✅ HORARIO DE RETIRO GUARDADO"
+        );
+
+        console.log(
+            "📅 Fecha:",
+            conversacion.pedido.fechaRetiroEstimada
+        );
+
+        console.log(
+            "🕐 Hora:",
+            conversacion.pedido.horaRetiroEstimada
+        );
+    }
+}
+
     // =================================================
     // OBTENER INFORMACIÓN ACTUAL DEL STOCK
     // =================================================
