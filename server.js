@@ -1841,32 +1841,50 @@ if (
         // ====================================================
 
         conversacion.pedido = {
-            id: generarIdPedido(),
+    id: generarIdPedido(),
 
-            producto: datosPedido.producto,
+    producto: datosPedido.producto,
 
-            variante: datosPedido.variante,
+    variante: datosPedido.variante,
 
-            cantidad: datosPedido.cantidad || 1,
+    cantidad: datosPedido.cantidad || 1,
 
-            precio: datosPedido.precio,
+    precio: datosPedido.precio,
 
-            confirmado: true,
+    confirmado: true,
 
-            guia: null,
+    guia: null,
 
-            estado: "confirmado",
+    estado: "confirmado",
 
-            fechaConfirmacion: new Date().toISOString(),
+    fechaConfirmacion: new Date().toISOString(),
 
-            fechaEnvio: null,
+    fechaEnvio: null,
 
-            fechaLlegada: null,
+    fechaLlegada: null,
 
-            fechaRetiro: null,
+    fechaRetiro: null,
 
-            fechaPago: null
-        };
+    fechaPago: null,
+
+    // ==========================================
+    // SEGUIMIENTO DE RETIRO
+    // ==========================================
+
+    seguimientoRetiro: false,
+
+    intentosRetiro: 0,
+
+    proximaVerificacionRetiro: null,
+
+    fechaInicioSeguimiento: null,
+
+    ultimaVerificacionRetiro: null,
+
+    fechaRetiroEstimada: null,
+
+    horaRetiroEstimada: null
+};
 
         // Mantener compatibilidad con la estructura actual
         conversacion.confirmado = true;
