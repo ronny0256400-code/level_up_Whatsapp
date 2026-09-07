@@ -398,6 +398,7 @@ async function actualizarGuiaPedido(idPedido, numeroGuia) {
     }
 }
 
+
 // ============================================================
 // EXTRAER DATOS ESTRUCTURADOS DEL PEDIDO CONFIRMADO
 // ============================================================
@@ -639,8 +640,11 @@ if (esAdministrador) {
         return res.sendStatus(200);
     }
 
-    const comandoAdmin = (message.text?.body || "").trim();
+const comandoAdminOriginal = (message.text?.body || "").trim();
 
+const comandoAdmin = comandoAdminOriginal
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
     // Si el administrador escribe cualquier cosa que NO sea
     // uno de nuestros comandos, el bot permanece completamente silencioso.
     const esComandoAdmin =
