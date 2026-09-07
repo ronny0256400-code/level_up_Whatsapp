@@ -894,8 +894,133 @@ Puedes acercarte a retirarlo presentando tu documento de identidad.
     }
 
     return res.sendStatus(200);
+
 }
 
+  // ==========================================
+// COMANDO RETIRADO
+// ==========================================
+
+if (tipoComando === "RETIRADO") {
+
+    const numeroGuia = partesComando[1];
+
+    if (!numeroGuia) {
+        console.log("⚠️ Comando RETIRADO incompleto.");
+        return res.sendStatus(200);
+    }
+
+    console.log(
+        "📦 Número de guía recibido para retiro:",
+        numeroGuia
+    );
+
+    const resultado = await actualizarRetiroPedido(
+        numeroGuia
+    );
+
+    if (!resultado.encontrado) {
+        console.log(
+            "❌ No se encontró un pedido para esta guía."
+        );
+
+        return res.sendStatus(200);
+    }
+
+    const pedido = resultado.conversacion.pedido;
+
+    console.log("✅ RETIRO REGISTRADO");
+    console.log("🆔 Pedido:", pedido.id);
+    console.log("🚚 Guía:", pedido.guia);
+    console.log("📱 Cliente:", resultado.numeroCliente);
+
+    return res.sendStatus(200);
+}
+
+  async function actualizarRetiroPedido(numeroGuia) {
+    try {
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID,
+            range: "MEMORIA!A2:C1000",
+        });
+
+        const rows = response.data.values || [];
+
+        for (let i = 0; i < rows.length; i++) {
+            const numeroCliente = String(rows[i][0] || "");
+            const historialGuardado = rows[i][1];
+
+            if (!historialGuardado) continue;
+
+            let conversacion;
+
+            try {
+                conversacion = JSON.parse(historialGuardado);
+            } catch (error) {
+                continue;
+            }
+
+            if (!conversacion.pedido) continue;
+
+            const guiaGuardada = String(
+                conversacion.pedido.guia || ""
+            ).trim();
+
+            if (guiaGuardada !== numeroGuia) {
+                continue;
+            }
+
+            conversacion.pedido.estado = "retirado";
+
+            conversacion.pedido.fechaRetiro =
+                new Date().toISOString();
+
+            await sheets.spreadsheets.values.update({
+                spreadsheetId: MEMORIA_SPREADSHEET_ID,
+                range: `MEMORIA!A${i + 2}:C${i + 2}`,
+                valueInputOption: "RAW",
+                requestBody: {
+                    values: [[
+                        numeroCliente,
+                        JSON.stringify(conversacion),
+                        new Date().toISOString()
+                    ]]
+                }
+            });
+
+            console.log("✅ PEDIDO MARCADO COMO RETIRADO");
+            console.log("🆔 Pedido:", conversacion.pedido.id);
+            console.log("🚚 Guía:", numeroGuia);
+            console.log("📱 Cliente:", numeroCliente);
+
+            return {
+                encontrado: true,
+                numeroCliente,
+                conversacion
+            };
+        }
+
+        console.log(
+            "❌ No se encontró ningún pedido con la guía:",
+            numeroGuia
+        );
+
+        return {
+            encontrado: false
+        };
+
+    } catch (error) {
+        console.error(
+            "❌ Error actualizando retiro:",
+            error
+        );
+
+        return {
+            encontrado: false,
+            error: true
+        };
+    }
+}
 
 // ESTA LLAVE CIERRA EL ADMINISTRADOR
 }
