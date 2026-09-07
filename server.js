@@ -397,6 +397,90 @@ async function actualizarGuiaPedido(idPedido, numeroGuia) {
         };
     }
 }
+async function actualizarLlegadaPedido(numeroGuia) {
+    try {
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID,
+            range: "MEMORIA!A2:C1000",
+        });
+
+        const rows = response.data.values || [];
+
+        for (let i = 0; i < rows.length; i++) {
+            const numeroCliente = String(rows[i][0] || "");
+            const historialGuardado = rows[i][1];
+
+            if (!historialGuardado) continue;
+
+            let conversacion;
+
+            try {
+                conversacion = JSON.parse(historialGuardado);
+            } catch (error) {
+                continue;
+            }
+
+            if (!conversacion.pedido) continue;
+
+            const guiaGuardada = String(
+                conversacion.pedido.guia || ""
+            ).trim();
+
+            if (guiaGuardada !== numeroGuia) {
+                continue;
+            }
+
+            conversacion.pedido.estado = "disponible_retiro";
+
+            conversacion.pedido.fechaLlegada =
+                new Date().toISOString();
+
+            await sheets.spreadsheets.values.update({
+                spreadsheetId: MEMORIA_SPREADSHEET_ID,
+                range: `MEMORIA!A${i + 2}:C${i + 2}`,
+                valueInputOption: "RAW",
+                requestBody: {
+                    values: [[
+                        numeroCliente,
+                        JSON.stringify(conversacion),
+                        new Date().toISOString()
+                    ]]
+                }
+            });
+
+            console.log("✅ PEDIDO MARCADO COMO LLEGADO");
+            console.log("🆔 Pedido:", conversacion.pedido.id);
+            console.log("🚚 Guía:", numeroGuia);
+            console.log("📱 Cliente:", numeroCliente);
+
+            return {
+                encontrado: true,
+                numeroCliente,
+                conversacion
+            };
+        }
+
+        console.log(
+            "❌ No se encontró ningún pedido con la guía:",
+            numeroGuia
+        );
+
+        return {
+            encontrado: false
+        };
+
+    } catch (error) {
+        console.error(
+            "❌ Error actualizando llegada:",
+            error
+        );
+
+        return {
+            encontrado: false,
+            error: true
+        };
+    }
+}
 
 
 // ============================================================
