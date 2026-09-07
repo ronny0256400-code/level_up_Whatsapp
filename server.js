@@ -729,8 +729,91 @@ Podrás realizar el seguimiento con esta guía.
         console.log("📲 Actualización enviada al cliente.");
     }
 
+   return res.sendStatus(200);
+}
+
+
+// ===============================
+// COMANDO LLEGÓ
+// ===============================
+
+if (tipoComando === "LLEGO") {
+
+    const numeroGuia = partesComando[1];
+
+    if (!numeroGuia) {
+        console.log("⚠️ Comando LLEGÓ incompleto.");
+        return res.sendStatus(200);
+    }
+
+    console.log("🚚 Número de guía recibido:", numeroGuia);
+
+    const resultado = await actualizarLlegadaPedido(
+        numeroGuia
+    );
+
+    if (!resultado.encontrado) {
+        console.log(
+            "❌ No se encontró un pedido para esta guía."
+        );
+
+        return res.sendStatus(200);
+    }
+
+    const pedido = resultado.conversacion.pedido;
+
+    const mensajeCliente = `
+📦 ¡Tu pedido ya llegó! 🎉
+
+Tu pedido ya se encuentra disponible para retiro en la agencia de Servientrega correspondiente.
+
+🆔 Pedido: ${pedido.id}
+🚚 Guía: ${pedido.guia}
+
+Puedes acercarte a retirarlo presentando tu documento de identidad.
+
+⏰ Te recomendamos retirarlo lo antes posible para evitar que sea devuelto.
+
+¡Gracias por comprar en Level Up Store! 😊
+`;
+
+    const respuestaCliente = await fetch(
+        `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                messaging_product: "whatsapp",
+                to: resultado.numeroCliente,
+                type: "text",
+                text: {
+                    body: mensajeCliente
+                },
+            }),
+        }
+    );
+
+    const dataCliente = await respuestaCliente.json();
+
+    if (!respuestaCliente.ok) {
+        console.error(
+            "❌ Error enviando aviso de llegada:",
+            dataCliente
+        );
+    } else {
+        console.log(
+            "📲 Aviso de llegada enviado al cliente."
+        );
+    }
+
     return res.sendStatus(200);
 }
+
+
+// ESTA LLAVE CIERRA EL ADMINISTRADOR
 }
     
 
