@@ -1341,9 +1341,7 @@ if (
             conversacion.pedido.horaRetiroEstimada =
                 horarioRetiro.horaRetiroEstimada;
 
-            conversacion.pedido.horaRetiroEstimada =
-                horarioRetiro.horaRetiroEstimada;
-
+        
             conversacion.pedido.ultimaVerificacionRetiro =
                 new Date().toISOString();
 
