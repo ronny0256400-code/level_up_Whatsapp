@@ -605,6 +605,61 @@ REGLAS IMPORTANTES:
         return null;
     }
 }
+
+// ============================================================
+// RESPUESTA PARA CLIENTE EN SEGUIMIENTO DE RETIRO
+// ============================================================
+
+function generarRespuestaRetiro(pedido, horarioRetiro) {
+
+    if (
+        horarioRetiro &&
+        horarioRetiro.tieneHorario === true
+    ) {
+
+        let referenciaHorario = "";
+
+        if (
+            horarioRetiro.fechaRetiroEstimada &&
+            horarioRetiro.horaRetiroEstimada
+        ) {
+            referenciaHorario =
+                `Queda registrado que tienes previsto retirar tu pedido aproximadamente a las ${horarioRetiro.horaRetiroEstimada}.`;
+        } else if (
+            horarioRetiro.fechaRetiroEstimada
+        ) {
+            referenciaHorario =
+                "Queda registrado el día que tienes previsto realizar el retiro.";
+        } else {
+            referenciaHorario =
+                "Queda registrado tu horario aproximado de retiro.";
+        }
+
+        return `
+Perfecto 😊
+
+${referenciaHorario}
+
+📦 Recuerda llevar tu cédula en mano y la guía de transporte que te enviamos.
+
+💵 Al momento del retiro deberás realizar el pago correspondiente.
+
+Estaremos pendientes para confirmar que hayas podido retirar tu pedido. 👍
+`;
+    }
+
+    return `
+Perfecto 😊
+
+Cuando tengas previsto acercarte a retirar tu pedido, indícanos aproximadamente qué día y horario tienes pensado hacerlo.
+
+📦 Recuerda llevar tu cédula en mano y la guía de transporte que te enviamos.
+
+💵 Al momento del retiro deberás realizar el pago correspondiente.
+
+Quedamos pendientes. 👍
+`;
+}
 // ============================================================
 // EXTRAER DATOS ESTRUCTURADOS DEL PEDIDO CONFIRMADO
 // ============================================================
@@ -1233,31 +1288,157 @@ else {
 
 console.log("Memoria del cliente:", JSON.stringify(conversacion));
 
-// ============================================================
-// DETECTAR HORARIO DE RETIRO
+
+ // ============================================================
+// MODO SEGUIMIENTO DE RETIRO
 // ============================================================
 
 if (
     conversacion.pedido &&
-    conversacion.pedido.seguimientoRetiro === true &&
-    !conversacion.pedido.fechaRetiroEstimada
+    conversacion.pedido.seguimientoRetiro === true
 ) {
-    console.log("🕐 Cliente en proceso de indicar horario de retiro.");
 
-    const horarioRetiro = await extraerHorarioRetiro(
-        conversacion,
-        text
+    console.log("📦 CLIENTE EN MODO SEGUIMIENTO DE RETIRO");
+    console.log(
+        "🆔 Pedido:",
+        conversacion.pedido.id
     );
 
-    if (
-        horarioRetiro &&
-        horarioRetiro.tieneHorario === true
-    ) {
-        conversacion.pedido.fechaRetiroEstimada =
-            horarioRetiro.fechaRetiroEstimada;
+    // Guardar mensaje del cliente
+    if (!conversacion.historial) {
+        conversacion.historial = [];
+    }
 
-        conversacion.pedido.horaRetiroEstimada =
-            horarioRetiro.horaRetiroEstimada;
+    conversacion.historial.push({
+        role: "user",
+        content: text
+    });
+
+    // ========================================================
+    // SI TODAVÍA NO TENEMOS HORARIO DE RETIRO
+    // ========================================================
+
+    if (!conversacion.pedido.fechaRetiroEstimada) {
+
+        console.log(
+            "🕐 Todavía no existe horario de retiro."
+        );
+
+        const horarioRetiro =
+            await extraerHorarioRetiro(
+                conversacion,
+                text
+            );
+
+        if (
+            horarioRetiro &&
+            horarioRetiro.tieneHorario === true
+        ) {
+
+            conversacion.pedido.fechaRetiroEstimada =
+                horarioRetiro.fechaRetiroEstimada;
+
+            conversacion.pedido.horaRetiroEstimada =
+                horarioRetiro.horaRetiroEstimada;
+
+            conversacion.pedido.horaRetiroEstimada =
+                horarioRetiro.horaRetiroEstimada;
+
+            conversacion.pedido.ultimaVerificacionRetiro =
+                new Date().toISOString();
+
+            const respuestaRetiro =
+                generarRespuestaRetiro(
+                    conversacion.pedido,
+                    horarioRetiro
+                );
+
+            conversacion.historial.push({
+                role: "assistant",
+                content: respuestaRetiro
+            });
+
+            await guardarConversacion(
+                from,
+                conversacion
+            );
+
+            console.log(
+                "✅ Horario de retiro guardado."
+            );
+
+            console.log(
+                "📅 Fecha:",
+                conversacion.pedido.fechaRetiroEstimada
+            );
+
+            console.log(
+                "🕐 Hora:",
+                conversacion.pedido.horaRetiroEstimada
+            );
+
+            // IMPORTANTE:
+            // NO continúa hacia el catálogo ni GPT vendedor.
+
+            const respuestaWhatsApp =
+                await fetch(
+                    `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization:
+                                `Bearer ${WHATSAPP_TOKEN}`,
+                            "Content-Type":
+                                "application/json",
+                        },
+                        body: JSON.stringify({
+                            messaging_product: "whatsapp",
+                            to: from,
+                            type: "text",
+                            text: {
+                                body: respuestaRetiro
+                            }
+                        })
+                    }
+                );
+
+            const dataWhatsApp =
+                await respuestaWhatsApp.json();
+
+            if (!respuestaWhatsApp.ok) {
+                console.error(
+                    "❌ Error enviando respuesta de retiro:",
+                    dataWhatsApp
+                );
+            } else {
+                console.log(
+                    "📲 Respuesta de retiro enviada al cliente."
+                );
+            }
+
+            return res.sendStatus(200);
+        }
+
+        // ====================================================
+        // CLIENTE NO DIO HORARIO
+        // ====================================================
+
+        const respuestaSinHorario = `
+Perfecto 😊
+
+Cuando tengas previsto acercarte a retirar tu pedido, indícanos aproximadamente qué día y horario tienes pensado hacerlo.
+
+📦 Recuerda llevar tu cédula en mano y la guía de transporte que te enviamos.
+
+💵 Al momento del retiro deberás realizar el pago correspondiente.
+
+Quedamos pendientes. 👍
+`;
+
+        conversacion.historial.push({
+            role: "assistant",
+            content: respuestaSinHorario
+        });
 
         await guardarConversacion(
             from,
@@ -1265,19 +1446,120 @@ if (
         );
 
         console.log(
-            "✅ HORARIO DE RETIRO GUARDADO"
+            "🕐 Cliente todavía no indicó horario de retiro."
         );
 
-        console.log(
-            "📅 Fecha:",
-            conversacion.pedido.fechaRetiroEstimada
+        const respuestaWhatsApp =
+            await fetch(
+                `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization:
+                            `Bearer ${WHATSAPP_TOKEN}`,
+                        "Content-Type":
+                            "application/json",
+                    },
+                    body: JSON.stringify({
+                        messaging_product: "whatsapp",
+                        to: from,
+                        type: "text",
+                        text: {
+                            body: respuestaSinHorario
+                        }
+                    })
+                }
+            );
+
+        const dataWhatsApp =
+            await respuestaWhatsApp.json();
+
+        if (!respuestaWhatsApp.ok) {
+            console.error(
+                "❌ Error enviando respuesta de retiro:",
+                dataWhatsApp
+            );
+        } else {
+            console.log(
+                "📲 Solicitud de horario enviada al cliente."
+            );
+        }
+
+        return res.sendStatus(200);
+    }
+
+    // ========================================================
+    // YA EXISTE UN HORARIO
+    // ========================================================
+
+    console.log(
+        "🕐 El cliente ya tiene horario registrado:",
+        conversacion.pedido.fechaRetiroEstimada,
+        conversacion.pedido.horaRetiroEstimada
+    );
+
+    const respuestaSeguimiento = `
+Perfecto 😊
+
+Tenemos registrado tu retiro pendiente.
+
+📦 Pedido: ${conversacion.pedido.id}
+🚚 Guía: ${conversacion.pedido.guia}
+
+Recuerda llevar tu cédula en mano y la guía de transporte.
+
+💵 No olvides realizar el pago correspondiente al momento del retiro.
+
+Quedamos pendientes para confirmar que hayas podido retirarlo. 👍
+`;
+
+    conversacion.historial.push({
+        role: "assistant",
+        content: respuestaSeguimiento
+    });
+
+    await guardarConversacion(
+        from,
+        conversacion
+    );
+
+    const respuestaWhatsApp =
+        await fetch(
+            `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization:
+                        `Bearer ${WHATSAPP_TOKEN}`,
+                    "Content-Type":
+                        "application/json",
+                },
+                body: JSON.stringify({
+                    messaging_product: "whatsapp",
+                    to: from,
+                    type: "text",
+                    text: {
+                        body: respuestaSeguimiento
+                    }
+                })
+            }
         );
 
+    const dataWhatsApp =
+        await respuestaWhatsApp.json();
+
+    if (!respuestaWhatsApp.ok) {
+        console.error(
+            "❌ Error enviando seguimiento de retiro:",
+            dataWhatsApp
+        );
+    } else {
         console.log(
-            "🕐 Hora:",
-            conversacion.pedido.horaRetiroEstimada
+            "📲 Seguimiento de retiro enviado al cliente."
         );
     }
+
+    return res.sendStatus(200);
 }
 
     // =================================================
