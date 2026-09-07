@@ -845,7 +845,28 @@ if (tipoComando === "LLEGO") {
     }
 
     const pedido = resultado.conversacion.pedido;
+// ============================================
+// ACTIVAR SEGUIMIENTO DE RETIRO
+// ============================================
 
+pedido.seguimientoRetiro = true;
+pedido.intentosRetiro = 0;
+pedido.fechaInicioSeguimiento = new Date().toISOString();
+pedido.ultimaVerificacionRetiro = null;
+pedido.proximaVerificacionRetiro = null;
+pedido.fechaRetiroEstimada = null;
+pedido.horaRetiroEstimada = null;
+
+// Guardar cambios en MEMORIA
+await guardarConversacion(
+    resultado.numeroCliente,
+    resultado.conversacion
+);
+
+console.log("🔔 SEGUIMIENTO DE RETIRO ACTIVADO");
+console.log("📦 Pedido:", pedido.id);
+console.log("📱 Cliente:", resultado.numeroCliente);
+  
     const mensajeCliente = `
 📦 ¡Tu pedido ya llegó! 🎉
 
