@@ -482,7 +482,129 @@ async function actualizarLlegadaPedido(numeroGuia) {
     }
 }
 
+// ============================================================
+// EXTRAER FECHA Y HORA ESTIMADA DE RETIRO
+// ============================================================
 
+async function extraerHorarioRetiro(conversacion, mensajeCliente) {
+    try {
+        const ahoraEcuador = new Date().toLocaleString("es-EC", {
+            timeZone: "America/Guayaquil",
+            dateStyle: "full",
+            timeStyle: "short"
+        });
+
+        const respuesta = await openai.responses.create({
+            model: "gpt-4o-mini",
+
+            instructions: `
+Eres un extractor de información para pedidos de Level Up Store.
+
+Tu única tarea es analizar el mensaje del cliente y determinar si indicó
+cuándo piensa retirar su pedido.
+
+FECHA Y HORA ACTUAL EN ECUADOR:
+${ahoraEcuador}
+
+MENSAJE DEL CLIENTE:
+${mensajeCliente}
+
+REGLAS IMPORTANTES:
+
+1. NO INVENTES información que el cliente no haya indicado o que no pueda
+   determinarse razonablemente a partir de su mensaje.
+
+2. Si indica una hora exacta, conviértela al formato HH:MM.
+   Ejemplos:
+   "a las 2" -> "14:00"
+   "a las 3 de la tarde" -> "15:00"
+   "a las 10 de la mañana" -> "10:00"
+
+3. Si dice "hoy", utiliza la fecha actual de Ecuador.
+
+4. Si dice "mañana", utiliza la fecha siguiente a la fecha actual.
+
+5. Si dice "en la tarde", "después del almuerzo" o algo similar,
+   puedes estimar una hora razonable SOLO si el mensaje permite hacerlo.
+   En ese caso indica que la hora fue estimada.
+
+6. Si solamente dice "hoy" o "mañana" pero no da una hora,
+   deja horaRetiroEstimada como null.
+
+7. Si no proporciona ningún momento de retiro,
+   indica tieneHorario: false.
+
+8. Nunca inventes una fecha solamente porque el cliente está conversando
+   sobre el pedido.
+
+9. Devuelve exclusivamente el JSON solicitado.
+`,
+
+            input: [
+                {
+                    role: "user",
+                    content: mensajeCliente
+                }
+            ],
+
+            text: {
+                format: {
+                    type: "json_schema",
+                    name: "horario_retiro",
+                    strict: true,
+                    schema: {
+                        type: "object",
+                        properties: {
+                            tieneHorario: {
+                                type: "boolean"
+                            },
+                            fechaRetiroEstimada: {
+                                type: ["string", "null"]
+                            },
+                            horaRetiroEstimada: {
+                                type: ["string", "null"]
+                            },
+                            horaEstimada: {
+                                type: "boolean"
+                            }
+                        },
+                        required: [
+                            "tieneHorario",
+                            "fechaRetiroEstimada",
+                            "horaRetiroEstimada",
+                            "horaEstimada"
+                        ],
+                        additionalProperties: false
+                    }
+                }
+            }
+        });
+
+        const texto = respuesta.output_text;
+
+        if (!texto) {
+            console.log("⚠️ No se pudo extraer el horario de retiro.");
+            return null;
+        }
+
+        const datos = JSON.parse(texto);
+
+        console.log(
+            "🕐 Horario de retiro detectado:",
+            JSON.stringify(datos)
+        );
+
+        return datos;
+
+    } catch (error) {
+        console.error(
+            "❌ Error extrayendo horario de retiro:",
+            error
+        );
+
+        return null;
+    }
+}
 // ============================================================
 // EXTRAER DATOS ESTRUCTURADOS DEL PEDIDO CONFIRMADO
 // ============================================================
