@@ -14,13 +14,19 @@ const conversaciones = new Map();
 
 app.use(express.json());
 
+// Meta puede reenviar un webhook. Esta caché evita duplicados durante la vida
+// del proceso sin crecer indefinidamente.
+const mensajesProcesados = new Map();
+const TIEMPO_DEDUPLICACION_MS = 24 * 60 * 60 * 1000;
+
 // =====================================================
 // CONFIGURACIÓN OPENAi
 // =====================================================
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai;
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+}
 // ============================================================
 // TRANSCRIBIR AUDIO DE WHATSAPP
 // ============================================================
@@ -158,7 +164,7 @@ async function transcribirAudio(mediaId) {
 // CONFIGURACIÓN WHATSAPP
 // =====================================================
 
-const VERIFY_TOKEN = "levelup_verification_2026";
+const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
@@ -168,27 +174,53 @@ const ASESOR_WHATSAPP = process.env.ASESOR_WHATSAPP;
 // CONFIGURACIÓN GOOGLE SHEETS
 // =====================================================
 
-const STOCK_SPREADSHEET_ID =
-  "1geYhn1AtyV0n75MtaX1Zo1ka4qEEKtTrbiTkViLswR0";
+const STOCK_SPREADSHEET_ID = process.env.STOCK_SPREADSHEET_ID;
+const MEMORIA_SPREADSHEET_ID = process.env.MEMORIA_SPREADSHEET_ID;
 
-const MEMORIA_SPREADSHEET_ID =
-  "1uQ-YrSQR10-6mBkFWckx2KhHQJTIn4FfjAZ0XIaQg0g";
+let googleCredentials;
+let sheets;
+let errorConfiguracionGoogle = null;
 
-const googleCredentials = JSON.parse(
-  process.env.GOOGLE_SERVICE_ACCOUNT_JSON
-);
+try {
+  if (!process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+    throw new Error("GOOGLE_SERVICE_ACCOUNT_JSON no está configurada");
+  }
 
-const auth = new google.auth.GoogleAuth({
-  credentials: googleCredentials,
-  scopes: [
-    "https://www.googleapis.com/auth/spreadsheets",
-  ],
-});
+  googleCredentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+  const auth = new google.auth.GoogleAuth({
+    credentials: googleCredentials,
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+  });
 
-const sheets = google.sheets({
-  version: "v4",
-  auth,
-});
+  sheets = google.sheets({ version: "v4", auth });
+} catch (error) {
+  errorConfiguracionGoogle = error;
+}
+
+function obtenerErroresConfiguracion() {
+  const errores = [];
+
+  if (!process.env.OPENAI_API_KEY) errores.push("OPENAI_API_KEY");
+  if (!VERIFY_TOKEN) errores.push("VERIFY_TOKEN");
+  if (!PHONE_NUMBER_ID) errores.push("PHONE_NUMBER_ID");
+  if (!WHATSAPP_TOKEN) errores.push("WHATSAPP_TOKEN");
+  if (!ASESOR_WHATSAPP) errores.push("ASESOR_WHATSAPP");
+  if (!STOCK_SPREADSHEET_ID) errores.push("STOCK_SPREADSHEET_ID");
+  if (!MEMORIA_SPREADSHEET_ID) errores.push("MEMORIA_SPREADSHEET_ID");
+  if (errorConfiguracionGoogle || !sheets) {
+    errores.push("GOOGLE_SERVICE_ACCOUNT_JSON");
+  }
+
+  return errores;
+}
+
+const erroresConfiguracionInicial = obtenerErroresConfiguracion();
+if (erroresConfiguracionInicial.length > 0) {
+  console.error(
+    "⚠️ Configuración incompleta o inválida. Variables requeridas:",
+    erroresConfiguracionInicial.join(", ")
+  );
+}
 
 // =====================================================
 // LEER STOCK DESDE GOOGLE SHEETS
@@ -310,6 +342,8 @@ async function guardarConversacion(numero, conversacion) {
             }
         });
 
+        conversaciones.set(numeroNormalizado, conversacion);
+
         console.log("💾 Conversación guardada en MEMORIA:", numeroNormalizado);
 
     } catch (error) {
@@ -374,6 +408,8 @@ async function actualizarGuiaPedido(idPedido, numeroGuia) {
             console.log("🆔 Pedido:", idPedido);
             console.log("🚚 Guía:", numeroGuia);
             console.log("📱 Cliente:", numeroCliente);
+
+            conversaciones.set(numeroCliente, conversacion);
 
             return {
                 encontrado: true,
@@ -453,6 +489,8 @@ async function actualizarLlegadaPedido(numeroGuia) {
             console.log("🚚 Guía:", numeroGuia);
             console.log("📱 Cliente:", numeroCliente);
 
+            conversaciones.set(numeroCliente, conversacion);
+
             return {
                 encontrado: true,
                 numeroCliente,
@@ -480,6 +518,221 @@ async function actualizarLlegadaPedido(numeroGuia) {
             error: true
         };
     }
+}
+
+async function actualizarRetiroPedido(numeroGuia) {
+    try {
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID,
+            range: "MEMORIA!A2:C1000",
+        });
+
+        const rows = response.data.values || [];
+
+        for (let i = 0; i < rows.length; i++) {
+            const numeroCliente = String(rows[i][0] || "");
+            const historialGuardado = rows[i][1];
+            if (!historialGuardado) continue;
+
+            let conversacion;
+            try {
+                conversacion = JSON.parse(historialGuardado);
+            } catch (error) {
+                continue;
+            }
+
+            if (!conversacion.pedido) continue;
+            const guiaGuardada = String(conversacion.pedido.guia || "").trim();
+            if (guiaGuardada !== String(numeroGuia).trim()) continue;
+
+            const ahora = new Date().toISOString();
+            conversacion.pedido.estado = "retirado";
+            conversacion.pedido.fechaRetiro = conversacion.pedido.fechaRetiro || ahora;
+            // El pago es contraentrega; un retiro confirmado implica que fue pagado.
+            conversacion.pedido.fechaPago = conversacion.pedido.fechaPago || ahora;
+            conversacion.pedido.seguimientoRetiro = false;
+
+            await sheets.spreadsheets.values.update({
+                spreadsheetId: MEMORIA_SPREADSHEET_ID,
+                range: `MEMORIA!A${i + 2}:C${i + 2}`,
+                valueInputOption: "RAW",
+                requestBody: {
+                    values: [[numeroCliente, JSON.stringify(conversacion), new Date().toISOString()]]
+                }
+            });
+
+            conversaciones.set(numeroCliente, conversacion);
+            return { encontrado: true, numeroCliente, conversacion };
+        }
+
+        return { encontrado: false };
+    } catch (error) {
+        console.error("❌ Error actualizando retiro:", error);
+        return { encontrado: false, error: true };
+    }
+}
+
+async function actualizarPagoPedido(idPedido) {
+    try {
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID,
+            range: "MEMORIA!A2:C1000",
+        });
+        const rows = response.data.values || [];
+
+        for (let i = 0; i < rows.length; i++) {
+            const numeroCliente = String(rows[i][0] || "");
+            const historialGuardado = rows[i][1];
+            if (!historialGuardado) continue;
+
+            let conversacion;
+            try {
+                conversacion = JSON.parse(historialGuardado);
+            } catch (error) {
+                continue;
+            }
+
+            const pedido = conversacion.pedido;
+            if (!pedido || String(pedido.id || "").trim() !== String(idPedido).trim()) {
+                continue;
+            }
+
+            pedido.estado = "pagado";
+            pedido.fechaPago = pedido.fechaPago || new Date().toISOString();
+
+            await sheets.spreadsheets.values.update({
+                spreadsheetId: MEMORIA_SPREADSHEET_ID,
+                range: `MEMORIA!A${i + 2}:C${i + 2}`,
+                valueInputOption: "RAW",
+                requestBody: {
+                    values: [[numeroCliente, JSON.stringify(conversacion), new Date().toISOString()]]
+                }
+            });
+
+            conversaciones.set(numeroCliente, conversacion);
+            return { encontrado: true, numeroCliente, conversacion };
+        }
+
+        return { encontrado: false };
+    } catch (error) {
+        console.error("❌ Error actualizando pago:", error);
+        return { encontrado: false, error: true };
+    }
+}
+
+function anonimizarHistorial(conversacion, numero) {
+    const datos = conversacion.datosCliente || {};
+    const nombres = String(datos.nombre || "").split(/\s+/).filter(Boolean);
+    const sensibles = [datos.nombre, ...nombres, datos.cedula, datos.telefono, numero]
+        .filter(value => value != null && String(value).trim())
+        .map(String).sort((a, b) => b.length - a.length);
+    return (conversacion.historial || []).map(({ role, content }) => {
+        let texto = String(content || "");
+        for (const valor of sensibles) {
+            const literal = valor.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            texto = texto.replace(new RegExp(literal, "giu"), "[DATO PERSONAL]");
+        }
+        texto = texto.replace(/\+?\d(?:[\s().-]*\d){6,}/g, "[NÚMERO OCULTO]");
+        return { role, content: texto };
+    });
+}
+
+// Serializa la comprobación e inserción para webhooks concurrentes del proceso.
+let colaAprendizaje = Promise.resolve();
+function guardarAprendizaje(conversacion, numero) {
+    if (!conversacion.confirmado || !conversacion.pedido?.confirmado || !conversacion.pedido.id) {
+        return Promise.resolve(false);
+    }
+    const pedido = conversacion.pedido;
+    const fila = [
+        `APR-${pedido.id}`, pedido.id, pedido.producto || "", "venta",
+        JSON.stringify(anonimizarHistorial(conversacion, numero)), "NO", new Date().toISOString()
+    ];
+    const operacion = colaAprendizaje.then(async () => {
+        const metadata = await sheets.spreadsheets.get({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID, fields: "sheets.properties.title"
+        });
+        if (!(metadata.data.sheets || []).some(hoja => hoja.properties.title === "APRENDIZAJE")) {
+            await sheets.spreadsheets.batchUpdate({
+                spreadsheetId: MEMORIA_SPREADSHEET_ID,
+                requestBody: { requests: [{ addSheet: { properties: { title: "APRENDIZAJE" } } }] }
+            });
+        }
+        const existentes = await sheets.spreadsheets.values.get({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID, range: "APRENDIZAJE!A:G"
+        });
+        const filas = existentes.data.values || [];
+        const encabezado = ["idAprendizaje", "idPedido", "producto", "resultado", "historial", "aprobada", "fecha"];
+        if (!filas.length) {
+            await sheets.spreadsheets.values.update({
+                spreadsheetId: MEMORIA_SPREADSHEET_ID, range: "APRENDIZAJE!A1:G1",
+                valueInputOption: "RAW", requestBody: { values: [encabezado] }
+            });
+        } else if (!encabezado.every((valor, i) => filas[0][i] === valor)) {
+            throw new Error("Encabezado incompatible en APRENDIZAJE");
+        }
+        if (filas.slice(1).some(fila => String(fila[1]) === String(pedido.id))) return false;
+        await sheets.spreadsheets.values.append({
+            spreadsheetId: MEMORIA_SPREADSHEET_ID, range: "APRENDIZAJE!A:G",
+            valueInputOption: "RAW", insertDataOption: "INSERT_ROWS", requestBody: { values: [fila] }
+        });
+        return true;
+    });
+    colaAprendizaje = operacion.catch(() => {});
+    return operacion;
+}
+
+function normalizarTexto(texto) {
+    return String(texto || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+}
+
+async function procesarEstadoReportadoPorCliente(numero, conversacion, texto) {
+    const pedido = conversacion.pedido;
+    if (!pedido || !["disponible_retiro", "pagado"].includes(pedido.estado)) {
+        return null;
+    }
+
+    const mensajeNormalizado = normalizarTexto(texto);
+    const reportaRetiro = /\b(ya\s+)?(retire|retirado|recibi|recogi|entregado)\b/.test(mensajeNormalizado);
+    const reportaPago = /\b(ya\s+)?(pague|pagado|hice\s+(el\s+)?pago|realice\s+(el\s+)?pago)\b/.test(mensajeNormalizado);
+
+    if (!reportaPago && !reportaRetiro) {
+        if (pedido.estado === "pagado") {
+            return "Tu pago ya está registrado 😊. Cuando retires tu pedido, escríbenos para dejarlo confirmado.";
+        }
+        return null;
+    }
+
+    const ahora = new Date().toISOString();
+    let respuesta;
+
+    if (reportaRetiro) {
+        pedido.estado = "retirado";
+        pedido.fechaRetiro = pedido.fechaRetiro || ahora;
+        pedido.fechaPago = pedido.fechaPago || ahora;
+        pedido.seguimientoRetiro = false;
+        respuesta = "¡Excelente! 😊 Registramos que ya retiraste tu pedido. Gracias por comprar en Level Up Store.";
+    } else {
+        pedido.estado = "pagado";
+        pedido.fechaPago = pedido.fechaPago || ahora;
+        pedido.seguimientoRetiro = false;
+        respuesta = "¡Gracias por confirmarnos! 😊 Registramos tu pago. Cuando hayas retirado tu pedido, escríbenos para dejarlo confirmado.";
+    }
+
+    conversacion.historial = conversacion.historial || [];
+    conversacion.historial.push({ role: "user", content: texto });
+    conversacion.historial.push({ role: "assistant", content: respuesta });
+    await guardarConversacion(numero, conversacion);
+
+    await notificarAsesor(
+        `📌 ACTUALIZACIÓN DEL CLIENTE\n\nPedido: ${pedido.id}\nEstado: ${pedido.estado}\nGuía: ${pedido.guia || "Pendiente"}\nCliente: ${numero}`
+    );
+
+    return respuesta;
 }
 
 // ============================================================
@@ -841,12 +1094,45 @@ async function notificarAsesor(mensaje) {
         console.error("❌ Error enviando notificación al asesor:", error);
     }
 }
+
+async function enviarMensajeWhatsApp(destinatario, mensaje) {
+    const response = await fetch(
+        `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                messaging_product: "whatsapp",
+                to: destinatario,
+                type: "text",
+                text: { body: mensaje },
+            }),
+        }
+    );
+
+    const cuerpo = await response.text();
+    if (!response.ok) {
+        throw new Error(`WhatsApp respondió ${response.status}: ${cuerpo}`);
+    }
+
+    return cuerpo ? JSON.parse(cuerpo) : {};
+}
 // =====================================================
 // RECIBIR MENSAJES DE WHATSAPP
 // =====================================================
 
 app.post("/webhook", async (req, res) => {
+  let messageIdProcesando = null;
   try {
+    const erroresConfiguracion = obtenerErroresConfiguracion();
+    if (erroresConfiguracion.length > 0) {
+      console.error("❌ Webhook rechazado: faltan variables de configuración.");
+      return res.status(503).json({ error: "Servicio no configurado" });
+    }
+
     console.log(
       "Mensaje recibido:",
       JSON.stringify(req.body)
@@ -861,21 +1147,23 @@ if (!message) {
 
 // EVITAR MENSAJES DUPLICADOS DE WHATSAPP
 const messageId = message.id;
+messageIdProcesando = messageId;
 
 if (!messageId) {
   return res.sendStatus(200);
 }
 
-if (!global.mensajesProcesados) {
-  global.mensajesProcesados = new Set();
-}
+  const ahora = Date.now();
+  for (const [id, fecha] of mensajesProcesados) {
+    if (ahora - fecha > TIEMPO_DEDUPLICACION_MS) mensajesProcesados.delete(id);
+  }
 
-if (global.mensajesProcesados.has(messageId)) {
-  console.log("⚠️ Mensaje duplicado ignorado:", messageId);
-  return res.sendStatus(200);
-}
+  if (mensajesProcesados.has(messageId)) {
+    console.log("⚠️ Mensaje duplicado ignorado:", messageId);
+    return res.sendStatus(200);
+  }
 
-global.mensajesProcesados.add(messageId);
+mensajesProcesados.set(messageId, ahora);
  
  const from = message.from;
     
@@ -922,6 +1210,23 @@ const partesComando = comandoAdmin.split(/\s+/);
 
 const tipoComando = partesComando[0].toUpperCase();
 
+if (tipoComando === "PAGO") {
+    const idPedido = partesComando[1];
+    if (!idPedido) {
+        console.log("⚠️ Comando PAGO incompleto.");
+        return res.sendStatus(200);
+    }
+
+    const resultado = await actualizarPagoPedido(idPedido);
+    if (!resultado.encontrado) {
+        console.log("❌ No se encontró un pedido para este ID.");
+        return res.sendStatus(200);
+    }
+
+    console.log("✅ PAGO REGISTRADO", resultado.conversacion.pedido.id);
+    return res.sendStatus(200);
+}
+
 if (tipoComando === "GUIA") {
 
     const idPedido = partesComando[1];
@@ -947,7 +1252,7 @@ if (tipoComando === "GUIA") {
 
     const pedido = resultado.conversacion.pedido;
 
-    const mensajeCliente = `
+	const mensajeCliente = `
 📦 ¡Actualización de tu pedido!
 
 Tu pedido ya fue enviado mediante Servientrega. 🚚
@@ -1071,6 +1376,16 @@ Por ejemplo:
 ¡Quedamos pendientes! 👍
 `;
 
+    try {
+        await enviarMensajeWhatsApp(resultado.numeroCliente, mensajeCliente);
+        console.log("📲 Aviso de llegada enviado al cliente.");
+    } catch (error) {
+        console.error("❌ Error enviando aviso de llegada:", error.message);
+        throw error;
+    }
+
+    return res.sendStatus(200);
+
 }
 
   // ==========================================
@@ -1111,91 +1426,6 @@ if (tipoComando === "RETIRADO") {
     console.log("📱 Cliente:", resultado.numeroCliente);
 
     return res.sendStatus(200);
-}
-
-  async function actualizarRetiroPedido(numeroGuia) {
-    try {
-        const response = await sheets.spreadsheets.values.get({
-            spreadsheetId: MEMORIA_SPREADSHEET_ID,
-            range: "MEMORIA!A2:C1000",
-        });
-
-        const rows = response.data.values || [];
-
-        for (let i = 0; i < rows.length; i++) {
-            const numeroCliente = String(rows[i][0] || "");
-            const historialGuardado = rows[i][1];
-
-            if (!historialGuardado) continue;
-
-            let conversacion;
-
-            try {
-                conversacion = JSON.parse(historialGuardado);
-            } catch (error) {
-                continue;
-            }
-
-            if (!conversacion.pedido) continue;
-
-            const guiaGuardada = String(
-                conversacion.pedido.guia || ""
-            ).trim();
-
-            if (guiaGuardada !== numeroGuia) {
-                continue;
-            }
-
-            conversacion.pedido.estado = "retirado";
-
-            conversacion.pedido.fechaRetiro =
-                new Date().toISOString();
-
-            await sheets.spreadsheets.values.update({
-                spreadsheetId: MEMORIA_SPREADSHEET_ID,
-                range: `MEMORIA!A${i + 2}:C${i + 2}`,
-                valueInputOption: "RAW",
-                requestBody: {
-                    values: [[
-                        numeroCliente,
-                        JSON.stringify(conversacion),
-                        new Date().toISOString()
-                    ]]
-                }
-            });
-
-            console.log("✅ PEDIDO MARCADO COMO RETIRADO");
-            console.log("🆔 Pedido:", conversacion.pedido.id);
-            console.log("🚚 Guía:", numeroGuia);
-            console.log("📱 Cliente:", numeroCliente);
-
-            return {
-                encontrado: true,
-                numeroCliente,
-                conversacion
-            };
-        }
-
-        console.log(
-            "❌ No se encontró ningún pedido con la guía:",
-            numeroGuia
-        );
-
-        return {
-            encontrado: false
-        };
-
-    } catch (error) {
-        console.error(
-            "❌ Error actualizando retiro:",
-            error
-        );
-
-        return {
-            encontrado: false,
-            error: true
-        };
-    }
 }
 
 // ESTA LLAVE CIERRA EL ADMINISTRADOR
@@ -1265,6 +1495,19 @@ else {
     const conversacion = await obtenerConversacion(from);
 
 console.log("Memoria del cliente:", JSON.stringify(conversacion));
+
+// Antes de enviar el mensaje al modelo, atendemos las confirmaciones que
+// cambian el estado real del pedido. Así no se mezclan con el flujo de venta.
+const respuestaEstado = await procesarEstadoReportadoPorCliente(
+    from,
+    conversacion,
+    text
+);
+
+if (respuestaEstado) {
+    await enviarMensajeWhatsApp(from, respuestaEstado);
+    return res.sendStatus(200);
+}
 
 
  // ============================================================
@@ -2339,6 +2582,11 @@ if (
 
         // Guardar todo en MEMORIA
         await guardarConversacion(from, conversacion);
+        try {
+            await guardarAprendizaje(conversacion, from);
+        } catch (error) {
+            console.error("❌ No se pudo guardar APRENDIZAJE:", error.message);
+        }
 
         console.log(
             "💾 PEDIDO GUARDADO:",
@@ -2434,6 +2682,8 @@ y continuar con el cliente.
     return res.sendStatus(200);
 
   } catch (error) {
+    // Si una dependencia falla, permitimos que Meta reintente este webhook.
+    if (messageIdProcesando) mensajesProcesados.delete(messageIdProcesando);
     console.error("ERROR:", error);
 
     return res.sendStatus(500);
@@ -2446,8 +2696,13 @@ y continuar con el cliente.
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(
     `Servidor funcionando en el puerto ${PORT}`
   );
+});
+
+server.on("error", (error) => {
+  console.error(`❌ No se pudo iniciar el servidor en el puerto ${PORT}:`, error.message);
+  process.exitCode = 1;
 });
