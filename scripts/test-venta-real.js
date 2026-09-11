@@ -6,7 +6,7 @@ const path = require('node:path');
 const resumen = '📋 RESUMEN DE TU PEDIDO\nProducto: iPad Air 1\nPrecio: $100\n¿Me confirmas que todos estos datos están correctos?';
 function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false, sinJson = false, video = '' } = {}) {
     let memoria = [], aprendizaje = [], creada = false, secuencia = 0;
-    const control = { openaiCaido: false, llamadasOpenAI: 0, llamadasClasificador: 0, etiqueta: "AMBIGUO" };
+    const control = { openaiCaido: false, llamadasOpenAI: 0, llamadasClasificador: 0, llamadasAtencion: 0, atencion: "NO_SOLICITA", etiqueta: "AMBIGUO" };
     const eventos = [], mensajes = [], logs = [], prompts = [], respuestas = [];
     const sheets = { spreadsheets: {
         get: async () => ({ data: { sheets: creada ? [{ properties: { title: 'APRENDIZAJE' } }] : [] } }),
@@ -28,6 +28,10 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
         if (name === 'openai') return class { constructor() { this.responses = { create: async args => {
             control.llamadasOpenAI++;
             if (control.openaiCaido) throw new Error('OpenAI simulado caído');
+            if (args.instructions.startsWith('Clasifica únicamente intención de atención humana')) {
+                control.llamadasAtencion++;
+                return { output_text: control.atencion };
+            }
             if (args.instructions.startsWith('Eres únicamente un clasificador')) {
                 control.llamadasClasificador++;
                 return { output_text: control.etiqueta };
@@ -212,3 +216,67 @@ for (const frase of ['todo bien','me parece bien','todo en orden']) {
         assert.equal(e.memoria().confirmado,true); assert.equal(e.control.llamadasClasificador,0);
     });
 }
+
+for (const frase of ['Quiero hablar con un asesor', '¿Puedo hablar con una persona?', 'Prefiero que me atienda alguien']) {
+    test(`atención humana sin pedido: ${frase}`, async () => {
+        const e=entorno(); await e.turno(frase);
+        const texto=e.mensajes.at(-1).text.body;
+        assert.match(texto,/Primero.*registrar tu pedido/);
+        assert.match(texto,/mismo chat/);
+        assert.ok(!e.memoria().pedido); assert.ok(!e.memoria().confirmado);
+        assert.ok(!e.eventos.includes('asesor'));
+        assert.equal(e.control.llamadasClasificador,0);
+        await e.turno('Me interesa iPad Air 1','Ficha del producto');
+        assert.match(e.mensajes.at(-1).text.body,/Ficha del producto/);
+    });
+}
+test('solicitud equivalente usa clasificador de atención humana', async () => {
+    const e=entorno(); e.control.atencion='SOLICITA';
+    await e.turno('Pásame con quien lleva las ventas');
+    assert.equal(e.control.llamadasAtencion,1);
+    assert.match(e.mensajes.at(-1).text.body,/Primero.*registrar tu pedido/);
+    assert.ok(!e.eventos.includes('asesor'));
+});
+test('pedido registrado no exige registrarse otra vez al pedir asesor', async () => {
+    const e=entorno(); await e.turno('Estos son mis datos'); await e.turno('sí');
+    const notificaciones=e.eventos.filter(x=>x==='asesor').length;
+    await e.turno('Quiero hablar con un asesor');
+    assert.match(e.mensajes.at(-1).text.body,/pedido ya está registrado/);
+    assert.doesNotMatch(e.mensajes.at(-1).text.body,/Primero|registrar tu pedido/);
+    assert.equal(e.eventos.filter(x=>x==='asesor').length,notificaciones);
+});
+test('pedido pendiente: pedir asesor no activa clasificador de confirmación', async () => {
+    const e=entorno(); await e.turno('Estos son mis datos'); e.control.etiqueta='ACEPTA';
+    await e.turno('Quiero hablar con un asesor');
+    assert.equal(e.control.llamadasClasificador,0);
+    assert.ok(!e.memoria().pedido); assert.ok(!e.eventos.includes('asesor'));
+    assert.equal(e.memoria().esperandoConfirmacionPedido,true);
+    await e.turno('sí'); assert.equal(e.memoria().confirmado,true);
+});
+test('bloque previo incluye coordinación, zona y dos videos antes del primer dato', async () => {
+    const e=entorno(); await e.turno('Quiero comprar','Dime nombre, cédula, teléfono, provincia y ciudad.');
+    const texto=e.mensajes.at(-1).text.body;
+    for (const dato of ['personalmente','mismo chat','coordinar la opción de entrega','agencias/puntos disponibles en tu zona','video de funcionamiento/prueba','video del empaque']) {
+        assert.ok(texto.indexOf(dato)>=0 && texto.indexOf(dato)<texto.indexOf('Dime nombre'));
+    }
+});
+test('mención sin solicitud no desvía flujo de venta', async () => {
+    const e=entorno(); await e.turno('Es para una persona que estudia','Ficha para estudio');
+    assert.match(e.mensajes.at(-1).text.body,/Ficha para estudio/);
+});
+
+test('solicitud semántica pendiente no se interpreta como aprobación', async () => {
+    const e=entorno(); await e.turno('Estos son mis datos');
+    e.control.atencion='SOLICITA'; e.control.etiqueta='ACEPTA';
+    await e.turno('Quiero tratar esto con quien está a cargo');
+    assert.ok(!e.memoria().pedido); assert.ok(!e.eventos.includes('asesor'));
+    assert.equal(e.control.llamadasClasificador,0);
+    assert.equal(e.memoria().esperandoConfirmacionPedido,true);
+});
+test('fallo de detección humana conserva pendiente sin confirmar', async () => {
+    const e=entorno(); await e.turno('Estos son mis datos');
+    e.control.openaiCaido=true;
+    await e.turno('Quiero tratar esto con quien está a cargo');
+    assert.ok(!e.memoria().pedido); assert.ok(!e.eventos.includes('asesor'));
+    assert.equal(e.memoria().esperandoConfirmacionPedido,true);
+});

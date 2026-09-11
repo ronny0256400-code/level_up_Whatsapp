@@ -133,3 +133,22 @@ del despacho y la posterior gestión con Servientrega, sin prometer horarios.
 
 Las pruebas semánticas usan respuestas simuladas del clasificador; validan el
 flujo y sus límites, no la precisión del modelo real.
+
+### Solicitudes de atención humana y pre-registro
+
+Antes de evaluar la confirmación se detecta si el cliente pide atención humana.
+Las solicitudes claras se reconocen localmente y las expresiones equivalentes
+usan un clasificador semántico de intención. Las aceptaciones obvias conservan
+el camino local sin OpenAI. Si el clasificador falla mientras hay un resumen
+pendiente, se pide aclaración sin confirmar ni notificar al asesor.
+
+Sin pedido registrado, se explica que primero se ayudará a registrar y aprobar
+la compra; luego el asesor seguirá personalmente por el mismo chat. Si ya hay
+pedido, se reconoce su registro sin pedir repetirlo. La solicitud por sí sola
+no transfiere ni notifica y no cambia la aprobación pendiente. La venta puede
+continuar en los siguientes mensajes.
+
+El bloque previo a los datos incluye coordinación de entrega, información de
+agencias/puntos disponibles en la zona y los videos de funcionamiento/prueba y
+del empaque antes del despacho; conserva envío gratis y contraentrega. El bot
+no inventa agencias: indica que el asesor proporcionará esa información.
