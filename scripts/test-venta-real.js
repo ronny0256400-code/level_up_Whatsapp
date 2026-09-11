@@ -6,7 +6,7 @@ const path = require('node:path');
 const resumen = '📋 RESUMEN DE TU PEDIDO\nProducto: iPad Air 1\nPrecio: $100\n¿Me confirmas que todos estos datos están correctos?';
 function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false, sinJson = false, video = '' } = {}) {
     let memoria = [], aprendizaje = [], creada = false, secuencia = 0;
-    const control = { openaiCaido: false, llamadasOpenAI: 0 };
+    const control = { openaiCaido: false, llamadasOpenAI: 0, llamadasClasificador: 0, etiqueta: "AMBIGUO" };
     const eventos = [], mensajes = [], logs = [], prompts = [], respuestas = [];
     const sheets = { spreadsheets: {
         get: async () => ({ data: { sheets: creada ? [{ properties: { title: 'APRENDIZAJE' } }] : [] } }),
@@ -28,6 +28,10 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
         if (name === 'openai') return class { constructor() { this.responses = { create: async args => {
             control.llamadasOpenAI++;
             if (control.openaiCaido) throw new Error('OpenAI simulado caído');
+            if (args.instructions.startsWith('Eres únicamente un clasificador')) {
+                control.llamadasClasificador++;
+                return { output_text: control.etiqueta };
+            }
             if (args.text && !args.input.some(m => m.role === 'user' && /datos/.test(m.content))) return { output_text: 'null' };
             if (args.text) return { output_text: JSON.stringify({ nombre:'Persona Ficticia',cedula:'0000000000',telefono:'000000000002',provincia:'Prueba',ciudad:'Prueba',producto:'iPad Air 1',variante:'32 GB',cantidad:1,precio:100 }) };
             prompts.push(args.instructions); return { output_text: respuestas.shift() || 'Gracias, continuamos.' };
@@ -152,3 +156,59 @@ test('espera sin datos obligatorios no confirma ni llama a OpenAI', async () => 
     await e.turno('confirmo');
     assert.ok(!e.memoria().pedido);
 });
+
+for (const frase of ['dale', 'todo bien por mí', 'me parece correcto', 'así está bien', 'sí, hagámoslo', 'perfecto, continuemos']) {
+    test(`semántica ACEPTA en contexto: ${frase}`, async () => {
+        const e=entorno(); await e.turno('Estos son mis datos');
+        e.control.etiqueta='ACEPTA'; await e.turno(frase);
+        assert.equal(e.memoria().confirmado,true);
+        assert.equal(e.control.llamadasClasificador,1);
+        assert.equal(e.eventos.filter(x=>x==='asesor').length,1);
+    });
+}
+for (const [frase,etiqueta] of [
+    ['sí, pero cambia la ciudad','CORRIGE'], ['todo bien menos el precio','CORRIGE'],
+    ['creo que sí','AMBIGUO'], ['déjame pensarlo','AMBIGUO'], ['no estoy seguro','AMBIGUO'],
+    ['corrige mi número','CORRIGE'], ['no quiero comprar','RECHAZA']
+]) {
+    test(`semántica ${etiqueta} no confirma: ${frase}`, async () => {
+        const e=entorno(); await e.turno('Estos son mis datos');
+        e.control.etiqueta=etiqueta; await e.turno(frase);
+        assert.ok(!e.memoria().pedido);
+        assert.equal(e.control.llamadasClasificador,1);
+    });
+}
+test('sin espera perfecto no crea pedido ni consulta clasificador', async () => {
+    const e=entorno(); e.control.etiqueta='ACEPTA'; await e.turno('perfecto');
+    assert.ok(!e.memoria().pedido); assert.equal(e.control.llamadasClasificador,0);
+});
+test('bloque comercial entregado antes de pedir datos y no repetido', async () => {
+    const e=entorno(); await e.turno('Quiero comprar','Dime nombre, cédula, teléfono, provincia y ciudad.');
+    const texto=e.mensajes[0].text.body;
+    for (const dato of ['GRATIS','todas las provincias del Ecuador','Servientrega','contraentrega','asesor','video de funcionamiento/prueba','video del empaque']) {
+        assert.ok(texto.indexOf(dato)>=0 && texto.indexOf(dato)<texto.indexOf('Dime nombre'));
+    }
+    assert.equal(e.memoria().bloqueComercialEnviado,true);
+    await e.turno('otra pregunta','Seguimos.');
+    assert.ok(!e.mensajes[1].text.body.includes('Envíos GRATIS'));
+});
+test('post-confirmación menciona ambos videos y luego Servientrega', async () => {
+    const e=entorno(); await e.turno('Estos son mis datos'); await e.turno('sí');
+    const texto=e.mensajes.at(-1).text.body;
+    for (const dato of ['Pedido confirmado','asesor','video de funcionamiento/prueba','video del empaque','antes del despacho','Servientrega']) assert.ok(texto.includes(dato));
+});
+test('clasificador inválido o caído no confirma y conserva espera', async () => {
+    for (const caido of [false,true]) {
+        const e=entorno(); await e.turno('Estos son mis datos');
+        e.control.etiqueta='ACEPTA porque quiere comprar'; e.control.openaiCaido=caido;
+        await e.turno('dale');
+        assert.ok(!e.memoria().pedido); assert.equal(e.memoria().esperandoConfirmacionPedido,true);
+    }
+});
+for (const frase of ['todo bien','me parece bien','todo en orden']) {
+    test(`aceptación obvia local: ${frase}`, async () => {
+        const e=entorno(); await e.turno('Estos son mis datos');
+        e.control.openaiCaido=true; await e.turno(frase);
+        assert.equal(e.memoria().confirmado,true); assert.equal(e.control.llamadasClasificador,0);
+    });
+}

@@ -106,8 +106,8 @@ y precio positivo. Con esos datos genera el resumen directamente, lo envía por
 WhatsApp y solo después de una respuesta HTTP exitosa persiste el borrador y
 `esperandoConfirmacionPedido=true`. No detecta el resumen por frases de la IA.
 
-La aceptación contextual utiliza ese borrador sin llamar a OpenAI ni consultar
-STOCK de nuevo. Admite las variantes naturales documentadas en las pruebas y
+La aceptación contextual usa ese borrador sin consultar STOCK de nuevo. Las
+aceptaciones obvias no llaman a OpenAI; las otras usan el clasificador descrito abajo. Admite las variantes naturales documentadas en las pruebas y
 rechaza objeciones o cambios. Una conversación antigua con espera pero sin
 borrador completo debe completar/revisar sus datos antes de confirmar.
 
@@ -116,3 +116,20 @@ de Meta cuando existe, incluso si el cuerpo no es JSON. Un HTTP exitoso indica
 aceptación de Meta, no una confirmación de entrega/lectura en el dispositivo.
 No hay reintentos persistentes para notificación o APRENDIZAJE: un fallo queda
 registrado para seguimiento operativo y no revierte la venta.
+
+### Confirmación semántica V1
+
+Solo con `esperandoConfirmacionPedido=true` se evalúa una nueva aceptación.
+Las respuestas claras se resuelven localmente. Las restantes se envían a OpenAI
+únicamente para clasificar entre `ACEPTA`, `RECHAZA`, `CORRIGE` y `AMBIGUO`.
+Se valida estrictamente la etiqueta: una salida distinta o un fallo se trata
+como ambigüedad y solicita aclaración sin crear pedido.
+
+El primer mensaje comercial incorpora un bloque fijo de envío gratuito a todas
+las provincias, Servientrega, contraentrega y ambos videos del asesor, antes de
+cualquier solicitud de datos. Se marca como enviado solo tras éxito de Meta.
+El mensaje posterior a la confirmación también menciona ambos videos antes
+del despacho y la posterior gestión con Servientrega, sin prometer horarios.
+
+Las pruebas semánticas usan respuestas simuladas del clasificador; validan el
+flujo y sus límites, no la precisión del modelo real.
