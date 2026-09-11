@@ -4,6 +4,105 @@ const { google } = require("googleapis");
 
 const app = express();
 
+const REGLAS_COMERCIALES_V1 = `
+REGLAS COMERCIALES V1 (prioritarias):
+Nunca cierres una objeción con una negativa seca. Reconoce la inquietud,
+responde con información VERDADERA del catálogo, reencuadra según el uso,
+ofrece una alternativa real y termina con un siguiente paso comercial suave.
+No inventes características, stock, capacidades, garantías ni beneficios.
+Ante la objeción de 32 GB: para estudio, documentos, Word, Excel, PowerPoint,
+lectura y apuntes esa capacidad puede ser adecuada según el uso; la nube puede
+complementar el almacenamiento. No garantices compatibilidad de aplicaciones
+ni instalación en este equipo sin información del catálogo. No afirmes que
+"los archivos cada vez pesan menos" ni inventes cantidades gratuitas de nube.
+Ofrece otra capacidad SOLO si aparece disponible; si no, explora el uso del cliente.
+
+Después de presentar el producto y antes de pedir datos de compra, explica
+naturalmente una vez: enviamos a todo Ecuador mediante Servientrega; el pago
+es contraentrega, al retirar. Al confirmar, un asesor continuará el proceso y
+le enviará un video de funcionamiento/prueba del equipo y otro del empaque
+antes del envío, como evidencia de su estado antes del despacho.
+No digas espontáneamente "somos una tienda virtual". Solo explica que no hay
+local/atención para prueba física si preguntan por tienda, ubicación o probarlo.
+
+Fichas WhatsApp: breves, emojis moderados, *nombre destacado*, características
+principales, cada capacidad y precio en línea separada, qué incluye (solo si
+consta en catálogo), utilidad principal y envío/pago. No bloques largos ni
+tecnicismos salvo que los pidan. Si el cliente expresa interés claro en iPad
+Air 1, responde con su ficha del catálogo; el sistema enviará primero el video
+comercial si está configurado. No prometas que enviaste un video.
+
+CONFIRMACIÓN: presenta el RESUMEN DE TU PEDIDO con producto y precio y pregunta
+explícitamente "¿Me confirmas que todos estos datos están correctos?".
+No anuncies que quedó confirmado antes de recibir esa aceptación. Si el
+cliente pregunta algo o cambia datos, resuelve y presenta un resumen actualizado
+antes de volver a pedir confirmación.
+`;
+
+function esConfirmacionAfirmativa(texto) {
+    const limpio = normalizarTexto(texto).replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+    // Una aceptación con objeciones, cambios o condiciones requiere aclaración.
+    if (/\b(no|pero|aunque|cambia|cambiar|cambio|modifica|modificar|espera|esperar|antes|depende|siempre|condicion|cancelar|cancela|duda|pregunta)\b/.test(limpio)) return false;
+    const afirmaciones = /^(?:(?:si|confirmo(?: mi pedido| el pedido)?|esta(?: todo)? correcto|todo correcto|de acuerdo|estoy de acuerdo|adelante|procedamos|correcto|correcta|confirmado|esta bien|todos los datos estan correctos|asi es|exacto|perfecto)\b[ ]*)+/;
+    const resto = limpio.replace(afirmaciones, "");
+    return resto !== limpio && /^(?:(?:muchas gracias|gracias|por favor|con la compra|con el pedido|pueden continuar|puedes continuar|todo bien)\s*)*$/.test(resto);
+}
+
+function datosPedidoCompletos(datos) {
+    return !!datos && ["nombre", "cedula", "telefono", "provincia", "ciudad", "producto"]
+        .every(campo => typeof datos[campo] === "string" && datos[campo].trim()) &&
+        Number.isInteger(datos.cantidad) && datos.cantidad > 0 &&
+        typeof datos.precio === "number" && Number.isFinite(datos.precio) && datos.precio > 0;
+}
+
+function generarResumenPedido(datos) {
+    return `📋 *Resumen de tu compra*
+📦 Producto: ${datos.producto}
+🔹 Variante: ${datos.variante || "No aplica"}
+🔢 Cantidad: ${datos.cantidad}
+💵 Precio: $${datos.precio}
+👤 Nombre: ${datos.nombre}
+🪪 Cédula: ${datos.cedula}
+📱 Teléfono: ${datos.telefono}
+📍 ${datos.ciudad}, ${datos.provincia}
+🚚 Servientrega · Envío gratis
+💳 Pago contraentrega al retirar
+¿Está todo correcto? Confirma para continuar con el asesor.`;
+}
+
+const colasWebhook = new Map();
+function serializarWebhook(handler) {
+    return async (req, res) => {
+        const numero = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from || "evento";
+        const anterior = colasWebhook.get(numero) || Promise.resolve();
+        const actual = anterior.catch(() => {}).then(() => handler(req, res));
+        colasWebhook.set(numero, actual);
+        try { return await actual; }
+        finally { if (colasWebhook.get(numero) === actual) colasWebhook.delete(numero); }
+    };
+}
+
+async function enviarVideoProductoSiCorresponde(numero, conversacion, texto) {
+    const mediaId = process.env.IPAD_AIR_1_VIDEO_MEDIA_ID;
+    if (!mediaId || !/^\d+$/.test(mediaId) || conversacion.videoIpadAir1Enviado) return false;
+    const interes = normalizarTexto(texto);
+    const menciona = /\bipad\s+air\s*1\b/.test(interes) && /me interesa|quiero|informacion|caracteristicas|muestrame|precio|cuesta/.test(interes);
+    const contexto = normalizarTexto(conversacion.producto || (conversacion.historial || []).slice(-3).map(m => m.content).join(" "));
+    if (/\b(no|otro|otra)\b/.test(interes) ||
+        !(menciona || (/\b(me interesa|lo quiero|quiero comprar|muestrame)\b/.test(interes) && /ipad\s+air\s*1\b/.test(contexto)))) return false;
+    try {
+        await enviarContenidoWhatsApp(numero, { type: "video", video: { id: mediaId } });
+        conversacion.videoIpadAir1Enviado = true;
+        await guardarConversacion(numero, conversacion);
+        return true;
+    } catch (error) {
+        console.error("Video comercial no disponible; continúa la ficha");
+        return false;
+    }
+}
+
+
+
 // ==========================================
 // MEMORIA DE CONVERSACIONES
 // ==========================================
@@ -35,7 +134,7 @@ async function transcribirAudio(mediaId) {
     let audioPath = null;
 
     try {
-        console.log("🎤 Obteniendo audio de WhatsApp:", mediaId);
+
 
         // 1. Obtener información del audio desde Meta
         const mediaResponse = await fetch(
@@ -57,7 +156,7 @@ async function transcribirAudio(mediaId) {
 
         const mediaData = await mediaResponse.json();
 
-        console.log("🔗 URL temporal del audio obtenida");
+
 
         // 2. Descargar el audio
         const audioResponse = await fetch(mediaData.url, {
@@ -78,11 +177,7 @@ async function transcribirAudio(mediaId) {
             await audioResponse.arrayBuffer()
         );
 
-        console.log(
-            "📥 Audio descargado:",
-            audioBuffer.length,
-            "bytes"
-        );
+
 
         // 3. Crear archivo temporal
         const fs = require("fs");
@@ -110,11 +205,12 @@ async function transcribirAudio(mediaId) {
 
         fs.writeFileSync(audioPath, audioBuffer);
 
-        console.log("💾 Audio temporal guardado:", audioPath);
+
 
         // 4. Transcribir con OpenAI
-        console.log("🤖 Enviando audio a OpenAI...");
 
+
+        console.log("Transcripción iniciada");
         const transcripcion =
             await openai.audio.transcriptions.create({
                 file: fs.createReadStream(audioPath),
@@ -122,19 +218,13 @@ async function transcribirAudio(mediaId) {
                 language: "es",
             });
 
-        console.log(
-            "📝 Transcripción:",
-            transcripcion.text
-        );
+
 
         return transcripcion.text;
 
     } catch (error) {
 
-        console.error(
-            "❌ Error transcribiendo audio:",
-            error
-        );
+        console.error('❌ Error transcribiendo audio:');
 
         return null;
 
@@ -147,14 +237,11 @@ async function transcribirAudio(mediaId) {
 
                 if (fs.existsSync(audioPath)) {
                     fs.unlinkSync(audioPath);
-                    console.log("🗑️ Archivo temporal eliminado");
+
                 }
 
             } catch (error) {
-                console.error(
-                    "⚠️ No se pudo eliminar el archivo temporal:",
-                    error
-                );
+                console.error('⚠️ No se pudo eliminar el archivo temporal:');
             }
         }
     }
@@ -216,10 +303,7 @@ function obtenerErroresConfiguracion() {
 
 const erroresConfiguracionInicial = obtenerErroresConfiguracion();
 if (erroresConfiguracionInicial.length > 0) {
-  console.error(
-    "⚠️ Configuración incompleta o inválida. Variables requeridas:",
-    erroresConfiguracionInicial.join(", ")
-  );
+  console.error("Configuración incompleta. Variables requeridas:", erroresConfiguracionInicial.join(", "));
 }
 
 // =====================================================
@@ -257,6 +341,7 @@ async function obtenerStock() {
     })
     .filter(producto => producto.disponible);
 
+  console.log("Stock leído correctamente");
   return productosDisponibles;
 }
 
@@ -285,7 +370,7 @@ async function obtenerConversacion(numero) {
     try {
       conversacion = JSON.parse(fila[1]);
     } catch (error) {
-      console.log("Historial inválido, creando conversación nueva.");
+
     }
   }
 
@@ -344,10 +429,11 @@ async function guardarConversacion(numero, conversacion) {
 
         conversaciones.set(numeroNormalizado, conversacion);
 
-        console.log("💾 Conversación guardada en MEMORIA:", numeroNormalizado);
+
 
     } catch (error) {
-        console.error("❌ Error guardando conversación en MEMORIA:", error);
+        console.error("Error de Google Sheets al guardar MEMORIA", { codigo: Number(error.code) || null });
+        throw error;
     }
 }
 
@@ -404,10 +490,10 @@ async function actualizarGuiaPedido(idPedido, numeroGuia) {
                 }
             });
 
-            console.log("✅ GUÍA ACTUALIZADA");
-            console.log("🆔 Pedido:", idPedido);
-            console.log("🚚 Guía:", numeroGuia);
-            console.log("📱 Cliente:", numeroCliente);
+
+
+
+
 
             conversaciones.set(numeroCliente, conversacion);
 
@@ -418,14 +504,14 @@ async function actualizarGuiaPedido(idPedido, numeroGuia) {
             };
         }
 
-        console.log("❌ Pedido no encontrado:", idPedido);
+
 
         return {
             encontrado: false
         };
 
     } catch (error) {
-        console.error("❌ Error actualizando guía:", error);
+        console.error('❌ Error actualizando guía:');
 
         return {
             encontrado: false,
@@ -484,10 +570,10 @@ async function actualizarLlegadaPedido(numeroGuia) {
                 }
             });
 
-            console.log("✅ PEDIDO MARCADO COMO LLEGADO");
-            console.log("🆔 Pedido:", conversacion.pedido.id);
-            console.log("🚚 Guía:", numeroGuia);
-            console.log("📱 Cliente:", numeroCliente);
+
+
+
+
 
             conversaciones.set(numeroCliente, conversacion);
 
@@ -498,20 +584,14 @@ async function actualizarLlegadaPedido(numeroGuia) {
             };
         }
 
-        console.log(
-            "❌ No se encontró ningún pedido con la guía:",
-            numeroGuia
-        );
+
 
         return {
             encontrado: false
         };
 
     } catch (error) {
-        console.error(
-            "❌ Error actualizando llegada:",
-            error
-        );
+        console.error('❌ Error actualizando llegada:');
 
         return {
             encontrado: false,
@@ -567,7 +647,7 @@ async function actualizarRetiroPedido(numeroGuia) {
 
         return { encontrado: false };
     } catch (error) {
-        console.error("❌ Error actualizando retiro:", error);
+        console.error('❌ Error actualizando retiro:');
         return { encontrado: false, error: true };
     }
 }
@@ -615,7 +695,7 @@ async function actualizarPagoPedido(idPedido) {
 
         return { encontrado: false };
     } catch (error) {
-        console.error("❌ Error actualizando pago:", error);
+        console.error('❌ Error actualizando pago:');
         return { encontrado: false, error: true };
     }
 }
@@ -836,24 +916,18 @@ REGLAS IMPORTANTES:
         const texto = respuesta.output_text;
 
         if (!texto) {
-            console.log("⚠️ No se pudo extraer el horario de retiro.");
+
             return null;
         }
 
         const datos = JSON.parse(texto);
 
-        console.log(
-            "🕐 Horario de retiro detectado:",
-            JSON.stringify(datos)
-        );
+
 
         return datos;
 
     } catch (error) {
-        console.error(
-            "❌ Error extrayendo horario de retiro:",
-            error
-        );
+        console.error('❌ Error extrayendo horario de retiro:');
 
         return null;
     }
@@ -923,8 +997,11 @@ async function extraerDatosPedido(conversacion) {
             model: "gpt-4o-mini",
 
             instructions: `
-Extrae exclusivamente los datos del pedido confirmado
-a partir del historial de conversación proporcionado.
+Extrae los datos del pedido que el cliente ha elegido comprar a partir del historial.
+Solo devuelve producto y precio cuando el cliente haya seleccionado esa opción;
+una ficha del asistente o una pregunta sobre un producto NO es intención de compra.
+Los datos personales deben haber sido proporcionados por el cliente, no inventados.
+Si el cliente cancela la compra, devuelve null en los campos del pedido.
 
 IMPORTANTE:
 
@@ -1012,19 +1089,13 @@ Devuelve únicamente los datos estructurados solicitados.
             extractionResponse.output_text
         );
 
-        console.log(
-            "📦 Datos estructurados del pedido:",
-            JSON.stringify(datos)
-        );
+
 
         return datos;
 
     } catch (error) {
 
-        console.error(
-            "❌ Error extrayendo datos del pedido:",
-            error
-        );
+        console.error("Error de OpenAI al recopilar pedido", { http: Number(error.status) || null });
 
         return null;
     }
@@ -1034,8 +1105,151 @@ Devuelve únicamente los datos estructurados solicitados.
 // GENERAR ID ÚNICO DE PEDIDO
 // ============================================================
 
+async function confirmarPedidoSiCorresponde(from, conversacion, texto) {
+    if (conversacion.confirmado || conversacion.pedido?.id ||
+        !conversacion.esperandoConfirmacionPedido || !esConfirmacionAfirmativa(texto)) return false;
+    const datosPedido = conversacion.borradorPedido;
+
+    if (datosPedidoCompletos(datosPedido)) {
+        console.log("Confirmación aceptada");
+        const anterior = JSON.parse(JSON.stringify(conversacion));
+
+        // ====================================================
+        // GUARDAR DATOS DEL CLIENTE
+        // ====================================================
+
+        conversacion.datosCliente = {
+            nombre: datosPedido.nombre,
+            cedula: datosPedido.cedula,
+            telefono: datosPedido.telefono || from,
+            provincia: datosPedido.provincia,
+            ciudad: datosPedido.ciudad
+        };
+
+        // ====================================================
+        // CREAR PEDIDO
+        // ====================================================
+
+        conversacion.pedido = {
+    id: generarIdPedido(),
+
+    producto: datosPedido.producto,
+
+    variante: datosPedido.variante,
+
+    cantidad: datosPedido.cantidad || 1,
+
+    precio: datosPedido.precio,
+
+    confirmado: true,
+
+    guia: null,
+
+    estado: "confirmado",
+
+    fechaConfirmacion: new Date().toISOString(),
+
+    fechaEnvio: null,
+
+    fechaLlegada: null,
+
+    fechaRetiro: null,
+
+    fechaPago: null,
+
+    // ==========================================
+    // SEGUIMIENTO DE RETIRO
+    // ==========================================
+
+    seguimientoRetiro: false,
+
+    intentosRetiro: 0,
+
+    proximaVerificacionRetiro: null,
+
+    fechaInicioSeguimiento: null,
+
+    ultimaVerificacionRetiro: null,
+
+    fechaRetiroEstimada: null,
+
+    horaRetiroEstimada: null
+};
+
+        // Mantener compatibilidad con la estructura actual
+        conversacion.confirmado = true;
+        conversacion.esperandoConfirmacionPedido = false;
+
+        // No anunciar ni notificar una venta que no se pudo persistir.
+        try {
+            await guardarConversacion(from, conversacion);
+        } catch (error) {
+            for (const clave of Object.keys(conversacion)) delete conversacion[clave];
+            Object.assign(conversacion, anterior);
+            conversaciones.delete(String(from));
+            throw error;
+        }
+        console.log("Pedido creado:", conversacion.pedido.id);
+
+        // ====================================================
+        // NOTIFICACIÓN AL ASESOR
+        // ====================================================
+
+        const notificacionPedido = `
+🔔 NUEVO PEDIDO CONFIRMADO
+
+🆔 Pedido: ${conversacion.pedido.id}
+
+👤 CLIENTE
+Nombre: ${datosPedido.nombre || "No disponible"}
+Cédula: ${datosPedido.cedula || "No disponible"}
+Teléfono: ${datosPedido.telefono || from}
+
+📍 UBICACIÓN
+Provincia: ${datosPedido.provincia || "No disponible"}
+Ciudad: ${datosPedido.ciudad || "No disponible"}
+
+📦 PEDIDO
+Producto: ${datosPedido.producto || "No disponible"}
+Variante: ${datosPedido.variante || "No especificada"}
+Cantidad: ${datosPedido.cantidad || 1}
+
+💵 VALOR
+$${datosPedido.precio ?? "No disponible"}
+
+🚚 ENVÍO
+Servientrega
+Envío: GRATIS
+Pago: CONTRAENTREGA
+
+🆔 GUÍA
+Pendiente
+
+📌 ACCIÓN PENDIENTE
+Gestionar agencia de Servientrega
+y continuar con el cliente.
+`;
+
+        await notificarAsesor(notificacionPedido);
+        try {
+            if (await guardarAprendizaje(conversacion, from)) console.log("Aprendizaje registrado");
+        } catch (error) {
+            console.error("Error guardando APRENDIZAJE");
+        }
+        return true;
+
+
+
+    } else {
+
+        console.error('❌ No se pudieron extraer los datos estructurados del pedido.');
+    }
+
+    return false;
+}
+
 function generarIdPedido() {
-    return `PED-${Date.now().toString(36).toUpperCase()}`;
+    return `PED-${require("node:crypto").randomUUID().toUpperCase()}`;
 }
 
 // =====================================================
@@ -1048,11 +1262,11 @@ app.get("/webhook", (req, res) => {
   const challenge = req.query["hub.challenge"];
 
   if (mode === "subscribe" && token === VERIFY_TOKEN) {
-    console.log("Webhook verificado correctamente.");
+
     return res.status(200).send(challenge);
   }
 
-  console.log("Error verificando webhook.");
+
 
   return res.sendStatus(403);
 });
@@ -1061,82 +1275,61 @@ app.get("/webhook", (req, res) => {
 // NOTIFICAR ASESOR
 // =====================================================
 
+async function enviarContenidoWhatsApp(destinatario, contenido) {
+    let response;
+    try {
+        response = await fetch(`https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ messaging_product: "whatsapp", to: destinatario, ...contenido })
+        });
+    } catch (error) {
+        console.error("Error de envío WhatsApp: transporte");
+        throw new Error("WhatsApp: error de transporte");
+    }
+    let data = null;
+    try { data = JSON.parse(await response.text()); } catch (error) { /* El status se conserva aunque no haya JSON. */ }
+    if (!response.ok) {
+        const codigoMeta = Number(data?.error?.code) || null;
+        console.error("Error de envío WhatsApp", { http: response.status, codigoMeta });
+        const error = new Error(`WhatsApp HTTP ${response.status}`);
+        error.status = response.status;
+        error.codigoMeta = codigoMeta;
+        throw error;
+    }
+    return data || {};
+}
+
 async function notificarAsesor(mensaje) {
     try {
-        const response = await fetch(
-            `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
-            {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    messaging_product: "whatsapp",
-                    to: ASESOR_WHATSAPP,
-                    type: "text",
-                    text: {
-                        body: mensaje,
-                    },
-                }),
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            console.error("❌ Error notificando al asesor:", data);
-            return;
-        }
-
-        console.log("📲 Notificación enviada al asesor");
+        await enviarMensajeWhatsApp(ASESOR_WHATSAPP, mensaje);
+        console.log("Notificación al asesor enviada");
+        return true;
     } catch (error) {
-        console.error("❌ Error enviando notificación al asesor:", error);
+        console.error("Notificación asesor fallida", { http: error.status || null, codigoMeta: error.codigoMeta || null });
+        return false;
     }
 }
 
 async function enviarMensajeWhatsApp(destinatario, mensaje) {
-    const response = await fetch(
-        `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                messaging_product: "whatsapp",
-                to: destinatario,
-                type: "text",
-                text: { body: mensaje },
-            }),
-        }
-    );
-
-    const cuerpo = await response.text();
-    if (!response.ok) {
-        throw new Error(`WhatsApp respondió ${response.status}: ${cuerpo}`);
-    }
-
-    return cuerpo ? JSON.parse(cuerpo) : {};
+    return enviarContenidoWhatsApp(destinatario, { type: "text", text: { body: mensaje } });
 }
+
 // =====================================================
 // RECIBIR MENSAJES DE WHATSAPP
 // =====================================================
 
-app.post("/webhook", async (req, res) => {
+app.post("/webhook", serializarWebhook(async (req, res) => {
   let messageIdProcesando = null;
+  console.log("Webhook recibido");
   try {
     const erroresConfiguracion = obtenerErroresConfiguracion();
     if (erroresConfiguracion.length > 0) {
-      console.error("❌ Webhook rechazado: faltan variables de configuración.");
+      console.error('❌ Webhook rechazado: faltan variables de configuración.');
       return res.status(503).json({ error: "Servicio no configurado" });
     }
 
-    console.log(
-      "Mensaje recibido:",
-      JSON.stringify(req.body)
-    );
+
 
  const message = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
 
@@ -1146,6 +1339,7 @@ if (!message) {
 }
 
 // EVITAR MENSAJES DUPLICADOS DE WHATSAPP
+console.log("Tipo de mensaje", ["text", "audio", "image", "video"].includes(message.type) ? message.type : "otro");
 const messageId = message.id;
 messageIdProcesando = messageId;
 
@@ -1159,14 +1353,14 @@ if (!messageId) {
   }
 
   if (mensajesProcesados.has(messageId)) {
-    console.log("⚠️ Mensaje duplicado ignorado:", messageId);
+
     return res.sendStatus(200);
   }
 
 mensajesProcesados.set(messageId, ahora);
- 
+
  const from = message.from;
-    
+
 // ============================================================
 // IDENTIFICAR AL ADMINISTRADOR
 // ============================================================
@@ -1181,11 +1375,11 @@ const esAdministrador =
     numeroRemitente === numeroAdministrador;
 
 if (esAdministrador) {
-    console.log("👤 Mensaje recibido del ADMINISTRADOR.");
+
 
     // Solo procesar mensajes de texto del administrador
     if (message.type !== "text") {
-        console.log("⚠️ Mensaje del administrador no es texto. Ignorado.");
+
         return res.sendStatus(200);
     }
 
@@ -1200,11 +1394,11 @@ const comandoAdmin = comandoAdminOriginal
         /^(GUIA|LLEG[ÓO]|RETIRADO|PAGO)\b/i.test(comandoAdmin);
 
     if (!esComandoAdmin) {
-        console.log("🤫 Mensaje del administrador sin comando. Ignorado.");
+
         return res.sendStatus(200);
     }
 
-  console.log("🛠️ Comando administrativo detectado:", comandoAdmin);
+
 
 const partesComando = comandoAdmin.split(/\s+/);
 
@@ -1213,17 +1407,17 @@ const tipoComando = partesComando[0].toUpperCase();
 if (tipoComando === "PAGO") {
     const idPedido = partesComando[1];
     if (!idPedido) {
-        console.log("⚠️ Comando PAGO incompleto.");
+
         return res.sendStatus(200);
     }
 
     const resultado = await actualizarPagoPedido(idPedido);
     if (!resultado.encontrado) {
-        console.log("❌ No se encontró un pedido para este ID.");
+
         return res.sendStatus(200);
     }
 
-    console.log("✅ PAGO REGISTRADO", resultado.conversacion.pedido.id);
+
     return res.sendStatus(200);
 }
 
@@ -1233,12 +1427,12 @@ if (tipoComando === "GUIA") {
     const numeroGuia = partesComando[2];
 
     if (!idPedido || !numeroGuia) {
-        console.log("⚠️ Comando GUIA incompleto.");
+
         return res.sendStatus(200);
     }
 
-    console.log("🆔 ID pedido:", idPedido);
-    console.log("🚚 Número de guía:", numeroGuia);
+
+
 
     const resultado = await actualizarGuiaPedido(
         idPedido,
@@ -1246,7 +1440,7 @@ if (tipoComando === "GUIA") {
     );
 
     if (!resultado.encontrado) {
-        console.log("❌ No se encontró el pedido.");
+
         return res.sendStatus(200);
     }
 
@@ -1265,35 +1459,7 @@ Podrás realizar el seguimiento con esta guía.
 ¡Gracias por comprar en Level Up Store! 😊
 `;
 
-    const respuestaCliente = await fetch(
-        `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                messaging_product: "whatsapp",
-                to: resultado.numeroCliente,
-                type: "text",
-                text: {
-                    body: mensajeCliente
-                },
-            }),
-        }
-    );
-
-    const dataCliente = await respuestaCliente.json();
-
-    if (!respuestaCliente.ok) {
-        console.error(
-            "❌ Error enviando actualización al cliente:",
-            dataCliente
-        );
-    } else {
-        console.log("📲 Actualización enviada al cliente.");
-    }
+    await enviarMensajeWhatsApp(resultado.numeroCliente, mensajeCliente);
 
    return res.sendStatus(200);
 }
@@ -1308,20 +1474,18 @@ if (tipoComando === "LLEGO") {
     const numeroGuia = partesComando[1];
 
     if (!numeroGuia) {
-        console.log("⚠️ Comando LLEGÓ incompleto.");
+
         return res.sendStatus(200);
     }
 
-    console.log("🚚 Número de guía recibido:", numeroGuia);
+
 
     const resultado = await actualizarLlegadaPedido(
         numeroGuia
     );
 
     if (!resultado.encontrado) {
-        console.log(
-            "❌ No se encontró un pedido para esta guía."
-        );
+
 
         return res.sendStatus(200);
     }
@@ -1345,10 +1509,10 @@ await guardarConversacion(
     resultado.conversacion
 );
 
-console.log("🔔 SEGUIMIENTO DE RETIRO ACTIVADO");
-console.log("📦 Pedido:", pedido.id);
-console.log("📱 Cliente:", resultado.numeroCliente);
-  
+
+
+
+
    const mensajeCliente = `
 📦 ¡Tu pedido ya llegó! 🎉
 
@@ -1378,9 +1542,9 @@ Por ejemplo:
 
     try {
         await enviarMensajeWhatsApp(resultado.numeroCliente, mensajeCliente);
-        console.log("📲 Aviso de llegada enviado al cliente.");
+
     } catch (error) {
-        console.error("❌ Error enviando aviso de llegada:", error.message);
+        console.error('❌ Error enviando aviso de llegada:');
         throw error;
     }
 
@@ -1397,40 +1561,35 @@ if (tipoComando === "RETIRADO") {
     const numeroGuia = partesComando[1];
 
     if (!numeroGuia) {
-        console.log("⚠️ Comando RETIRADO incompleto.");
+
         return res.sendStatus(200);
     }
 
-    console.log(
-        "📦 Número de guía recibido para retiro:",
-        numeroGuia
-    );
+
 
     const resultado = await actualizarRetiroPedido(
         numeroGuia
     );
 
     if (!resultado.encontrado) {
-        console.log(
-            "❌ No se encontró un pedido para esta guía."
-        );
+
 
         return res.sendStatus(200);
     }
 
     const pedido = resultado.conversacion.pedido;
 
-    console.log("✅ RETIRO REGISTRADO");
-    console.log("🆔 Pedido:", pedido.id);
-    console.log("🚚 Guía:", pedido.guia);
-    console.log("📱 Cliente:", resultado.numeroCliente);
+
+
+
+
 
     return res.sendStatus(200);
 }
 
 // ESTA LLAVE CIERRA EL ADMINISTRADOR
 }
-    
+
 
 let text = null;
 
@@ -1442,7 +1601,7 @@ if (message.type === "text") {
 
   text = message.text?.body;
 
-  console.log("⌨️ Mensaje de texto:", text);
+
 }
 
 
@@ -1452,12 +1611,13 @@ if (message.type === "text") {
 
 else if (message.type === "audio") {
 
-  console.log("🎤 Audio recibido");
 
+
+  console.log("Audio recibido");
   const mediaId = message.audio?.id;
 
   if (!mediaId) {
-    console.log("❌ El audio no tiene media ID");
+
     return res.sendStatus(200);
   }
 
@@ -1465,13 +1625,13 @@ else if (message.type === "audio") {
 
   if (!text) {
 
-    console.log("❌ No se pudo transcribir el audio");
+
 
     // Por ahora simplemente confirmamos recepción
     return res.sendStatus(200);
   }
 
-  console.log("📝 Audio convertido a texto:", text);
+
 }
 
 
@@ -1481,20 +1641,41 @@ else if (message.type === "audio") {
 
 else {
 
-  console.log("📦 Tipo de mensaje no compatible:", message.type);
+
 
   return res.sendStatus(200);
 }
 
-    console.log("Número:", from);
-    console.log("Mensaje:", text);
+
+
 
     if (!text) {
       return res.sendStatus(200);
     }
     const conversacion = await obtenerConversacion(from);
+    if (esConfirmacionAfirmativa(text) && (conversacion.esperandoConfirmacionPedido ||
+        (conversacion.confirmado && conversacion.pedido?.estado === "confirmado"))) {
+        if (!conversacion.confirmado) {
+            conversacion.historial = conversacion.historial || [];
+            conversacion.historial.push({ role: "user", content: text });
+        }
+        if (conversacion.confirmado || await confirmarPedidoSiCorresponde(from, conversacion, text)) {
+            const confirmacion = "¡Perfecto! 😊 Tu pedido queda confirmado. Un asesor continuará el proceso contigo.";
+            await enviarMensajeWhatsApp(from, confirmacion);
+            conversacion.historial.push({ role: "assistant", content: confirmacion });
+            await guardarConversacion(from, conversacion);
+            return res.sendStatus(200);
+        }
+        await enviarMensajeWhatsApp(from, "Necesitamos completar los datos del pedido antes de confirmarlo.");
+        return res.sendStatus(200);
+    }
+    if (conversacion.esperandoConfirmacionPedido) {
+        conversacion.esperandoConfirmacionPedido = false;
+        await guardarConversacion(from, conversacion);
+    }
 
-console.log("Memoria del cliente:", JSON.stringify(conversacion));
+
+
 
 // Antes de enviar el mensaje al modelo, atendemos las confirmaciones que
 // cambian el estado real del pedido. Así no se mezclan con el flujo de venta.
@@ -1519,11 +1700,8 @@ if (
     conversacion.pedido.seguimientoRetiro === true
 ) {
 
-    console.log("📦 CLIENTE EN MODO SEGUIMIENTO DE RETIRO");
-    console.log(
-        "🆔 Pedido:",
-        conversacion.pedido.id
-    );
+
+
 
     // Guardar mensaje del cliente
     if (!conversacion.historial) {
@@ -1541,9 +1719,7 @@ if (
 
     if (!conversacion.pedido.fechaRetiroEstimada) {
 
-        console.log(
-            "🕐 Todavía no existe horario de retiro."
-        );
+
 
         const horarioRetiro =
             await extraerHorarioRetiro(
@@ -1562,7 +1738,7 @@ if (
             conversacion.pedido.horaRetiroEstimada =
                 horarioRetiro.horaRetiroEstimada;
 
-        
+
             conversacion.pedido.ultimaVerificacionRetiro =
                 new Date().toISOString();
 
@@ -1582,60 +1758,18 @@ if (
                 conversacion
             );
 
-            console.log(
-                "✅ Horario de retiro guardado."
-            );
 
-            console.log(
-                "📅 Fecha:",
-                conversacion.pedido.fechaRetiroEstimada
-            );
 
-            console.log(
-                "🕐 Hora:",
-                conversacion.pedido.horaRetiroEstimada
-            );
+
+
+
 
             // IMPORTANTE:
             // NO continúa hacia el catálogo ni GPT vendedor.
 
-            const respuestaWhatsApp =
-                await fetch(
-                    `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
-                    {
-                        method: "POST",
-                        headers: {
-                            Authorization:
-                                `Bearer ${WHATSAPP_TOKEN}`,
-                            "Content-Type":
-                                "application/json",
-                        },
-                        body: JSON.stringify({
-                            messaging_product: "whatsapp",
-                            to: from,
-                            type: "text",
-                            text: {
-                                body: respuestaRetiro
-                            }
-                        })
-                    }
-                );
+            await enviarMensajeWhatsApp(from, respuestaRetiro);
 
-            const dataWhatsApp =
-                await respuestaWhatsApp.json();
-
-            if (!respuestaWhatsApp.ok) {
-                console.error(
-                    "❌ Error enviando respuesta de retiro:",
-                    dataWhatsApp
-                );
-            } else {
-                console.log(
-                    "📲 Respuesta de retiro enviada al cliente."
-                );
-            }
-
-            return res.sendStatus(200);
+    return res.sendStatus(200);
         }
 
         // ====================================================
@@ -1664,58 +1798,18 @@ Quedamos pendientes. 👍
             conversacion
         );
 
-        console.log(
-            "🕐 Cliente todavía no indicó horario de retiro."
-        );
 
-        const respuestaWhatsApp =
-            await fetch(
-                `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization:
-                            `Bearer ${WHATSAPP_TOKEN}`,
-                        "Content-Type":
-                            "application/json",
-                    },
-                    body: JSON.stringify({
-                        messaging_product: "whatsapp",
-                        to: from,
-                        type: "text",
-                        text: {
-                            body: respuestaSinHorario
-                        }
-                    })
-                }
-            );
 
-        const dataWhatsApp =
-            await respuestaWhatsApp.json();
+        await enviarMensajeWhatsApp(from, respuestaSinHorario);
 
-        if (!respuestaWhatsApp.ok) {
-            console.error(
-                "❌ Error enviando respuesta de retiro:",
-                dataWhatsApp
-            );
-        } else {
-            console.log(
-                "📲 Solicitud de horario enviada al cliente."
-            );
-        }
-
-        return res.sendStatus(200);
+    return res.sendStatus(200);
     }
 
     // ========================================================
     // YA EXISTE UN HORARIO
     // ========================================================
 
-    console.log(
-        "🕐 El cliente ya tiene horario registrado:",
-        conversacion.pedido.fechaRetiroEstimada,
-        conversacion.pedido.horaRetiroEstimada
-    );
+
 
     const respuestaSeguimiento = `
 Perfecto 😊
@@ -1742,41 +1836,7 @@ Quedamos pendientes para confirmar que hayas podido retirarlo. 👍
         conversacion
     );
 
-    const respuestaWhatsApp =
-        await fetch(
-            `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
-            {
-                method: "POST",
-                headers: {
-                    Authorization:
-                        `Bearer ${WHATSAPP_TOKEN}`,
-                    "Content-Type":
-                        "application/json",
-                },
-                body: JSON.stringify({
-                    messaging_product: "whatsapp",
-                    to: from,
-                    type: "text",
-                    text: {
-                        body: respuestaSeguimiento
-                    }
-                })
-            }
-        );
-
-    const dataWhatsApp =
-        await respuestaWhatsApp.json();
-
-    if (!respuestaWhatsApp.ok) {
-        console.error(
-            "❌ Error enviando seguimiento de retiro:",
-            dataWhatsApp
-        );
-    } else {
-        console.log(
-            "📲 Seguimiento de retiro enviado al cliente."
-        );
-    }
+    await enviarMensajeWhatsApp(from, respuestaSeguimiento);
 
     return res.sendStatus(200);
 }
@@ -1787,10 +1847,7 @@ Quedamos pendientes para confirmar que hayas podido retirarlo. 👍
 
     const stock = await obtenerStock();
 
-    console.log(
-      "Stock obtenido:",
-      JSON.stringify(stock)
-    );
+
 
 // Agrupamos las variantes que pertenecen al mismo producto
 const productosAgrupados = {};
@@ -1838,13 +1895,14 @@ ${item.informacion}
   })
   .join("\n");
 
-    console.log("CATÁLOGO QUE SE ENVÍA A GPT:");
-    console.log(stockTexto);
+
+
     // =================================================
     // INSTRUCCIONES DEL ASISTENTE
     // =================================================
 
-const instrucciones = `
+const instrucciones = `${REGLAS_COMERCIALES_V1}
+
 Eres el asistente virtual de Level Up Store.
 
 Tu función es atender clientes por WhatsApp como un asesor
@@ -2120,7 +2178,7 @@ Asistente:
 
 No expliques nuevamente todo el proceso de envío cada vez que el cliente manifieste intención de avanzar.
 
-Solo proporciona esta información cuando sea necesaria o cuando el cliente pregunte:
+Explica estas condiciones una vez después de presentar el producto y ANTES de pedir datos personales:
 
 - Los envíos son gratuitos.
 - Los envíos se realizan mediante Servientrega.
@@ -2434,8 +2492,8 @@ CATÁLOGO DISPONIBLE ACTUAL
 ${stockTexto}
 
 `;
-    
-    
+
+
 
     // =================================================
     // CONSULTAR OPENAI
@@ -2460,235 +2518,53 @@ conversacion.historial.push({
 // CONSULTAR OPENAI
 // ================================================
 
-const aiResponse = await openai.responses.create({
-    model: "gpt-4o-mini",
-
-    instructions: instrucciones,
-
-    input: conversacion.historial,
-});
-
-// Obtener respuesta
-const respuesta =
-    aiResponse.output_text ||
-    "Disculpa, no pude procesar tu mensaje en este momento.";
-
-conversacion.historial.push({
-    role: "assistant",
-    content: respuesta
-});
-
-await guardarConversacion(from, conversacion);
-// ========================================================
-// DETECTAR PEDIDO CONFIRMADO
-// ========================================================
-
-const textoCliente = (text || "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-
-const confirmacionPositiva =
-    /^(si|sí|confirmo|confirmado|correcto|correcta|correctísimo|correctisimo|perfecto|perfectamente|todo correcto|todos.*correctos|esta bien|está bien|asi es|así es|exacto|exactamente|de acuerdo)\b/i.test(
-        textoCliente
-    );
-
-const respuestaConfirmaPedido =
-    respuesta.toLowerCase().includes("pedido queda confirmado");
-
-console.log("🔎 Confirmación del cliente:", confirmacionPositiva);
-console.log("🔎 IA confirmó el pedido:", respuestaConfirmaPedido);
-if (
-    confirmacionPositiva &&
-    respuestaConfirmaPedido &&
-    !conversacion.confirmado
-) {
-
-    console.log("✅ PEDIDO CONFIRMADO POR EL CLIENTE");
-
-    // ========================================================
-    // EXTRAER DATOS ESTRUCTURADOS DEL PEDIDO
-    // ========================================================
-
-    const datosPedido = await extraerDatosPedido(conversacion);
-
-    if (datosPedido) {
-
-        // ====================================================
-        // GUARDAR DATOS DEL CLIENTE
-        // ====================================================
-
-        conversacion.datosCliente = {
-            nombre: datosPedido.nombre,
-            cedula: datosPedido.cedula,
-            telefono: datosPedido.telefono || from,
-            provincia: datosPedido.provincia,
-            ciudad: datosPedido.ciudad
-        };
-
-        // ====================================================
-        // CREAR PEDIDO
-        // ====================================================
-
-        conversacion.pedido = {
-    id: generarIdPedido(),
-
-    producto: datosPedido.producto,
-
-    variante: datosPedido.variante,
-
-    cantidad: datosPedido.cantidad || 1,
-
-    precio: datosPedido.precio,
-
-    confirmado: true,
-
-    guia: null,
-
-    estado: "confirmado",
-
-    fechaConfirmacion: new Date().toISOString(),
-
-    fechaEnvio: null,
-
-    fechaLlegada: null,
-
-    fechaRetiro: null,
-
-    fechaPago: null,
-
-    // ==========================================
-    // SEGUIMIENTO DE RETIRO
-    // ==========================================
-
-    seguimientoRetiro: false,
-
-    intentosRetiro: 0,
-
-    proximaVerificacionRetiro: null,
-
-    fechaInicioSeguimiento: null,
-
-    ultimaVerificacionRetiro: null,
-
-    fechaRetiroEstimada: null,
-
-    horaRetiroEstimada: null
-};
-
-        // Mantener compatibilidad con la estructura actual
-        conversacion.confirmado = true;
-
-        // Guardar todo en MEMORIA
-        await guardarConversacion(from, conversacion);
-        try {
-            await guardarAprendizaje(conversacion, from);
-        } catch (error) {
-            console.error("❌ No se pudo guardar APRENDIZAJE:", error.message);
-        }
-
-        console.log(
-            "💾 PEDIDO GUARDADO:",
-            JSON.stringify(conversacion.pedido)
-        );
-
-        // ====================================================
-        // NOTIFICACIÓN AL ASESOR
-        // ====================================================
-
-        const notificacionPedido = `
-🔔 NUEVO PEDIDO CONFIRMADO
-
-🆔 Pedido: ${conversacion.pedido.id}
-
-👤 CLIENTE
-Nombre: ${datosPedido.nombre || "No disponible"}
-Cédula: ${datosPedido.cedula || "No disponible"}
-Teléfono: ${datosPedido.telefono || from}
-
-📍 UBICACIÓN
-Provincia: ${datosPedido.provincia || "No disponible"}
-Ciudad: ${datosPedido.ciudad || "No disponible"}
-
-📦 PEDIDO
-Producto: ${datosPedido.producto || "No disponible"}
-Variante: ${datosPedido.variante || "No especificada"}
-Cantidad: ${datosPedido.cantidad || 1}
-
-💵 VALOR
-$${datosPedido.precio ?? "No disponible"}
-
-🚚 ENVÍO
-Servientrega
-Envío: GRATIS
-Pago: CONTRAENTREGA
-
-🆔 GUÍA
-Pendiente
-
-📌 ACCIÓN PENDIENTE
-Gestionar agencia de Servientrega
-y continuar con el cliente.
-`;
-
-        await notificarAsesor(notificacionPedido);
-
-        console.log("📲 Notificación del pedido enviada al asesor");
-
-    } else {
-
-        console.error(
-            "❌ No se pudieron extraer los datos estructurados del pedido."
-        );
+// El borrador se recopila antes de pedir aprobación; aceptar no llama a OpenAI.
+let borrador = null;
+if (!conversacion.confirmado) {
+    borrador = await extraerDatosPedido(conversacion);
+}
+let respuesta;
+const prepararResumen = datosPedidoCompletos(borrador);
+if (prepararResumen) {
+    respuesta = generarResumenPedido(borrador);
+} else {
+    try {
+        const aiResponse = await openai.responses.create({
+            model: "gpt-4o-mini", instructions: instrucciones,
+            input: conversacion.historial
+        });
+        respuesta = aiResponse.output_text || "Disculpa, no pude procesar tu mensaje en este momento.";
+    } catch (error) {
+        console.error("Error de OpenAI", { http: Number(error.status) || null });
+        throw error;
     }
 }
-    
-    // =================================================
-    // RESPONDER POR WHATSAPP
-    // =================================================
-
-    const response = await fetch(
-      `https://graph.facebook.com/v23.0/${PHONE_NUMBER_ID}/messages`,
-      {
-        method: "POST",
-
-        headers: {
-          Authorization: `Bearer ${WHATSAPP_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          messaging_product: "whatsapp",
-
-          to: from,
-
-          type: "text",
-
-          text: {
-            body: respuesta,
-          },
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    console.log(
-      "Respuesta de WhatsApp:",
-      JSON.stringify(data)
-    );
+await enviarVideoProductoSiCorresponde(from, conversacion, text);
+await enviarMensajeWhatsApp(from, respuesta);
+conversacion.historial.push({ role: "assistant", content: respuesta });
+if (prepararResumen) {
+    conversacion.borradorPedido = borrador;
+    conversacion.esperandoConfirmacionPedido = true;
+}
+try {
+    await guardarConversacion(from, conversacion);
+} catch (error) {
+    conversacion.esperandoConfirmacionPedido = false;
+    conversaciones.delete(String(from));
+    throw error;
+}
+if (prepararResumen) console.log("Esperando confirmación");
 
     return res.sendStatus(200);
 
   } catch (error) {
     // Si una dependencia falla, permitimos que Meta reintente este webhook.
     if (messageIdProcesando) mensajesProcesados.delete(messageIdProcesando);
-    console.error("ERROR:", error);
+    console.error("Webhook falló", { http: Number(error.status) || null });
 
     return res.sendStatus(500);
   }
-});
+}));
 
 // =====================================================
 // SERVIDOR
@@ -2697,12 +2573,10 @@ y continuar con el cliente.
 const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {
-  console.log(
-    `Servidor funcionando en el puerto ${PORT}`
-  );
+  console.log("Servidor iniciado");
 });
 
 server.on("error", (error) => {
-  console.error(`❌ No se pudo iniciar el servidor en el puerto ${PORT}:`, error.message);
+  console.error('Error técnico');
   process.exitCode = 1;
 });

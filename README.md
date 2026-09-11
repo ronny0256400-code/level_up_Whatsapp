@@ -76,3 +76,43 @@ un pedido confirmado, con historial anonimizado y aprobación pendiente (`NO`).
 No modifica MEMORIA y evita repetir el mismo ID de pedido dentro de este proceso.
 
 Pruebas locales sin servicios externos: `node --test scripts/test-v1.js`.
+
+## Ajustes V1 para venta real
+
+La solicitud de confirmación queda persistida en MEMORIA como
+`esperandoConfirmacionPedido`. Una aceptación posterior confirma una sola vez;
+una pregunta o cambio de datos requiere un nuevo resumen. Los webhooks de un
+cliente se procesan en orden dentro de una instancia. El cierre guarda MEMORIA,
+notifica al asesor y registra APRENDIZAJE. Un error de notificación no revierte
+el pedido; los errores se registran sin payloads ni datos personales.
+
+### Video comercial iPad Air 1
+
+Proporciona el **ID numérico de media de WhatsApp Cloud API** de un video real,
+previamente cargado y accesible al número de WhatsApp que usa el bot. Configúralo
+en `IPAD_AIR_1_VIDEO_MEDIA_ID`. No es un enlace de YouTube/Drive ni un token.
+El mismo video sirve para todas las capacidades; se intenta enviar antes de la
+ficha y se recuerda el envío en MEMORIA para evitar repetirlo. Sin ID válido o
+si Meta falla, continúa la ficha. Este video comercial es independiente de los
+videos de prueba y empaque que enviará el asesor para el equipo vendido.
+
+Pruebas adicionales sin servicios externos: `node scripts/test-venta-real.js`.
+
+### Confirmación y entrega del resumen
+
+El servidor recopila un `borradorPedido` estructurado antes de pedir aprobación.
+Exige nombre, cédula, teléfono, provincia, ciudad, producto, cantidad positiva
+y precio positivo. Con esos datos genera el resumen directamente, lo envía por
+WhatsApp y solo después de una respuesta HTTP exitosa persiste el borrador y
+`esperandoConfirmacionPedido=true`. No detecta el resumen por frases de la IA.
+
+La aceptación contextual utiliza ese borrador sin llamar a OpenAI ni consultar
+STOCK de nuevo. Admite las variantes naturales documentadas en las pruebas y
+rechaza objeciones o cambios. Una conversación antigua con espera pero sin
+borrador completo debe completar/revisar sus datos antes de confirmar.
+
+Todos los envíos usan el mismo helper, que verifica HTTP y conserva el código
+de Meta cuando existe, incluso si el cuerpo no es JSON. Un HTTP exitoso indica
+aceptación de Meta, no una confirmación de entrega/lectura en el dispositivo.
+No hay reintentos persistentes para notificación o APRENDIZAJE: un fallo queda
+registrado para seguimiento operativo y no revierte la venta.
