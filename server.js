@@ -1253,7 +1253,9 @@ app.post("/webhook", serializarWebhook(async (req, res) => {
 
 
 
- const message = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+const message = req.body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+
+console.log("DEBUG MENSAJE:", JSON.stringify(message, null, 2));
 
 // Si no es un mensaje real, ignorar el webhook
 if (!message) {
