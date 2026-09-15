@@ -4,9 +4,11 @@
   "description": "Bot de WhatsApp para Level Up Store",
   "main": "server.js",
   "scripts": {
+    "ai:work": "node --env-file=.env scripts/ai-orchestrator.js",
     "start": "node server.js",
     "check": "node --check server.js && node --check scripts/test-integrations.js",
-    "test:integrations": "node scripts/test-integrations.js"
+    "test:integrations": "node scripts/test-integrations.js",
+    "test:ycloud": "node --test scripts/test-ycloud-webhook.js"
   },
   "engines": {
     "node": ">=18"

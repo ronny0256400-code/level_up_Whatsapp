@@ -190,6 +190,8 @@ async function enviarVideoProductoSiCorresponde(numero, conversacion, texto) {
 const conversaciones = new Map();
 
 
+// YCloud verifica la firma sobre bytes originales antes del parser JSON de Meta.
+app.post("/ycloud/webhook", require("./lib/ycloud-webhook").createYCloudWebhook());
 app.use(express.json());
 
 // Meta puede reenviar un webhook. Esta caché evita duplicados durante la vida

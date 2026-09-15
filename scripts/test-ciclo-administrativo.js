@@ -43,6 +43,7 @@ function entorno({ inicial = venta(), disco, ahora = BASE } = {}) {
     const context=vm.createContext({ Date:Reloj, process:{env}, console:{log:(...x)=>logs.push(x),error:(...x)=>logs.push(x)},
         setInterval(fn,ms) { control.intervalos.push({fn,ms}); return {unref(){}}; },
         require(name) {
+            if(name==='./lib/ycloud-webhook') return require('../lib/ycloud-webhook');
             if(name==='express') return express;
             if(name==='node:crypto') return require(name);
             if(name==='googleapis') return {google:{auth:{GoogleAuth:class{}},sheets:()=>sheets}};

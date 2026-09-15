@@ -24,6 +24,7 @@ function entorno() {
     const env = Object.fromEntries(['OPENAI_API_KEY','VERIFY_TOKEN','PHONE_NUMBER_ID','WHATSAPP_TOKEN','STOCK_SPREADSHEET_ID','MEMORIA_SPREADSHEET_ID'].map(k => [k, 'dummy']));
     env.ASESOR_WHATSAPP = '593999999999'; env.GOOGLE_SERVICE_ACCOUNT_JSON = '{}';
     const context = vm.createContext({ require(name) {
+        if (name === './lib/ycloud-webhook') return require('../lib/ycloud-webhook');
         if (name === 'express') return express;
         if (name === 'openai') return class { constructor() { this.responses = { create() { throw new Error('No debe llegar a IA'); } }; } };
         if (name === 'googleapis') return { google: { auth: { GoogleAuth: class {} }, sheets: () => sheets } };

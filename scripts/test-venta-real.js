@@ -22,6 +22,7 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
     const env = Object.fromEntries(['OPENAI_API_KEY','VERIFY_TOKEN','PHONE_NUMBER_ID','WHATSAPP_TOKEN','STOCK_SPREADSHEET_ID','MEMORIA_SPREADSHEET_ID'].map(k => [k,'dummy']));
     env.ASESOR_WHATSAPP='000000000001'; env.GOOGLE_SERVICE_ACCOUNT_JSON='{}'; env.IPAD_AIR_1_VIDEO_MEDIA_ID=video;
     const context = vm.createContext({ require(name) {
+        if (name === './lib/ycloud-webhook') return require('../lib/ycloud-webhook');
         if (name === 'node:crypto') return require(name);
         if (name === 'express') return express;
         if (name === 'googleapis') return { google: { auth: { GoogleAuth: class {} }, sheets: () => sheets } };
