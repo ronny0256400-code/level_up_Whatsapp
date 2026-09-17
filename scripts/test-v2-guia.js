@@ -14,7 +14,7 @@ async function fixture({multi=false, stock=products()}={}) {
   // Simulated Sheets formula: backend only records sale rows; this test-owned reader recalculates availability.
   e.sheets.spreadsheets.values.get=async args=>{
     const result=await get(args);
-    if(args.range.includes('PAGINA DE STOCK')) {
+    if(args.range === "'PAGINA DE STOCK'!A3:G") {
       const rows=(await get({range:"'REGISTRO DE VENTAS'!A5:W"})).data.values;
       result.data.values=result.data.values.map(row=>{const copy=[...row];copy[4]-=rows.filter(r=>r[14]===row[0]&&['enviado','en agencia','pagado'].includes(r[5])).reduce((sum,r)=>sum+Number(r[18]),0);return copy;}).filter(row=>row[4]>0);
     }

@@ -12,7 +12,7 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
         get: async () => ({ data: { sheets: creada ? [{ properties: { title: 'APRENDIZAJE' } }] : [] } }),
         batchUpdate: async () => { creada = true; },
         values: {
-            get: async ({ range }) => ({ data: { values: range.startsWith('APRENDIZAJE') ? aprendizaje : range.startsWith('MEMORIA') ? memoria : [['IPADAIR1-32-PLA','iPad Air 1','32 GB','plateado',20,100,'Para lectura; incluye cable']] } }),
+            get: async ({ range }) => ({ data: { values: range === "'PAGINA DE STOCK'!A2:G2" ? [require('./helpers/inventory-fixture').HEADERS] : range.startsWith('APRENDIZAJE') ? aprendizaje : range.startsWith('MEMORIA') ? memoria : [['IPADAIR1-32-PLA','iPad Air 1','32 GB','plateado',20,100,'Para lectura; incluye cable']] } }),
             update: async ({ range, requestBody }) => { if (range.startsWith('MEMORIA')) { requestBody.values.forEach((row,i)=>{memoria[Number(range.match(/A(\d+)/)[1])-2+i]=row;}); eventos.push('memoria'); } else aprendizaje = requestBody.values; },
             append: async ({ requestBody }) => { aprendizaje.push(...requestBody.values); eventos.push('aprendizaje'); }
         }

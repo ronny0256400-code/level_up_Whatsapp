@@ -1,6 +1,18 @@
 # Diagnóstico del fallo V2 — 2026-09-17
 
-## Evidencia y alcance
+## Actualización: causa confirmada y corregida localmente
+
+El propietario confirmó `CATALOGO_INVALIDO` en `inventory.catalog`, con stack original en `v2-inventory.js:9:30`, `19:165` y `82:20`. La fila 2 contiene encabezados; el lector anterior pedía A2:G y entregaba esa fila al parser. El texto `STOCK` no pasa la validación numérica y provocaba la excepción antes de atender al cliente.
+
+La corrección lee datos exclusivamente en A3:G y valida encabezados por separado en A2:G2. Usa ID-PRODUCTO, omite filas vacías/invalidas aisladas, admite información vacía y valores numéricos evaluados de fórmulas o celdas monetarias. No consulta DATOS para el catálogo. No modifica escritura de ventas ni transporte.
+
+Validación de esta corrección: antes 333 pruebas (332 aprobadas, 1 omitida); después 348 (347 aprobadas, 0 fallidas, 1 omitida). Se añadieron 15 pruebas y se actualizaron fixtures a encabezados en fila 2/datos desde fila 3. `npm run check` y `git diff --check` aprobados. Sin despliegue.
+
+Archivos de esta corrección: lib/v2-inventory.js; scripts/helpers/inventory-fixture.js; scripts/test-v2-inventory.js; mocks de scripts/test-v2-guia.js y scripts/test-venta-real.js; SPEC.md y este informe. La lógica de GUIA y YCloud permanece intacta.
+
+## Diagnóstico previo (histórico, antes de recibir la excepción)
+
+### Evidencia y alcance
 
 Base local y SHA desplegado en Render: `7c39e65`, confirmado por el usuario. Se contrastó el flujo directamente con ese commit. Los logs adicionales repiten router comercial/nuevo, model_call LOW 185/0, Webhook falló http:null e ingress_retry, sin excepción ni stack. No se accedió a Render ni se desplegó. No se consultaron/modificaron hojas reales ni credenciales.
 

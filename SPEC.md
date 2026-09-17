@@ -8,6 +8,14 @@ Este archivo es la única fuente de verdad funcional del proyecto. Ninguna IA pu
 
 La implementación #1 del Día 1 está autorizada: router, estados compatibles, controles humanos, entrada protegida, privacidad y preparación de pedidos/modelos. El bloque posterior de integración final autoriza registrar ventas y actualizar estados para que Sheets recalcule stock; prohíbe tocar RE-STOCK o DATOS!P y no autoriza el calendario completo de retiro. Conservar funcionalidades que no entren en conflicto con esta especificación.
 
+## Corrección definitiva de catálogo — 2026-09-17
+
+Esta aclaración del propietario prevalece sobre las referencias históricas al catálogo maestro: PAGINA DE STOCK tiene encabezados en fila 2 y datos exclusivamente en A3:G (ID-PRODUCTO, PRODUCTO, CAPACIDAD, COLOR, STOCK, PRECIO, INFORMACION DEL PRODUCTO). ID-PRODUCTO es la clave; la disponibilidad y los atributos de cada variante provienen de esa misma fila, sin consultar DATOS ni estructuras antiguas. Se leen valores evaluados sin formato para admitir fórmulas y precios monetarios de Sheets.
+
+PAGINA DE STOCK se genera mediante fórmulas desde DATOS: se usan sus resultados evaluados, sin interpretar FILTER ni exigir celdas literales. Las columnas auxiliares H:I, incluida «Ultima actualización» en I, quedan fuera del catálogo. En DATOS, los encabezados están en fila 2: B:G son entradas manuales de RE-STOCK y L:R es el catálogo maestro, tablas distintas. REGISTRO DE VENTAS conserva encabezados en fila 4 y datos en B5:W.
+
+Solo se ofrecen variantes válidas con stock mayor que cero. Se omiten filas vacías e inválidas aisladas; información del producto puede estar vacía. Columnas esenciales ausentes o ninguna fila válida producen CATALOGO_INVALIDO. Un catálogo válido con todas sus existencias en cero queda sin disponibilidad. Esta corrección no modifica GUIA, YCloud ni reglas comerciales y no autoriza despliegue.
+
 ## Estados oficiales
 - nuevo
 - interesado
