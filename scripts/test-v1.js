@@ -22,36 +22,33 @@ function entorno() {
     const app = { use() {}, get() {}, post(route, handler) { routes[route] = handler; }, listen() { return { on() {} }; } };
     function express() { return app; } express.json = () => {};
     const env = Object.fromEntries(['OPENAI_API_KEY','VERIFY_TOKEN','PHONE_NUMBER_ID','WHATSAPP_TOKEN','STOCK_SPREADSHEET_ID','MEMORIA_SPREADSHEET_ID'].map(k => [k, 'dummy']));
-    env.ASESOR_WHATSAPP = '593999999999'; env.GOOGLE_SERVICE_ACCOUNT_JSON = '{}';
+    env.ASESOR_WHATSAPP = '593999999999'; env.GOOGLE_SERVICE_ACCOUNT_JSON = '{}'; env.MODEL_LOW='fixture'; env.MODEL_NORMAL='fixture'; env.MODEL_HIGH='fixture';
     const context = vm.createContext({ require(name) {
+        if (name.startsWith('./lib/')) return require('../' + name.slice(2));
+        if (name === 'node:async_hooks') return require(name);
         if (name === './lib/ycloud-webhook') return require('../lib/ycloud-webhook');
         if (name === 'express') return express;
         if (name === 'openai') return class { constructor() { this.responses = { create() { throw new Error('No debe llegar a IA'); } }; } };
         if (name === 'googleapis') return { google: { auth: { GoogleAuth: class {} }, sheets: () => sheets } };
         throw new Error(name);
     }, process: { env }, console: { log() {}, error() {} }, fetch: async (url, args) => { mensajes.push(JSON.parse(args.body)); return { ok: true, text: async () => '{}' }; } });
-    vm.runInContext(fs.readFileSync(path.join(__dirname, '../server.js'), 'utf8') + '\nthis.api = { guardarAprendizaje, anonimizarHistorial };', context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname, '../server.js'), 'utf8') + '\nthis.api = { procesarMensajeV2, guardarAprendizaje, anonimizarHistorial };', context);
     async function comando(text) {
         let status;
-        await routes['/webhook']({ body: { entry: [{ changes: [{ value: { messages: [{ id: `msg-${text}`, from: env.ASESOR_WHATSAPP, type: 'text', text: { body: text } }] } }] }] } }, { sendStatus(code) { status = code; }, status(code) { status = code; return this; }, json() {} });
+        await context.api.procesarMensajeV2({ body: { entry: [{ changes: [{ value: { messages: [{ id: `msg-${text}`, from: env.ASESOR_WHATSAPP, type: 'text', text: { body: text } }] } }] }] } }, { sendStatus(code) { status = code; }, status(code) { status = code; return this; }, json() {} });
         assert.equal(status, 200);
     }
     return { original, memoria, escrituras, mensajes, comando, api: context.api, filas: () => aprendizaje };
 }
 
-test('PAGO busca ID, modifica solo estado y fechaPago y no envía mensajes', async () => {
+test('V2: PAGO no modifica campos ni envía mensajes', async () => {
     const e = entorno();
     await e.comando('PAGO GUIA-OTRA');
-    assert.equal(e.escrituras.length, 0);
     await e.comando('PAGO PED-UNO');
-    const actual = JSON.parse(e.memoria[0][1]);
-    assert.equal(actual.pedido.estado, 'pagado');
-    assert.ok(actual.pedido.fechaPago);
-    delete actual.pedido.fechaPago; actual.pedido.estado = e.original.pedido.estado;
-    assert.deepEqual(actual, e.original);
-    assert.equal(e.mensajes.length, 0);
     await e.comando('PAGO');
-    assert.equal(e.escrituras.length, 1);
+    assert.deepEqual(JSON.parse(e.memoria[0][1]), e.original);
+    assert.equal(e.escrituras.length, 0);
+    assert.equal(e.mensajes.length, 0);
 });
 
 test('LLEGO envía aviso al cliente y termina el webhook', async () => {

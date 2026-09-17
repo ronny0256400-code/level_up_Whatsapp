@@ -1,4 +1,16 @@
-# level_up_Whatsapp
+# Level Up Store — V2, Día 1 / implementación #1
+
+La única fuente funcional es [SPEC.md](SPEC.md). El alcance y las verificaciones de esta entrega están en [IMPLEMENTACION_DIA1.md](IMPLEMENTACION_DIA1.md). Los apartados V1 de abajo se conservan como historial técnico y no autorizan reglas que contradigan SPEC.
+
+Cambios actuales: router previo a IA, toma humana persistida, postventa sin respuesta al cliente, nuevas oportunidades independientes, deduplicación/buffer/rate limit, firma Meta, salidas YCloud protegidas, pedidos multilínea y límite de $300, métricas privadas y modelos por entorno. PAGO y RETIRADO ya no ejecutan acciones.
+
+Configurar `MODEL_LOW`, `MODEL_NORMAL`, `MODEL_HIGH`, `WHATSAPP_APP_SECRET` y el número real `WHATSAPP_BUSINESS_NUMBER`, además de las variables existentes. `MODEL_TRANSCRIPTION` selecciona el modelo de audio. No hay modelos de Responses predeterminados: una configuración incompleta impide el flujo que los necesita. Consultar `.env.example`, sin subir `.env`.
+
+`TEST_MODE=true` sustituye Sheets y OpenAI por adaptadores de memoria y bloquea los envíos reales, incluidos los avisos administrativos. No cargar credenciales reales para pruebas automáticas. `npm test` ejecuta la suite simulada completa; la prueba HTTP de YCloud requiere poder escuchar en localhost. `npm run test:integrations` es un diagnóstico externo separado y no forma parte de esa suite.
+
+La recepción crea `ENTRADAS_V2` dentro del spreadsheet de memoria para mensajes pendientes/IDs. No escribe stock. Sigue siendo necesario operar con **una sola instancia Node**: los bloqueos entre procesos y las transacciones de inventario corresponden a trabajo posterior.
+
+## Documentación histórica V1
 
 Bot de WhatsApp de Level Up Store. Recibe el webhook de Meta, consulta stock y
 memoria en Google Sheets y usa OpenAI para atención y transcripción de audios.
@@ -296,3 +308,11 @@ La clasificación de retiro solo acepta localmente expresiones completas; el
 resto usa semántica con prioridad SOLICITA. “Ya lo tengo claro” y “ya tengo la
 guía” no significan pago. Un vencimiento de 72 horas sigue teniendo prioridad
 sobre todo mensaje y no depende del horario de recordatorios.
+
+### Inventario final y GUIA V2
+
+GUIA registra todas las líneas en REGISTRO DE VENTAS con estado `enviado`;
+Sheets recalcula el stock. El backend no escribe DATOS!P ni RE-STOCK.
+Incluye revalidación integral, recuperación de escrituras inciertas y exclusión
+entre pedidos dentro de una instancia Node. El aviso de envío precede al silencio
+por atención humana. Detalles, límites y pruebas en [IMPLEMENTACION_INVENTARIO.md](IMPLEMENTACION_INVENTARIO.md).

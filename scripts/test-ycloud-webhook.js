@@ -12,7 +12,7 @@ const { createYCloudWebhook } = require('../lib/ycloud-webhook');
 test('YCloud y Meta conviven en el servidor real con dependencias simuladas', async t => {
   const secretFixture = 'local-test-signing-secret';
   let secret = secretFixture;
-  const logs = [];
+  const logs = [], queued = [];
   const clock = Date.now();
   const app = express();
   // Load real route registration and Meta handlers without starting production.
@@ -22,13 +22,16 @@ test('YCloud y Meta conviven en el servidor real con dependencias simuladas', as
   const env = Object.fromEntries(['OPENAI_API_KEY', 'VERIFY_TOKEN', 'PHONE_NUMBER_ID',
     'WHATSAPP_TOKEN', 'STOCK_SPREADSHEET_ID', 'MEMORIA_SPREADSHEET_ID', 'ASESOR_WHATSAPP']
     .map(name => [name, 'fixture']));
-  env.GOOGLE_SERVICE_ACCOUNT_JSON = '{}';
+  env.GOOGLE_SERVICE_ACCOUNT_JSON = '{}'; env.WHATSAPP_APP_SECRET='fixture'; env.MODEL_LOW='fixture';env.MODEL_NORMAL='fixture';env.MODEL_HIGH='fixture';
   const forbidden = () => assert.fail('El webhook no debe llamar a dependencias externas');
   const context = vm.createContext({ process: { env }, console: { log() {}, error() {} },
     fetch: forbidden, require(name) {
+      if(name==='node:async_hooks') return require(name);
+      if(name==='./lib/v2-ingress') return {...require('../lib/v2-ingress'),createIngress:()=>({accept:async m=>queued.push(m)})};
+      if(name.startsWith('./lib/') && name!=='./lib/ycloud-webhook') return require('../'+name.slice(2));
       if (name === 'express') return mockExpress;
       if (name === './lib/ycloud-webhook') return {
-        createYCloudWebhook: () => createYCloudWebhook({ getSecret: () => secret, log: entry => logs.push(entry), now: () => clock })
+        createYCloudWebhook: options => createYCloudWebhook({ ...options, getSecret: () => secret, log: entry => logs.push(entry), now: () => clock })
       };
       if (name === 'openai') return class { constructor() { this.responses = { create: forbidden }; } };
       if (name === 'googleapis') return { google: { auth: { GoogleAuth: class {} },
@@ -42,7 +45,7 @@ test('YCloud y Meta conviven en el servidor real con dependencias simuladas', as
   t.after(() => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }));
   const base = `http://127.0.0.1:${server.address().port}`;
   const inbound = { type: 'whatsapp.inbound_message.received', createTime: new Date(clock).toISOString(),
-    whatsappInboundMessage: { id: 'wim-test', from: '+593999123456', text: { body: 'CONTENIDO PRIVADO' } } };
+    whatsappInboundMessage: { id: 'wim-test', from: '+593999123456', type: 'text', text: { body: 'CONTENIDO PRIVADO' } } };
   function signature(body, timestamp = Math.floor(clock / 1000)) {
     return `t=${timestamp},s=${createHmac('sha256', secretFixture).update(`${timestamp}.${body}`).digest('hex')}`;
   }
@@ -53,6 +56,8 @@ test('YCloud y Meta conviven en el servidor real con dependencias simuladas', as
   await t.test('POST inbound válido: 200 y metadatos seguros', async () => {
     const response = await post(JSON.stringify(inbound, null, 2));
     assert.equal(response.status, 200);
+    assert.equal(queued.at(-1).text.body, 'CONTENIDO PRIVADO');
+    assert.equal(queued.at(-1).provider, 'ycloud');
     assert.deepEqual(await response.json(), { received: true, ignored: false });
     const entry = logs.at(-1);
     assert.equal(entry.eventType, inbound.type);
@@ -112,10 +117,13 @@ test('YCloud y Meta conviven en el servidor real con dependencias simuladas', as
     assert.equal(logs.at(-1).messageId, null);
     assert.equal(logs.at(-1).sender, null);
   });
-  await t.test('Meta GET inválido y POST existente mantienen su comportamiento', async () => {
+  await t.test('Meta GET inválido y POST requiere firma válida', async () => {
     assert.equal((await fetch(base + '/webhook?hub.mode=subscribe&hub.verify_token=wrong')).status, 403);
     assert.equal((await fetch(base + '/webhook', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ entry: [] }) })).status, 200);
+      body: JSON.stringify({ entry: [] }) })).status, 401);
+    const body=JSON.stringify({entry:[]});
+    const signature='sha256='+createHmac('sha256','fixture').update(body).digest('hex');
+    assert.equal((await fetch(base+'/webhook',{method:'POST',headers:{'Content-Type':'application/json','X-Hub-Signature-256':signature},body})).status,200);
     assert.equal((await post(JSON.stringify(inbound))).status, 200);
   });
 });

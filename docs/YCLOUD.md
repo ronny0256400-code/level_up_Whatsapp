@@ -1,91 +1,34 @@
-# Recepción inicial de YCloud
+# YCloud — recepción protegida V2
 
-`POST /ycloud/webhook` solo valida y registra metadatos. No llama a OpenAI,
-Sheets ni WhatsApp, no crea pedidos y no envía respuestas a clientes.
-`/webhook` de Meta conserva sus handlers y su parser JSON.
+`POST /ycloud/webhook` verifica firma y entrega mensajes al mismo inbox/router V2 que Meta. Ya no envía “YCloud conectado correctamente”. No existe una respuesta de conectividad que evada estados, toma humana o NO_CONTACTAR.
 
-## Configuración y firma
+## Firma y códigos HTTP
 
-Configurar `YCLOUD_WEBHOOK_SECRET` en el entorno del proceso. No es una API key:
-debe coincidir con el secreto de firma del endpoint configurado en YCloud.
-El módulo no lee archivos de entorno ni muestra el secreto.
+Configurar `YCLOUD_WEBHOOK_SECRET` sin incluirlo en código ni logs. Se valida `YCloud-Signature: t=<segundos Unix>,s=<HMAC hexadecimal>` sobre timestamp, punto y cuerpo original, con SHA-256 y comparación de tiempo constante. Ventana local de cinco minutos; un solo timestamp y una o varias firmas.
 
-Se valida `YCloud-Signature: t=<segundos Unix>,s=<HMAC hexadecimal>` sobre
-`timestamp + '.' + cuerpo original`, con SHA-256 y comparación de tiempo
-constante, conforme a la [documentación de YCloud](https://docs.ycloud.com/reference/configure-webhooks).
-Se aceptan múltiples firmas `s` y un solo `t`. La política local rechaza
-timestamps a más de 5 minutos, en el pasado o futuro; mantener el reloj del
-servidor sincronizado. El timestamp de firma no es createTime del evento.
+- 200: evento autenticado aceptado, duplicado o ignorado.
+- 400: cuerpo o estructura inválida.
+- 401: firma incorrecta/ausente o fuera de ventana.
+- 413: cuerpo superior a 256 KiB.
+- 415: contenido no JSON o compresión no admitida.
+- 503: secreto ausente o no se pudo persistir la recepción.
 
-| Caso | HTTP |
-| --- | --- |
-| Evento soportado válido y firmado | 200 |
-| Evento desconocido válido y firmado | 200, ignored: true |
-| Body vacío, JSON inválido o estructura inválida | 400 |
-| Firma ausente, incorrecta o timestamp fuera de ventana | 401 |
-| Body superior a 256 KiB | 413 |
-| Content-Type no JSON o compresión no admitida | 415 |
-| YCLOUD_WEBHOOK_SECRET ausente | 503 |
+Eventos: `whatsapp.inbound_message.received` y `whatsapp.message.updated`. Solo los entrantes se entregan al inbox; estados de salida no disparan conversaciones. El cliente normalizado utiliza `wamid` si existe, y en su defecto `id`. Evitar suscripciones duplicadas de proveedores con identificadores diferentes para el mismo mensaje.
 
-La firma se comprueba antes de interpretar JSON. En solicitudes con varios
-errores se devuelve el primer error detectado. No se confirma con 200 un
-evento sin autenticar. YCloud puede reintentar respuestas no 2xx.
+## Flujo y salidas
 
-Eventos soportados: `whatsapp.inbound_message.received` (objeto
-`whatsappInboundMessage`) y `whatsapp.message.updated` (objeto `whatsappMessage`).
-Los logs incluyen tipo, id o wamid, remitente enmascarado (solo últimos cuatro
-dígitos), fecha de recepción y fecha del evento si es válida. No incluyen texto,
-multimedia, nombres, payload completo, headers de autorización ni firma.
-No hay persistencia ni deduplicación en esta etapa; un reintento puede producir
-otra línea de log.
+Firma → normalización → protección de eco → deduplicación persistida → límite 20/minuto → buffer 5 segundos → router común → guarda final de salida. La administración no espera el buffer comercial. La llamada al receptor solo confirma aceptación duradera, no entrega de una respuesta.
 
-## Pruebas locales sin credenciales reales ni chatbot
+Texto de clientes YCloud se envía mediante `lib/ycloud-client.js` con `YCLOUD_API_KEY` y `YCLOUD_PHONE_NUMBER`. El adaptador exige una guarda explícita; sin ella rechaza enviar. El servidor vuelve a consultar estado antes del envío. Las alertas al administrador mantienen el transporte Meta existente.
 
-```sh
-npm run test:ycloud
-```
+Imágenes/documentos no se interpretan. El flujo de audio YCloud aún no descarga su URL: solicita texto únicamente cuando el router permite respuesta; un audio declarado mayor a tres minutos recibe la respuesta fija de límite. La transcripción de audio Meta sigue disponible con duración verificada. Videos por YCloud no se implementan en este bloque: se registra el error técnico y continúa la información textual, sin marcar video enviado.
 
-Para probar con HTTP manualmente, iniciar solo el receptor en una terminal:
+`TEST_MODE=true` bloquea salidas reales de ambos proveedores. No cargar `.env` en pruebas automáticas.
 
-```sh
-YCLOUD_WEBHOOK_SECRET=local-test node -e 'const express=require("express"); const app=express(); app.post("/ycloud/webhook",require("./lib/ycloud-webhook").createYCloudWebhook()); app.listen(3001,"127.0.0.1");'
-```
+## Persistencia y pruebas
 
-En otra terminal, enviar un evento ficticio firmado con ese secreto de prueba:
+Sheets conserva `ENTRADAS_V2` para inbox/IDs y `MEMORIA` para oportunidades y controles. Los logs del receptor solo incluyen metadatos minimizados y remitente enmascarado; nunca texto, multimedia, firma o credenciales.
 
-```sh
-node <<'NODE'
-const { createHmac } = require('node:crypto');
-const timestamp = Math.floor(Date.now() / 1000);
-const body = JSON.stringify({
-  type: 'whatsapp.inbound_message.received',
-  createTime: new Date().toISOString(),
-  whatsappInboundMessage: { id: 'local-message', from: '+593999123456' }
-});
-const signature = createHmac('sha256', 'local-test')
-  .update(`${timestamp}.${body}`).digest('hex');
-fetch('http://127.0.0.1:3001/ycloud/webhook', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json', 'YCloud-Signature': `t=${timestamp},s=${signature}` },
-  body
-}).then(async response => console.log(response.status, await response.json()));
-NODE
-```
+Ejecutar `npm run test:ycloud` para HTTP/firma con dependencias simuladas y `npm run test:v2` para guardas, router e inbox. La prueba HTTP necesita puerto localhost. Ejecutar `npm test` para toda la suite automática.
 
-Resultado esperado: `200 { received: true, ignored: false }`. Estos comandos
-no leen .env ni usan credenciales existentes. Detener el receptor con Ctrl+C.
-
-## Render
-
-El endpoint usa el servidor existente y su variable PORT. No requiere nuevas
-dependencias ni cambios al comando `npm start`. Antes de recibir tráfico real:
-
-1. Configurar YCLOUD_WEBHOOK_SECRET en las variables de entorno del servicio.
-2. Desplegar esta versión.
-3. Registrar en YCloud `https://<servicio>.onrender.com/ycloud/webhook` y suscribir
-   los dos eventos soportados con firma habilitada.
-4. Enviar un evento de prueba desde YCloud y verificar el HTTP y los metadatos.
-
-El código está preparado para Render; no se ha desplegado ni probado contra
-YCloud real en esta etapa. La velocidad de entrega también depende de que el
-servicio Render esté activo; un servicio suspendido puede requerir reintentos.
+Render usa el servidor y PORT existentes. Este cambio no despliega ni configura servicios remotos. Ver [SPEC.md](../SPEC.md) e [IMPLEMENTACION_DIA1.md](../IMPLEMENTACION_DIA1.md) para alcance y límites actuales.

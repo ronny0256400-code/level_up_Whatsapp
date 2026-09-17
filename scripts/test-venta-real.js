@@ -12,16 +12,18 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
         get: async () => ({ data: { sheets: creada ? [{ properties: { title: 'APRENDIZAJE' } }] : [] } }),
         batchUpdate: async () => { creada = true; },
         values: {
-            get: async ({ range }) => ({ data: { values: range.startsWith('APRENDIZAJE') ? aprendizaje : range.startsWith('MEMORIA') ? memoria : [['1','iPad Air 1','32 GB','1','$100','SI','Para lectura; incluye cable']] } }),
-            update: async ({ range, requestBody }) => { if (range.startsWith('MEMORIA')) { memoria = requestBody.values; eventos.push('memoria'); } else aprendizaje = requestBody.values; },
+            get: async ({ range }) => ({ data: { values: range.startsWith('APRENDIZAJE') ? aprendizaje : range.startsWith('MEMORIA') ? memoria : [['IPADAIR1-32-PLA','iPad Air 1','32 GB','plateado',20,100,'Para lectura; incluye cable']] } }),
+            update: async ({ range, requestBody }) => { if (range.startsWith('MEMORIA')) { requestBody.values.forEach((row,i)=>{memoria[Number(range.match(/A(\d+)/)[1])-2+i]=row;}); eventos.push('memoria'); } else aprendizaje = requestBody.values; },
             append: async ({ requestBody }) => { aprendizaje.push(...requestBody.values); eventos.push('aprendizaje'); }
         }
     } };
     const routes = {}; const app = { use() {}, get() {}, post(r,h) { routes[r]=h; }, listen() { return { on() {} }; } };
     function express() { return app; } express.json = () => {};
     const env = Object.fromEntries(['OPENAI_API_KEY','VERIFY_TOKEN','PHONE_NUMBER_ID','WHATSAPP_TOKEN','STOCK_SPREADSHEET_ID','MEMORIA_SPREADSHEET_ID'].map(k => [k,'dummy']));
-    env.ASESOR_WHATSAPP='000000000001'; env.GOOGLE_SERVICE_ACCOUNT_JSON='{}'; env.IPAD_AIR_1_VIDEO_MEDIA_ID=video;
+    env.ASESOR_WHATSAPP='000000000001'; env.GOOGLE_SERVICE_ACCOUNT_JSON='{}'; env.MODEL_LOW='fixture'; env.MODEL_NORMAL='fixture'; env.MODEL_HIGH='fixture'; env.IPAD_AIR_1_VIDEO_MEDIA_ID=video;
     const context = vm.createContext({ require(name) {
+        if (name.startsWith('./lib/')) return require('../' + name.slice(2));
+        if (name === 'node:async_hooks') return require(name);
         if (name === './lib/ycloud-webhook') return require('../lib/ycloud-webhook');
         if (name === 'node:crypto') return require(name);
         if (name === 'express') return express;
@@ -38,7 +40,7 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
                 return { output_text: control.etiqueta };
             }
             if (args.text && !args.input.some(m => m.role === 'user' && /datos/.test(m.content))) return { output_text: 'null' };
-            if (args.text) return { output_text: JSON.stringify({ nombre:'Persona Ficticia',cedula:'0000000000',telefono:'000000000002',provincia:'Prueba',ciudad:'Prueba',producto:'iPad Air 1',variante:'32 GB',cantidad:1,precio:100 }) };
+            if (args.text) return { output_text: JSON.stringify({ id_producto:'IPADAIR1-32-PLA',nombre:'Persona Ficticia',cedula:'0000000000',telefono:'000000000002',provincia:'Prueba',ciudad:'Prueba',producto:'iPad Air 1',variante:'32 GB',cantidad:1,precio:100 }) };
             prompts.push(args.instructions); return { output_text: respuestas.shift() || 'Gracias, continuamos.' };
         } }; } };
         throw Error(name);
@@ -49,14 +51,14 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
         const fallo = (asesor && falloAsesor) || (body.type === 'video' && falloVideo) || (!asesor && body.type === 'text' && falloCliente);
         return { ok: !fallo, status: fallo ? 500 : 200, text: async () => sinJson ? '<html>error</html>' : JSON.stringify({ error: { code: 131000, message:'Persona Ficticia 000000000002' } }) };
     } });
-    vm.runInContext(fs.readFileSync(path.join(__dirname,'../server.js'),'utf8')+'\nthis.api={conversaciones,esConfirmacionAfirmativa};',context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname,'../server.js'),'utf8')+'\nthis.api={procesarMensajeV2,conversaciones,esConfirmacionAfirmativa};',context);
     async function turno(texto, respuesta, id = `msg-${++secuencia}`, esperado = 200) {
         if (respuesta) respuestas.push(respuesta);
         let status;
-        await routes['/webhook']({ body:{entry:[{changes:[{value:{messages:[{id,from:'000000000002',type:'text',text:{body:texto}}]}}]}]} },{ sendStatus(code) { status=code; }, status(code) { status=code; return this; }, json() {} });
+        await context.api.procesarMensajeV2({ body:{entry:[{changes:[{value:{messages:[{id,from:'000000000002',type:'text',text:{body:texto}}]}}]}]} },{ sendStatus(code) { status=code; }, status(code) { status=code; return this; }, json() {} });
         assert.equal(status,esperado);
     }
-    return { control, turno, eventos, mensajes, logs, prompts, api:context.api, memoria:()=>JSON.parse(memoria[0][1]), aprendizaje:()=>aprendizaje };
+    return { control, turno, eventos, mensajes, logs, prompts, api:context.api, memoria:()=>JSON.parse(memoria.find(row=>row[0]==='000000000002')[1]), aprendizaje:()=>aprendizaje };
 }
 
 test('turno A persiste espera; turno B confirma sin frase de IA, incluso recargando MEMORIA', async () => {
@@ -180,7 +182,8 @@ for (const [frase,etiqueta] of [
         const e=entorno(); await e.turno('Estos son mis datos');
         e.control.etiqueta=etiqueta; await e.turno(frase);
         assert.ok(!e.memoria().pedido);
-        assert.equal(e.control.llamadasClasificador,1);
+        assert.equal(e.control.llamadasClasificador, frase === 'no quiero comprar' ? 0 : 1);
+        if (frase === 'no quiero comprar') assert.equal(e.memoria().estado, 'no_interesado');
     });
 }
 test('sin espera perfecto no crea pedido ni consulta clasificador', async () => {

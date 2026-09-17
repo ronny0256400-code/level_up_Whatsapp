@@ -9,7 +9,7 @@ const BASE = '2026-09-14T15:00:00.000Z'; // Lunes 10:00 America/Guayaquil.
 function venta(estado = 'confirmado') {
     return { confirmado: true, datosCliente: { nombre: 'Persona de Prueba', telefono: CLIENTE, cedula: '0000000000', provincia: 'Prueba', ciudad: 'Prueba' },
         historial: [{ role: 'user', content: 'Historial sintético conservado' }], extra: { preservar: true },
-        pedido: { id: 'PED-PRUEBA', estado, producto: 'Equipo de prueba', variante: '32 GB', precio: 100, cantidad: 1,
+        pedido: { id: 'PED-PRUEBA', id_producto: 'EQUIPO', estado, producto: 'Equipo de prueba', variante: '32 GB', precio: 100, cantidad: 1,
             guia: estado === 'confirmado' ? null : 'GUIA-PRUEBA', fechaConfirmacion: BASE,
             fechaLlegada: estado === 'disponible_retiro' ? BASE : null,
             fechaPago: null, seguimientoRetiro: estado === 'disponible_retiro', proximaVerificacionRetiro: '2026-09-14T17:00:00.000Z' } };
@@ -23,10 +23,11 @@ function entorno({ inicial = venta(), disco, ahora = BASE } = {}) {
     const app = { use() {}, get(r,h) { routes[`GET ${r}`]=h; }, post(r,h) { routes[r]=h; }, listen() { return { on() {} }; } };
     function express() { return app; } express.json = () => {};
     const env = Object.fromEntries(['OPENAI_API_KEY','VERIFY_TOKEN','PHONE_NUMBER_ID','WHATSAPP_TOKEN','STOCK_SPREADSHEET_ID','MEMORIA_SPREADSHEET_ID'].map(k=>[k,'dummy']));
-    env.ASESOR_WHATSAPP=ADMIN; env.GOOGLE_SERVICE_ACCOUNT_JSON='{}';
-    const sheets = { spreadsheets: { values: {
+    env.ASESOR_WHATSAPP=ADMIN; env.GOOGLE_SERVICE_ACCOUNT_JSON='{}'; env.MODEL_LOW='fixture'; env.MODEL_NORMAL='fixture'; env.MODEL_HIGH='fixture';
+    const inventoryMock = require('./helpers/inventory-fixture').inventoryFixture().sheets;
+    const sheets = { spreadsheets: { get: inventoryMock.spreadsheets.get, batchUpdate: inventoryMock.spreadsheets.batchUpdate, values: {
         get: async ({ range }) => {
-            if (!range.startsWith('MEMORIA')) { control.stock++; return { data: { values: [] } }; }
+            if (!range.startsWith('MEMORIA')) { control.stock++; return inventoryMock.spreadsheets.values.get({range}); }
             return { data: { values: clone(almacen.rows) } };
         },
         update: async ({ range, requestBody }) => {
@@ -43,6 +44,8 @@ function entorno({ inicial = venta(), disco, ahora = BASE } = {}) {
     const context=vm.createContext({ Date:Reloj, process:{env}, console:{log:(...x)=>logs.push(x),error:(...x)=>logs.push(x)},
         setInterval(fn,ms) { control.intervalos.push({fn,ms}); return {unref(){}}; },
         require(name) {
+            if(name.startsWith('./lib/')) return require('../'+name.slice(2));
+            if(name==='node:async_hooks') return require(name);
             if(name==='./lib/ycloud-webhook') return require('../lib/ycloud-webhook');
             if(name==='express') return express;
             if(name==='node:crypto') return require(name);
@@ -65,12 +68,12 @@ function entorno({ inicial = venta(), disco, ahora = BASE } = {}) {
             return {ok:!control.falloEnvio,status:control.falloEnvio?500:200,text:async()=>control.falloEnvio?'error':'{}'};
         }
     });
-    vm.runInContext(fs.readFileSync(path.join(__dirname,'../server.js'),'utf8')+'\nthis.api={revisarSeguimientos,interpretarHorarioRetiro,siguienteHorarioOperativo,sigueRetiro,iniciarSchedulerRetiro,conversaciones};',context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname,'../server.js'),'utf8')+'\nthis.api={procesarMensajeV2,revisarSeguimientos,interpretarHorarioRetiro,siguienteHorarioOperativo,sigueRetiro,iniciarSchedulerRetiro,conversaciones};',context);
     let serial=0;
     async function mensaje(texto,{admin=false,tipo='text',id,esperado=200,from=CLIENTE}={}) {
         const m={id:id||`msg-${++serial}`,from:admin?ADMIN:from,type:tipo,text:{body:texto},audio:{id:'media-sintetico'},image:{id:'imagen-sintetica'}};
         let status;
-        await routes['/webhook']({body:{entry:[{changes:[{value:{messages:[m]}}]}]}},{sendStatus(c){status=c;},status(c){status=c;return this;},json(){}});
+        await context.api.procesarMensajeV2({body:{entry:[{changes:[{value:{messages:[m]}}]}]}},{sendStatus(c){status=c;},status(c){status=c;return this;},json(){}});
         assert.equal(status,esperado);
     }
     return {almacen,control,enviados,logs,env,api:context.api,mensaje,
@@ -80,13 +83,13 @@ function entorno({ inicial = venta(), disco, ahora = BASE } = {}) {
         clientes:()=>enviados.filter(m=>m.to===CLIENTE), asesores:()=>enviados.filter(m=>m.to===ADMIN),
         reiniciar:()=>entorno({disco:almacen,ahora:new Date(control.ahora).toISOString()})};
 }
-async function llegada() {const e=entorno();await e.mensaje('GUIA PED-PRUEBA GUIA-PRUEBA',{admin:true});await e.mensaje('LLEGO GUIA-PRUEBA',{admin:true});return e;}
+async function llegada() {const e=entorno();await e.mensaje('GUIA PED-PRUEBA GUIA-PRUEBA',{admin:true});await e.mensaje(`LIBERAR ${CLIENTE}`,{admin:true});await e.mensaje('LLEGO GUIA-PRUEBA',{admin:true});return e;}
 
 for(const [nombre,verifica] of [
  ['guía correcta',c=>assert.equal(c.pedido.guia,'GUIA-PRUEBA')],
  ['estado enviado',c=>assert.equal(c.pedido.estado,'enviado')],
  ['fechaEnvio actual',c=>assert.equal(c.pedido.fechaEnvio,BASE)],
- ['preserva cliente, historial y campos restantes',c=>{const esperado=venta();delete c.pedido.guia;delete c.pedido.estado;delete c.pedido.fechaEnvio;delete esperado.pedido.guia;delete esperado.pedido.estado;assert.deepEqual(c,esperado);}]
+ ['preserva cliente, historial y campos restantes',c=>{const esperado=venta();assert.equal(c.estado,'enviado');assert.equal(c.human_takeover,true);assert.equal(c.human_reason,'guia');assert.equal(c.estado_previo_humano,'enviado');assert.equal(c.pedido.sales_registered,true);assert.deepEqual(c.pedido.sales_rows,[5]);assert.equal(c.pedido.avisoGuia.estado,'enviada');assert.equal(c.pedido.avisoGuia.intentos,1);delete c.human_takeover;delete c.human_reason;delete c.estado_previo_humano;delete c.pedido.sales_registered;delete c.pedido.sales_rows;delete c.pedido.avisoGuia;delete c.estado;delete c.pedido.guia;delete c.pedido.estado;delete c.pedido.fechaEnvio;delete esperado.pedido.guia;delete esperado.pedido.estado;assert.deepEqual(c,esperado);}]
 ]) test(`GUIA: ${nombre}`,async()=>{const e=entorno();await e.mensaje('GUIA PED-PRUEBA GUIA-PRUEBA',{admin:true});verifica(e.actual());assert.equal(e.control.api,0);});
 test('GUIA repetida no duplica pedido ni aviso',async()=>{const e=entorno();await e.mensaje('GUIA PED-PRUEBA GUIA-PRUEBA',{admin:true});const c=e.actual();await e.mensaje('GUIA PED-PRUEBA GUIA-PRUEBA',{admin:true});assert.deepEqual(e.actual(),c);assert.equal(e.clientes().length,1);});
 for(const [nombre,verifica] of [
@@ -126,10 +129,13 @@ for(const frase of ['Sí, ya retiré','Ya lo retiré','Ya tengo el equipo','Sí,
 test('semántica de retiro solo en disponible y etiqueta inequívoca',async()=>{const e=entorno({inicial:venta('disponible_retiro')});e.control.etiqueta='RETIRADO';await e.mensaje('Ahora está en mis manos');assert.equal(e.actual().pedido.estado,'pagado');assert.equal(e.control.api,1);});
 test('ambiguo pregunta y conserva pendiente',async()=>{const e=entorno({inicial:venta('disponible_retiro')});await e.mensaje('creo que sí');assert.equal(e.actual().pedido.estado,'disponible_retiro');assert.equal(e.asesores().length,0);assert.match(e.clientes()[0].text.body,/confirmas/);});
 test('fuera de disponible ya lo tengo no se interpreta como pago',async()=>{const e=entorno({inicial:venta('enviado')});await e.mensaje('ya lo tengo');assert.equal(e.actual().pedido.estado,'enviado');assert.equal(e.asesores().length,0);});
-test('PAGO por ID preserva todos los campos, cancela efectivamente y es idempotente',async()=>{const inicial=venta('disponible_retiro');const e=entorno({inicial});await e.mensaje('PAGO PED-PRUEBA',{admin:true});const c=e.actual();assert.equal(c.pedido.estado,'pagado');assert.equal(c.pedido.fechaPago,BASE);assert.equal(e.api.sigueRetiro(c.pedido),false);c.pedido.estado=inicial.pedido.estado;c.pedido.fechaPago=null;assert.deepEqual(c,inicial);const escrituras=e.control.escritura;await e.mensaje('PAGO PED-PRUEBA',{admin:true});assert.equal(e.control.escritura,escrituras);assert.equal(e.enviados.length,0);assert.equal(e.control.api,0);e.tiempo('2026-09-18T15:00:00Z');await e.tick();assert.equal(e.actual().pedido.estado,'pagado');});
-test('RETIRADO por guía es alias pagado, nunca retirado',async()=>{const e=entorno({inicial:venta('disponible_retiro')});await e.mensaje('RETIRADO GUIA-PRUEBA',{admin:true});assert.equal(e.actual().pedido.estado,'pagado');assert.equal(e.actual().pedido.fechaPago,BASE);assert.equal(e.api.sigueRetiro(e.actual().pedido),false);});
-for(const estado of ['pagado','sin_respuesta'])for(const tipo of ['text','audio','image','video'])test(`bloqueo persistente ${estado} + ${tipo}`,async()=>{const c=venta(estado);const e=entorno({inicial:c});const r=e.reiniciar();await r.mensaje('hola quiero comprar',{tipo});assert.equal(r.control.api,0);assert.equal(r.control.audio,0);assert.equal(r.control.stock,0);assert.equal(r.enviados.length,0);assert.equal(r.control.escritura,0);assert.deepEqual(r.actual(),c);});
-test('pagado jamás vence a sin respuesta ni reabre por GUIA/LLEGO',async()=>{const e=entorno({inicial:venta('pagado')});e.tiempo('2026-09-25T15:00:00Z');await e.tick();await e.mensaje('GUIA PED-PRUEBA OTRA',{admin:true});await e.mensaje('LLEGO GUIA-PRUEBA',{admin:true});assert.equal(e.actual().pedido.estado,'pagado');assert.equal(e.enviados.length,0);});
+for (const command of ['PAGO PED-PRUEBA','RETIRADO GUIA-PRUEBA']) test(`V2: comando obsoleto ${command} no cambia estado`, async()=> {
+    const inicial=venta('disponible_retiro'), e=entorno({inicial});
+    await e.mensaje(command,{admin:true}); await e.mensaje(command,{admin:true});
+    assert.deepEqual(e.actual(),inicial);assert.equal(e.control.escritura,0);assert.equal(e.enviados.length,0);assert.equal(e.control.api,0);
+});
+for(const estado of ['pagado','sin_respuesta'])for(const tipo of ['text','audio','image','video'])test(`bloqueo persistente ${estado} + ${tipo}`,async()=>{const c=venta(estado);const e=entorno({inicial:c});const r=e.reiniciar();await r.mensaje('hola',{tipo});assert.equal(r.control.api,0);assert.equal(r.control.audio,0);assert.equal(r.control.stock,0);assert.equal(r.enviados.length,0);assert.deepEqual(r.actual().pedido,c.pedido);if(tipo==='text')assert.ok(r.actual().last_customer_message_at);else assert.equal(r.control.escritura,0);});
+test('pagado jamás vence a sin respuesta ni reabre por GUIA/LLEGO',async()=>{const e=entorno({inicial:venta('pagado')});e.tiempo('2026-09-25T15:00:00Z');await e.tick();await e.mensaje('GUIA PED-PRUEBA OTRA',{admin:true});await e.mensaje('LLEGO GUIA-PRUEBA',{admin:true});assert.equal(e.actual().pedido.estado,'pagado');assert.equal(e.clientes().length,0);assert.equal(e.asesores().length,1);assert.match(e.asesores()[0].text.body,/GUIA_CONFLICTIVA/);});
 test('sin respuesta no se convierte automáticamente a pagado ni nueva venta',async()=>{const e=entorno({inicial:venta('sin_respuesta')});await e.mensaje('ya retiré');await e.mensaje('PAGO PED-PRUEBA',{admin:true});await e.mensaje('LLEGO GUIA-PRUEBA',{admin:true});assert.equal(e.actual().pedido.estado,'sin_respuesta');assert.equal(e.enviados.length,0);});
 test('dos schedulers concurrentes no duplican recordatorio',async()=>{const e=entorno({inicial:venta('disponible_retiro'),ahora:'2026-09-14T17:00:00Z'});await Promise.all([e.tick(),e.tick()]);assert.equal(e.clientes().length,1);assert.equal(e.actual().pedido.ultimoRecordatorio,'2026-09-14T17:00:00.000Z');assert.equal(e.control.api,0);});
 test('doble confirmación simultánea no duplica pago ni alerta',async()=>{const e=entorno({inicial:venta('disponible_retiro')});await Promise.all([e.mensaje('ya retiré'),e.mensaje('ya retiré')]);assert.equal(e.asesores().length,1);assert.equal(e.actual().pedido.estado,'pagado');});
@@ -258,9 +264,9 @@ test('un cliente lento no bloquea otro webhook ni su scheduler',async()=>{
         assert.equal(e.enviados.filter(m=>m.to===segundo).length,2);
     } finally {liberar();await lento;}
 });
-test('PAGO y scheduler del mismo cliente no sobrescriben el estado terminal',async()=>{
+test('confirmación de retiro y scheduler del mismo cliente no sobrescriben el estado terminal',async()=>{
     const e=entorno({inicial:venta('disponible_retiro'),ahora:'2026-09-14T17:00:00Z'});
-    await Promise.all([e.tick(),e.mensaje('PAGO PED-PRUEBA',{admin:true})]);
+    await Promise.all([e.tick(),e.mensaje('ya retiré')]);
     assert.equal(e.actual().pedido.estado,'pagado');
     const n=e.enviados.length;e.control.ahora+=7200000;await e.tick();assert.equal(e.enviados.length,n);
 });
