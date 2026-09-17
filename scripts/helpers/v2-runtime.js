@@ -18,9 +18,9 @@ function runtime(options = {}) {
     require(name){
       if(name==='express')return express;
       if(name==='googleapis')return{google:{auth:{GoogleAuth:class{}},sheets:()=>sheets}};
-      if(name==='openai')return class{constructor(){this.responses={create:async args=>{calls.push(args);return{output_text:args.text?JSON.stringify(control.data):args.instructions.startsWith('Clasifica únicamente intención')?'NO_SOLICITA':args.instructions.startsWith('Clasifica únicamente retiro')?'AMBIGUO':'Respuesta sintética',usage:{input_tokens:10,output_tokens:3}};}};this.audio={transcriptions:{create:async()=>{control.audio++;throw Error('No transcribir');}}};}};
+      if(name==='openai')return class{constructor(){this.responses={create:async args=>{calls.push(args);if(options.respond)return options.respond(args);return{output_text:args.text?JSON.stringify(control.data):args.instructions.startsWith('Clasifica únicamente intención')?'NO_SOLICITA':args.instructions.startsWith('Clasifica únicamente retiro')?'AMBIGUO':'Respuesta sintética',usage:{input_tokens:10,output_tokens:3}};}};this.audio={transcriptions:{create:async()=>{control.audio++;throw Error('No transcribir');}}};}};
       if(name==='./lib/v2-ingress')return{...require('../../lib/v2-ingress'),createIngress:opts=>createIngress({...opts,now:()=>control.time,delay:(fn,ms)=>{timers.push({fn,ms});return{};}})};
-      if(name==='./lib/ycloud-client')return{enviarMensajeYCloud:async(to,text,{canSend})=>{if(!await canSend(to))return false;sent.push({to,text:{body:text},provider:'ycloud'});return{};}};
+      if(name==='./lib/ycloud-client')return{enviarMensajeYCloud:async(to,text,{canSend})=>{if(!await canSend(to))return false;if(options.ycloudError)throw options.ycloudError;sent.push({to,text:{body:text},provider:'ycloud'});return{};}};
       if(name.startsWith('./lib/'))return require('../../'+name.slice(2));
       if(name.startsWith('node:')||['fs','path','os'].includes(name))return require(name);
       throw Error('Dependencia no simulada');

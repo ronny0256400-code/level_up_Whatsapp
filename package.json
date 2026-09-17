@@ -6,11 +6,11 @@
   "scripts": {
     "ai:work": "node --env-file=.env scripts/ai-orchestrator.js",
     "start": "node server.js",
-    "check": "node --check server.js && node --check lib/v2-policy.js && node --check lib/v2-ingress.js && node --check lib/v2-storage.js && node --check lib/v2-models.js && node --check lib/v2-audio.js && node --check lib/ycloud-webhook.js && node --check lib/ycloud-client.js && node --check lib/v2-inventory.js",
+    "check": "node --check server.js && node --check lib/v2-policy.js && node --check lib/v2-ingress.js && node --check lib/v2-storage.js && node --check lib/v2-models.js && node --check lib/v2-audio.js && node --check lib/ycloud-webhook.js && node --check lib/ycloud-client.js && node --check lib/v2-inventory.js && node --check lib/v2-errors.js",
     "test:integrations": "node scripts/test-integrations.js",
     "test:ycloud": "node --test scripts/test-ycloud-webhook.js",
-    "test": "node --test scripts/test-v1.js scripts/test-venta-real.js scripts/test-ciclo-administrativo.js scripts/test-ycloud-webhook.js scripts/test-v2-policy.js scripts/test-v2-runtime.js scripts/test-ai-orchestrator.js scripts/test-ai-sandbox.js scripts/test-ai-worker-antigravity.js scripts/test-ai-manual.js scripts/test-v2-inventory.js scripts/test-v2-guia.js",
-    "test:v2": "node --test scripts/test-v2-policy.js scripts/test-v2-runtime.js scripts/test-v2-inventory.js scripts/test-v2-guia.js"
+    "test": "node --test scripts/test-v1.js scripts/test-venta-real.js scripts/test-ciclo-administrativo.js scripts/test-ycloud-webhook.js scripts/test-v2-policy.js scripts/test-v2-runtime.js scripts/test-ai-orchestrator.js scripts/test-ai-sandbox.js scripts/test-ai-worker-antigravity.js scripts/test-ai-manual.js scripts/test-v2-inventory.js scripts/test-v2-guia.js scripts/test-v2-diagnostics.js",
+    "test:v2": "node --test scripts/test-v2-policy.js scripts/test-v2-runtime.js scripts/test-v2-inventory.js scripts/test-v2-guia.js scripts/test-v2-diagnostics.js"
   },
   "engines": {
     "node": ">=18"

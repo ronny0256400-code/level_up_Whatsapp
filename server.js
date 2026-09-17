@@ -4,13 +4,15 @@ const { google } = require("googleapis");
 
 const app = express();
 const v2 = require('./lib/v2-policy');
+const { inStage, safeError, atStage } = require('./lib/v2-errors');
 const { createModels } = require('./lib/v2-models');
 const { createInventory, InventoryError, catalogText } = require('./lib/v2-inventory');
 let inventoryService;
 function inventarioFinal() { return inventoryService ||= createInventory({ sheets, spreadsheetId: STOCK_SPREADSHEET_ID, now: () => new Date() }); }
 const { createIngress, verifyMeta } = require('./lib/v2-ingress');
 const { createInboxStore, memorySheets } = require('./lib/v2-storage');
-const { enviarMensajeYCloud } = require('./lib/ycloud-client');
+const { enviarMensajeYCloud: enviarYCloudInterno } = require('./lib/ycloud-client');
+const enviarMensajeYCloud = (...args) => inStage('transport.ycloud', () => enviarYCloudInterno(...args));
 const TEST_MODE = process.env.TEST_MODE === 'true';
 const { AsyncLocalStorage } = require('node:async_hooks');
 const modelContext = new AsyncLocalStorage();
@@ -94,7 +96,7 @@ Pedir atención humana NO equivale a aceptar o confirmar una compra.`,
         if (etiqueta === "SOLICITA") return true;
         if (etiqueta === "NO_SOLICITA") return false;
     } catch (error) {
-        console.error("Error clasificando atención humana", { http: Number(error.status) || null });
+        console.error("Error clasificando atención humana", safeError(error));
     }
     return null;
 }
@@ -121,7 +123,7 @@ Nunca clasifiques dudas ni correcciones como ACEPTA.`,
         const etiqueta = (resultado.output_text || "").trim();
         return ["ACEPTA", "RECHAZA", "CORRIGE", "AMBIGUO"].includes(etiqueta) ? etiqueta : "AMBIGUO";
     } catch (error) {
-        console.error("Error de OpenAI al clasificar confirmación", { http: Number(error.status) || null });
+        console.error("Error de OpenAI al clasificar confirmación", safeError(error));
         return "AMBIGUO";
     }
 }
@@ -169,7 +171,8 @@ function serializarWebhook(handler) {
         colasWebhook.set(numero, actual);
         try { return await actual; }
         catch (error) {
-            console.error("Error técnico al serializar webhook", { http: Number(error.status) || null });
+            console.error("Error técnico al serializar webhook", safeError(error, 'webhook.serialize'));
+            res.processingError?.(error);
             return res.sendStatus(500);
         }
         finally { if (colasWebhook.get(numero) === actual) colasWebhook.delete(numero); }
@@ -430,6 +433,9 @@ async function obtenerStock() {
 }
 
 async function obtenerConversacion(numero, refrescar = false) {
+    return inStage('memory.load', () => obtenerConversacionInterno(numero, refrescar));
+}
+async function obtenerConversacionInterno(numero, refrescar = false) {
   const numeroNormalizado = String(numero);
 
   // Primero revisamos la memoria que ya está en RAM
@@ -479,6 +485,9 @@ async function obtenerConversacion(numero, refrescar = false) {
 // ============================================================
 
 async function guardarConversacion(numero, conversacion, reservandoFila = false) {
+    return inStage('memory.save', () => guardarConversacionInterno(numero, conversacion, reservandoFila));
+}
+async function guardarConversacionInterno(numero, conversacion, reservandoFila = false) {
     try {
         if (conversacion.__root) {
             const root = conversacion.__root;
@@ -526,7 +535,7 @@ async function guardarConversacion(numero, conversacion, reservandoFila = false)
 
 
     } catch (error) {
-        console.error("Error de Google Sheets al guardar MEMORIA", { codigo: Number(error.code) || null });
+        console.error("Error de Google Sheets al guardar MEMORIA", safeError(atStage(error, 'memory.save')));
         throw error;
     }
 }
@@ -905,7 +914,7 @@ async function revisarSeguimientos(instantePrueba = null) {
             })();
         } catch (error) {
             conversaciones.delete(numero);
-            console.error("Error técnico en seguimiento", { http: Number(error.status) || null });
+            console.error("Error técnico en seguimiento", safeError(error));
         }
     })));
 }
@@ -1101,9 +1110,7 @@ Devuelve únicamente los datos estructurados solicitados.
             }
         });
 
-        const datos = JSON.parse(
-            extractionResponse.output_text
-        );
+        const datos = await inStage('model.parse_order', () => JSON.parse(extractionResponse.output_text));
 
 
 
@@ -1111,7 +1118,7 @@ Devuelve únicamente los datos estructurados solicitados.
 
     } catch (error) {
 
-        console.error("Error de OpenAI al recopilar pedido", { http: Number(error.status) || null });
+        console.error("Error de OpenAI al recopilar pedido", safeError(error));
 
         return null;
     }
@@ -1460,6 +1467,9 @@ async function comandoControlV2(message) {
 }
 
 async function enviarContenidoWhatsApp(destinatario, contenido, contexto = null, permiso = null) {
+    return inStage('transport.whatsapp', () => enviarContenidoWhatsAppInterno(destinatario, contenido, contexto, permiso));
+}
+async function enviarContenidoWhatsAppInterno(destinatario, contenido, contexto = null, permiso = null) {
     const admin = v2.isAdmin(destinatario, ASESOR_WHATSAPP);
     if (!admin && !(await puedeEnviarCliente(destinatario, contexto, permiso))) return false;
     if (TEST_MODE) return { simulated: true };
@@ -1824,7 +1834,7 @@ else {
     // OBTENER INFORMACIÓN ACTUAL DEL STOCK
     // =================================================
 
-    const snapshot = await inventarioFinal().catalog();
+    const snapshot = await inStage('inventory.catalog', () => inventarioFinal().catalog());
     const stockTexto = catalogText([...snapshot.available.values()]);
     const agotadosTexto = [...snapshot.master.values()].filter(p => !snapshot.available.has(p.id_producto))
         .map(p => `${p.producto} / ${p.capacidad} / ${p.color}: agotado temporalmente, no registrar pedido`).join('\n');
@@ -2492,7 +2502,7 @@ if (prepararResumen) {
         }, 'NORMAL');
         respuesta = aiResponse.output_text || "Disculpa, no pude procesar tu mensaje en este momento.";
     } catch (error) {
-        console.error("Error de OpenAI", { http: Number(error.status) || null });
+        console.error("Error de OpenAI", safeError(error));
         throw error;
     }
 }
@@ -2522,7 +2532,8 @@ if (prepararResumen) console.log("Esperando confirmación");
     // Si una dependencia falla, permitimos que Meta reintente este webhook.
     if (messageIdProcesando) mensajesProcesados.delete(messageIdProcesando);
     conversaciones.clear();
-    console.error("Webhook falló", { http: Number(error.status) || null });
+    console.error("Webhook falló", safeError(error));
+    res.processingError?.(error);
 
     return res.sendStatus(500);
   }
@@ -2534,11 +2545,12 @@ const entradaV2 = createIngress({
     ownNumbers: [process.env.WHATSAPP_BUSINESS_NUMBER, process.env.YCLOUD_PHONE_NUMBER],
     log: logV2,
     processMessage: async message => {
-        let status = 200;
+        let status = 200, processingError;
         await modelContext.run(null, () => procesarMensajeV2({ body: { entry: [{ changes: [{ value: { messages: [message] } }] }] } }, {
+            processingError(error) { processingError = error; },
             sendStatus(code) { status = code; }, status(code) { status = code; return this; }, json() {}
         }));
-        if (status >= 400) throw new Error('Procesamiento pendiente');
+        if (status >= 400) throw processingError || atStage(Object.assign(new Error('Procesamiento pendiente'), { status }), 'webhook.configuration');
     }
 });
 app.post('/webhook', async (req, res) => {
