@@ -87,8 +87,8 @@ test('mensajes repetidos y concurrentes no duplican pedido ni APRENDIZAJE', asyn
 });
 test('cierre persiste MEMORIA, notifica asesor y después registra aprendizaje', async () => {
     const e=entorno(); await e.turno('datos',resumen); await e.turno('está correcto');
-    const i=e.eventos.indexOf('asesor'); assert.equal(e.eventos[i-1],'memoria'); assert.equal(e.eventos[i+1],'aprendizaje');
-    assert.ok(e.logs.flat().includes('Notificación al asesor enviada'));
+    const i=e.eventos.indexOf('asesor'); assert.equal(e.eventos[i-1],'memoria'); assert.equal(e.eventos[i+1],'memoria'); assert.ok(e.eventos.indexOf('aprendizaje',i)>i+1);
+    assert.ok(e.logs.some(args=>args[1]?.event==='admin_notice_sent'));
 });
 test('error WhatsApp al asesor conserva pedido y aprendizaje sin PII en logs', async () => {
     const e=entorno({falloAsesor:true}); await e.turno('datos',resumen); await e.turno('de acuerdo');
@@ -153,7 +153,8 @@ test('asesor con Meta 500 sin JSON conserva status y pedido', async () => {
     const e=entorno({falloAsesor:true,sinJson:true});
     await e.turno('Estos son mis datos'); await e.turno('Confirmo mi pedido');
     assert.equal(e.memoria().confirmado,true);
-    assert.ok(e.logs.some(args=>args[0]==='Notificación asesor fallida' && args[1].http===500));
+    assert.ok(e.logs.some(args=>args[1]?.event==='admin_notice_uncertain' && args[1].status===500));
+    assert.equal(e.memoria().pedido.avisoConfirmacion.estado,'incierta');
 });
 test('espera sin datos obligatorios no confirma ni llama a OpenAI', async () => {
     const e=entorno(); await e.turno('sí');

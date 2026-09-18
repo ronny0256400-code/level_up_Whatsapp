@@ -18,13 +18,14 @@ function runtime(options = {}) {
     require(name){
       if(name==='express')return express;
       if(name==='googleapis')return{google:{auth:{GoogleAuth:class{}},sheets:()=>sheets}};
-      if(name==='openai')return class{constructor(){this.responses={create:async args=>{calls.push(args);if(options.respond)return options.respond(args);return{output_text:args.text?JSON.stringify(control.data):args.instructions.startsWith('Clasifica únicamente intención')?'NO_SOLICITA':args.instructions.startsWith('Clasifica únicamente retiro')?'AMBIGUO':'Respuesta sintética',usage:{input_tokens:10,output_tokens:3}};}};this.audio={transcriptions:{create:async()=>{control.audio++;throw Error('No transcribir');}}};}};
+      if(name==='openai')return class{constructor(){this.responses={create:async args=>{calls.push(args);if(options.respond)return options.respond(args);return{output_text:args.text?JSON.stringify(control.data):args.instructions.startsWith('Clasifica únicamente intención')?'NO_SOLICITA':args.instructions.startsWith('Clasifica únicamente retiro')?'AMBIGUO':'Respuesta sintética',usage:{input_tokens:10,output_tokens:3}};}};this.audio={transcriptions:{create:async args=>{control.audio++;if(options.transcribe)return options.transcribe(args);throw Error('No transcribir');}}};}};
+      if(name==='./lib/v2-storage' && options.testModeSharedSheets)return{...require('../../lib/v2-storage'),memorySheets:()=>sheets};
       if(name==='./lib/v2-ingress')return{...require('../../lib/v2-ingress'),createIngress:opts=>createIngress({...opts,now:()=>control.time,delay:(fn,ms)=>{timers.push({fn,ms});return{};}})};
-      if(name==='./lib/ycloud-client')return{enviarMensajeYCloud:async(to,text,{canSend})=>{if(!await canSend(to))return false;if(options.ycloudError)throw options.ycloudError;sent.push({to,text:{body:text},provider:'ycloud'});return{};}};
+      if(name==='./lib/ycloud-client')return{enviarMensajeYCloud:async(to,text,{canSend})=>{if(!await canSend(to))return false;if(options.ycloudError && (!options.ycloudErrorTo || options.ycloudErrorTo===to))throw options.ycloudError;sent.push({to,text:{body:text},provider:'ycloud'});return{};}};
       if(name.startsWith('./lib/'))return require('../../'+name.slice(2));
       if(name.startsWith('node:')||['fs','path','os'].includes(name))return require(name);
       throw Error('Dependencia no simulada');
-    }, fetch:async(url,args)=>{if(!url.endsWith('/messages'))throw Error('Red de medios prohibida');if(control.failSend)return{ok:false,status:500,text:async()=>'{"error":{"code":1}}'};sent.push(JSON.parse(args.body));return{ok:true,text:async()=>'{}'};}
+    }, fetch:async(url,args)=>{if(!url.endsWith('/messages')){if(options.fetchMedia)return options.fetchMedia(url,args);throw Error('Red de medios prohibida');}if(control.failSend || options.failSendTo===JSON.parse(args.body).to)return{ok:false,status:options.failSendStatus||500,text:async()=>'{"error":{"code":1}}'};sent.push(JSON.parse(args.body));return{ok:true,text:async()=>'{}'};}
   });
   vm.runInContext(fs.readFileSync(path.join(__dirname,'../../server.js'),'utf8')+'\nthis.api={procesarMensajeV2,entradaV2,obtenerConversacion,guardarConversacion,revisarSeguimientos,enviarMensajeWhatsApp,confirmarPedidoSiCorresponde,generarResumenPedido,generarIdPedido,contextosPedido,inventarioFinal,obtenerStock,actualizarGuiaPedido};',context);
   let seq=0;

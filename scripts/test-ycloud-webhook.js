@@ -67,6 +67,17 @@ test('YCloud y Meta conviven en el servidor real con dependencias simuladas', as
     assert.equal(entry.timestamp, new Date(clock).toISOString());
     assert.doesNotMatch(JSON.stringify(logs), /CONTENIDO PRIVADO|593999123456|local-test-signing-secret/);
   });
+  await t.test('audio y voice normalizados conservan link para la cola sin loguearlo', async () => {
+    for (const type of ['audio','voice']) {
+      const event = { ...inbound, whatsappInboundMessage: { ...inbound.whatsappInboundMessage,
+        type, [type]: { link: 'https://api.ycloud.com/v2/whatsapp/media/download/123?sig=PRIVATE_AUDIO_URL', mime_type: 'audio/ogg' } } };
+      assert.equal((await post(JSON.stringify(event))).status, 200);
+      assert.equal(queued.at(-1).type, 'audio');
+      assert.equal(queued.at(-1).audio.mime_type, 'audio/ogg');
+      assert.match(queued.at(-1).audio.link, /PRIVATE_AUDIO_URL/);
+      assert.doesNotMatch(JSON.stringify(logs), /PRIVATE_AUDIO_URL/);
+    }
+  });
   await t.test('actualización de mensaje válida y campos opcionales ausentes', async () => {
     assert.equal((await post(JSON.stringify({ type: 'whatsapp.message.updated', whatsappMessage: { wamid: 'wamid.test', from: '+593999654321' } }))).status, 200);
     assert.equal(logs.at(-1).messageId, 'wamid.test');

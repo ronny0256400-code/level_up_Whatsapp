@@ -737,3 +737,15 @@ No revelar cantidades exactas entre 2 y 5.
 - 2026-09-16: implementación #1 verificada localmente; detalles y límites técnicos en IMPLEMENTACION_DIA1.md, sin cambios adicionales de reglas.
 - 2026-09-16: autorizada integración con estructura final de inventario/ventas; Sheets calcula existencias a partir del registro, sin escritura del backend sobre RE-STOCK ni DATOS!P. Sin despliegue ni calendario completo de retiro.
 - 2026-09-16: GUIA conectado al flujo real con intención durable, reconciliación por pedido/guía y exclusión con DERIVAR. Insuficiencia: cero ventas, estado del pedido conservado y alerta humana. Alcance de concurrencia: una instancia Node. Se mantienen fuera de este bloque LLEGO y calendario de retiro. Ver IMPLEMENTACION_INVENTARIO.md para pruebas y límites de APIs externas.
+
+## Audio YCloud y verificación confirmado/GUIA — 2026-09-18
+
+Autorizado audio real YCloud: normalizar audio/voice, descargar medios autenticados de forma segura, verificar máximo 3 minutos, transcribir con MODEL_TRANSCRIPTION y continuar por el mismo router respetando estado, contexto y controles. Errores de descarga/transcripción solicitan texto; exceso de duración solicita audio más corto o texto. No guardar binarios permanentemente ni registrar enlaces, contenido de cliente o secretos. TEST_MODE no hace llamadas reales.
+
+Confirmar solo persiste el pedido interno y su ID; no escribe REGISTRO DE VENTAS ni modifica existencias. GUIA sigue registrando la venta y Sheets calcula el stock. Se verifica el ejemplo IPADAIR1-32-PLA, cantidad 1, precio 110, existencias 3: confirmar mantiene 3; GUIA produce 2 mediante fórmulas. Reportar gaps en la comunicación del ID al administrador sin implementar un mecanismo nuevo. Sin cambios de LLEGO, reglas comerciales ni despliegue.
+
+## Aviso administrativo de confirmación — 2026-09-18
+
+El aviso NUEVO PEDIDO CONFIRMADO se dirige a ASESOR_WHATSAPP por el proveedor del flujo de origen: YCloud para YCloud y Meta para Meta. Debe incluir ID, nombre, teléfono, líneas/productos, cantidades y total. Persistir el aviso junto al pedido antes de enviarlo, conservar idempotencia por pedido y recuperación tras reinicio. No registrar datos personales completos. TEST_MODE no hace envíos reales. No cambiar ID_PEDIDO, GUIA, LLEGO ni reglas comerciales. No desplegar.
+
+Los rechazos explícitos se reintentan con espera progresiva. Si un timeout, error 5xx o reinicio deja incierta la aceptación, conservar el aviso para conciliación y no reenviar ciegamente: el registro interno no constituye una transacción compartida con el proveedor.

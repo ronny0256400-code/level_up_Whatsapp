@@ -19,9 +19,15 @@ Eventos: `whatsapp.inbound_message.received` y `whatsapp.message.updated`. Solo 
 
 Firma → normalización → protección de eco → deduplicación persistida → límite 20/minuto → buffer 5 segundos → router común → guarda final de salida. La administración no espera el buffer comercial. La llamada al receptor solo confirma aceptación duradera, no entrega de una respuesta.
 
-Texto de clientes YCloud se envía mediante `lib/ycloud-client.js` con `YCLOUD_API_KEY` y `YCLOUD_PHONE_NUMBER`. El adaptador exige una guarda explícita; sin ella rechaza enviar. El servidor vuelve a consultar estado antes del envío. Las alertas al administrador mantienen el transporte Meta existente.
+Texto de clientes YCloud se envía mediante `lib/ycloud-client.js` con `YCLOUD_API_KEY` y `YCLOUD_PHONE_NUMBER`. El adaptador exige una guarda explícita; sin ella rechaza enviar. El servidor vuelve a consultar estado antes del envío. El aviso «NUEVO PEDIDO CONFIRMADO» usa el proveedor del chat que confirma el pedido (YCloud o Meta), persistido junto al aviso. Su destinatario se toma de ASESOR_WHATSAPP. Las demás alertas administrativas conservan su transporte anterior. Ver [IMPLEMENTACION_AVISO_ADMIN.md](../IMPLEMENTACION_AVISO_ADMIN.md).
 
-Imágenes/documentos no se interpretan. El flujo de audio YCloud aún no descarga su URL: solicita texto únicamente cuando el router permite respuesta; un audio declarado mayor a tres minutos recibe la respuesta fija de límite. La transcripción de audio Meta sigue disponible con duración verificada. Videos por YCloud no se implementan en este bloque: se registra el error técnico y continúa la información textual, sin marcar video enviado.
+Imágenes/documentos no se interpretan. Audio YCloud (`audio` y alias `voice`) entra por la misma cola. El enlace `audio.link` se descarga únicamente por HTTPS desde el endpoint de medios de api.ycloud.com, con X-API-Key, sin redirecciones, límite de 16 MiB y timeout de 20 segundos. No se registran enlaces ni bytes.
+
+Se verifica la duración antes de transcribir: Ogg/Opus se mide localmente; otros formatos admitidos requieren `ffprobe` disponible en el servidor. ffprobe no permite protocolos de red. Una duración superior a 180 segundos recibe el mensaje fijo y no llama al modelo. Si no se puede verificar, descargar o transcribir, se solicita texto. No se interpreta la duración declarada como prueba suficiente para aceptar un archivo.
+
+`MODEL_TRANSCRIPTION` selecciona el modelo; la llamada usa español, timeout de 60 segundos y no hace reintentos automáticos del SDK. El texto vuelve al router comercial existente. Las métricas usan el wrapper de modelos existente. El archivo privado temporal se elimina en finally; no se guarda audio en Sheets ni almacenamiento permanente. Una caché acotada de transcripciones en MEMORIA permite reusar un resultado ya persistido si falla trabajo posterior; usa la misma privacidad del contexto conversacional. No se puede evitar una segunda transcripción si el proceso cae después de recibirla y antes de persistirla.
+
+La transcripción Meta se conserva. Videos por YCloud no se implementan en este bloque: se registra el error técnico y continúa la información textual, sin marcar video enviado.
 
 `TEST_MODE=true` bloquea salidas reales de ambos proveedores. No cargar `.env` en pruebas automáticas.
 

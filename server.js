@@ -745,6 +745,64 @@ async function actualizarPagoPedido(idPedido, campo = "id") {
 }
 async function actualizarRetiroPedido(numeroGuia) { return actualizarPagoPedido(numeroGuia, "guia"); }
 
+// This outbox is exclusively for the confirmed-order administrative notice.
+function crearAvisoConfirmacion(c) {
+    const p = c.pedido, d = c.datosCliente;
+    return {
+        key: `pedido-confirmado:${p.id}`, provider: c.provider === 'ycloud' ? 'ycloud' : 'meta',
+        destinatario: ASESOR_WHATSAPP, estado: 'pendiente', intentos: 0,
+        texto: `🔔 NUEVO PEDIDO CONFIRMADO\n\n🆔 Pedido: ${p.id}\nNombre: ${d.nombre}\nCédula: ${d.cedula}\nTeléfono: ${d.telefono}\nProvincia: ${d.provincia}\nCiudad: ${d.ciudad}\n\n${p.lineas.map(l => `Producto: ${l.producto} · ${l.capacidad || ''} · ${l.color || ''}\nSKU: ${l.id_producto}\nCantidad: ${l.cantidad} · Precio: $${l.precio_unitario.toFixed(2)} · Subtotal: $${l.subtotal.toFixed(2)}`).join('\n\n')}\n\nTotal: $${p.total.toFixed(2)}\nServientrega · Envío GRATIS · CONTRAENTREGA\nGuía: Pendiente\nGestionar agencia de Servientrega y continuar con el cliente.`
+    };
+}
+async function enviarAvisoConfirmacion(numero, c, ahora = new Date()) {
+    const aviso = c.pedido?.avisoConfirmacion;
+    if (!aviso || ['enviada','incierta'].includes(aviso.estado)) return;
+    // A surviving reservation may already have reached the provider. Never replay it blindly.
+    if (aviso.estado === 'enviando') {
+        aviso.estado = 'incierta';
+        await guardarConversacion(numero, c);
+        logV2({ event: 'admin_notice_uncertain', provider: aviso.provider });
+        return;
+    }
+    if (aviso.proximoIntento && Date.parse(aviso.proximoIntento) > ahora.getTime()) return;
+    if (!v2.isAdmin(aviso.destinatario, ASESOR_WHATSAPP)) {
+        logV2({ event: 'admin_notice_configuration', provider: aviso.provider });
+        return;
+    }
+    aviso.estado = 'enviando';
+    aviso.intentos++;
+    aviso.fechaIntento = ahora.toISOString();
+    await guardarConversacion(numero, c);
+    let result;
+    try {
+        if (TEST_MODE) result = { simulated: true };
+        else if (aviso.provider === 'ycloud') result = await enviarMensajeYCloud(aviso.destinatario, aviso.texto, {
+            canSend: () => v2.isAdmin(aviso.destinatario, ASESOR_WHATSAPP), testMode: TEST_MODE
+        });
+        else result = await enviarMensajeWhatsApp(aviso.destinatario, aviso.texto);
+        if (result === false) throw Object.assign(new Error('Admin notice blocked'), { status: 403 });
+    } catch (error) {
+        const status = Number(error.status);
+        // Only explicit rejection is safe to retry. Timeout/5xx can hide acceptance.
+        const rejected = status >= 400 && status < 500 && status !== 408;
+        const notConfigured = error.message === 'YCloud no configurado';
+        aviso.estado = rejected || notConfigured ? 'pendiente' : 'incierta';
+        aviso.proximoIntento = new Date(ahora.getTime() + Math.min(3600000, 60000 * 2 ** Math.min(aviso.intentos - 1, 6))).toISOString();
+        aviso.error = safeError(error, 'admin.notice');
+        await guardarConversacion(numero, c);
+        logV2({ event: aviso.estado === 'incierta' ? 'admin_notice_uncertain' : 'admin_notice_retry', provider: aviso.provider, ...aviso.error });
+        return;
+    }
+    aviso.estado = 'enviada';
+    aviso.fechaEnvio = ahora.toISOString();
+    aviso.proximoIntento = null;
+    delete aviso.error;
+    aviso.providerMessageId = result?.id || result?.messages?.[0]?.id || null;
+    if (TEST_MODE) aviso.simulated = true;
+    await guardarConversacion(numero, c);
+    logV2({ event: 'admin_notice_sent', provider: aviso.provider, simulated: TEST_MODE });
+}
+
 // Reserva duradera, reintento diferido y máximo acotado; no existe transacción Meta/Sheets.
 async function enviarAvisoPersistente(numero, conversacion, campo, enviar, ahora = new Date()) {
     const aviso = conversacion.pedido[campo];
@@ -868,6 +926,7 @@ async function revisarSeguimientos(instantePrueba = null) {
     await Promise.all(filas.map(({ numero }) => colasCicloV1.has(numero) ? Promise.resolve() : exclusivoV1(numero, async () => {
         try {
             const root = await obtenerConversacion(numero, true);
+            for (const scoped of contextosPedido(root)) await enviarAvisoConfirmacion(numero, scoped, instantePrueba || new Date());
             await enviarAlertaHumanaV2(numero, root);
             for (const scoped of contextosPedido(root)) await enviarAvisoGuia(numero, scoped);
             if (root.human_takeover || root.no_contactar) return;
@@ -1232,6 +1291,7 @@ async function confirmarPedidoSiCorresponde(from, conversacion, texto, clasifica
         conversacion.followup_stage = "closed";
         conversacion.esperandoConfirmacionPedido = false;
 
+        conversacion.pedido.avisoConfirmacion = crearAvisoConfirmacion(conversacion);
         // No anunciar ni notificar una venta que no se pudo persistir.
         try {
             await guardarConversacion(from, conversacion);
@@ -1247,42 +1307,7 @@ async function confirmarPedidoSiCorresponde(from, conversacion, texto, clasifica
         // NOTIFICACIÓN AL ASESOR
         // ====================================================
 
-        const notificacionPedido = `
-🔔 NUEVO PEDIDO CONFIRMADO
-
-🆔 Pedido: ${conversacion.pedido.id}
-
-👤 CLIENTE
-Nombre: ${datosPedido.nombre || "No disponible"}
-Cédula: ${datosPedido.cedula || "No disponible"}
-Teléfono: ${datosPedido.telefono || from}
-
-📍 UBICACIÓN
-Provincia: ${datosPedido.provincia || "No disponible"}
-Ciudad: ${datosPedido.ciudad || "No disponible"}
-
-📦 PEDIDO
-Producto: ${datosPedido.producto || "No disponible"}
-Variante: ${datosPedido.variante || "No especificada"}
-Cantidad: ${datosPedido.cantidad || 1}
-
-💵 VALOR
-$${datosPedido.precio ?? "No disponible"}
-
-🚚 ENVÍO
-Servientrega
-Envío: GRATIS
-Pago: CONTRAENTREGA
-
-🆔 GUÍA
-Pendiente
-
-📌 ACCIÓN PENDIENTE
-Gestionar agencia de Servientrega
-y continuar con el cliente.
-`;
-
-        await notificarAsesor(notificacionPedido);
+        await enviarAvisoConfirmacion(from, conversacion);
         try {
             if (await guardarAprendizaje(conversacion, from)) console.log("Aprendizaje registrado");
         } catch (error) {
@@ -1727,17 +1752,31 @@ else if (message.type === "audio") {
       return res.sendStatus(200);
   }
   if (message.provider === 'ycloud') {
-      await enviarMensajeWhatsApp(from, 'Por favor escribe tu consulta para poder ayudarte.');
-      return res.sendStatus(200);
+      const saved = memoriaCliente.audioTranscriptions?.find(item => item.id === message.id);
+      text = saved?.text;
+      if (!text) {
+          text = await require('./lib/ycloud-audio').transcribeYCloudAudio(message.audio, {
+              env: process.env, models, conversation: memoriaCliente, fetchMedia: fetch,
+              testMode: TEST_MODE, log: logV2
+          });
+          if (typeof text === 'string' && text) {
+              // Persist transcription before downstream work so retries reuse it.
+              memoriaCliente.audioTranscriptions = [
+                  ...(memoriaCliente.audioTranscriptions || []).filter(item => item.at > Date.now() - 86400000),
+                  { id: message.id, text, at: Date.now() }
+              ].slice(-20);
+              await guardarConversacion(from, memoriaCliente);
+          }
+      }
+      if (!text || text.unsupported) {
+          await enviarMensajeWhatsApp(from, 'Por favor escribe tu consulta para poder ayudarte.');
+          return res.sendStatus(200);
+      }
+  } else {
+      const mediaId = message.audio?.id;
+      if (!mediaId) return res.sendStatus(200);
+      text = await transcribirAudio(mediaId);
   }
-  const mediaId = message.audio?.id;
-
-  if (!mediaId) {
-
-    return res.sendStatus(200);
-  }
-
-  text = await transcribirAudio(mediaId);
   if (text?.tooLong || text?.unsupported) {
       await enviarMensajeWhatsApp(from, 'El audio debe durar máximo 3 minutos y tener una duración verificable. Puedes enviar uno más corto o escribir tu consulta.');
       return res.sendStatus(200);
