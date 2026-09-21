@@ -8,6 +8,16 @@ Este archivo es la única fuente de verdad funcional del proyecto. Ninguna IA pu
 
 La implementación #1 del Día 1 está autorizada: router, estados compatibles, controles humanos, entrada protegida, privacidad y preparación de pedidos/modelos. El bloque posterior de integración final autoriza registrar ventas y actualizar estados para que Sheets recalcule stock; prohíbe tocar RE-STOCK o DATOS!P y no autoriza el calendario completo de retiro. Conservar funcionalidades que no entren en conflicto con esta especificación.
 
+## Precedencia operativa vigente — reconciliación de auditoría
+
+Las decisiones operativas más recientes del propietario sustituyen las resoluciones antiguas contradictorias, incluida la resolución 13 de implementación #1. Esta reconciliación del commit auditado 2777fb1989edcfd2007add353c1407c853cfdf8a (PASS CON OBSERVACIONES) es exclusivamente documental: no autoriza cambios funcionales ni despliegue.
+
+Confirmar persiste pedido.estado=confirmado y human_takeover=true. Tras el cierre breve único, el bot queda completamente silencioso ante mensajes normales del cliente, incluida postventa. El asesor continúa manualmente por el mismo WhatsApp y envía personalmente los videos de funcionamiento y empaque durante la pausa. No existe obligación de multimedia automática en esta etapa.
+
+GUIA registra envío/venta y mantiene human_takeover=true. LIBERAR quita la pausa y recupera el estado real del pedido: un pedido confirmado/enviado permanece exclusivamente en logística/post-envío. Mientras exista ese pedido activo en fase logística, «quiero comprar otro» tampoco abre automáticamente otra oportunidad. El manejo de compras adicionales y múltiples pedidos simultáneos se definirá en una etapa futura.
+
+LLEGO durante takeover persiste llegada/timers sin avisar al cliente; al LIBERAR se emite el aviso pendiente una sola vez. La postventa recibida durante takeover no provoca otra intervención automática: el asesor ya atiende ese chat. Los comandos administrativos necesarios conservan su procesamiento.
+
 ## Corrección definitiva de catálogo — 2026-09-17
 
 Esta aclaración del propietario prevalece sobre las referencias históricas al catálogo maestro: PAGINA DE STOCK tiene encabezados en fila 2 y datos exclusivamente en A3:G (ID-PRODUCTO, PRODUCTO, CAPACIDAD, COLOR, STOCK, PRECIO, INFORMACION DEL PRODUCTO). ID-PRODUCTO es la clave; la disponibilidad y los atributos de cada variante provienen de esa misma fila, sin consultar DATOS ni estructuras antiguas. Se leen valores evaluados sin formato para admitir fórmulas y precios monetarios de Sheets.
@@ -38,14 +48,14 @@ retirado = pagado.
 ## Reglas principales
 
 - El bot solo atiende ventas nuevas y logística.
-- Después de una venta, cualquier consulta sobre la compra anterior es POSTVENTA y pasa a humano.
+- Con el bot activo, cualquier consulta de postventa sobre la compra anterior pasa a humano. Durante human_takeover prevalece el silencio, sin otra intervención automática.
 - Un chat cerrado que diga solamente hola, gracias, ok, emojis, etc. se ignora sin llamar a OpenAI.
-- Un chat cerrado puede reactivarse únicamente si existe intención positiva explícita de NUEVA COMPRA.
+- Un chat cerrado puede reactivarse únicamente si existe intención positiva explícita de NUEVA COMPRA y no hay un pedido activo en fase logística. LIBERAR no autoriza abrir otra oportunidad para ese pedido activo.
 - Ejemplos: “quiero comprar”, “me interesa”, “quiero otra”, “quiero otro equipo”, etc.
 - Las negaciones deben impedir falsos positivos: “no quiero comprar otra” NO reactiva.
-- “No estoy interesado” cierra esa oportunidad y cancela seguimientos. Si en el futuro el cliente inicia expresamente una nueva compra, puede abrirse una nueva oportunidad.
-- “No me escriban” activa NO_CONTACTAR. Nosotros no iniciamos más mensajes. Si posteriormente el propio cliente inicia explícitamente una nueva compra, puede reactivarse.
-- Cualquier postventa: garantía, devolución, daño, configuración, cargador, equipo anterior, reclamo, “me estafaron”, etc. => human_takeover y aviso al administrador.
+- “No estoy interesado” cierra esa oportunidad y cancela seguimientos. Si en el futuro el cliente inicia expresamente una nueva compra y no hay un pedido activo en fase logística, puede abrirse una nueva oportunidad.
+- “No me escriban” activa NO_CONTACTAR. Nosotros no iniciamos más mensajes. Si posteriormente el propio cliente inicia explícitamente una nueva compra y no hay un pedido activo en fase logística, puede reactivarse.
+- Con human_takeover=false, postventa (garantía, devolución, daño, configuración, cargador, equipo anterior, reclamo, “me estafaron”, etc.) => human_takeover y aviso al administrador. Con human_takeover=true, mantener silencio; no generar otra intervención ni aviso automático por ese mensaje.
 - Aviso POSTVENTA al administrador: nombre si existe + número + último mensaje.
 - Si un mensaje mezcla postventa y nueva compra, POSTVENTA tiene prioridad.
 - Insulto sin relación con compra => spam/silencio.
@@ -73,7 +83,10 @@ retirado = pagado.
 
 ## Liberar
 - desactiva human_takeover.
-- si el pedido ya tiene guía, no vuelve al flujo comercial normal; queda en modo logístico.
+- recupera el estado real del pedido, incluido confirmado aunque todavía no tenga guía.
+- si el pedido está confirmado/enviado, queda exclusivamente en modo logístico/post-envío; no vuelve a venta, captura de datos ni esperando_confirmacion.
+- mientras exista el pedido activo en fase logística, incluso «quiero comprar otro» NO inicia otra oportunidad automáticamente. Múltiples pedidos simultáneos quedan para una definición futura.
+- si LLEGO dejó un aviso pendiente durante takeover, emitirlo una sola vez conservando llegada/timers.
 
 ## Pedidos
 - ID formato LU0001, LU0002, etc.
@@ -111,19 +124,16 @@ retirado = pagado.
 - Después de GUIA cualquier cambio pasa a humano.
 
 ## Flujo de venta
-1. responder pregunta
-2. identificar modelo/producto
-3. enviar foto o video
-4. características
-5. qué incluye
-6. explicar envío
-7. preguntar si desea registrar compra
-8. recopilar datos faltantes
-9. mostrar resumen
-10. pedir confirmación
-11. registrar pedido
+1. responder la consulta de producto/precio brevemente, con variante relevante y hasta 2–4 características principales.
+2. responder características o qué incluye únicamente según lo consultado.
+3. ante intención de compra, explicar brevemente envío gratis por Servientrega, contraentrega al retirar y videos de prueba/empaque; preguntar si desea registrar el pedido.
+4. después de aceptar el registro, recopilar solamente datos faltantes.
+5. mostrar un resumen y pedir confirmación expresamente.
+6. al confirmar, persistir pedido.estado=confirmado, ID_PEDIDO y human_takeover=true; emitir el cierre breve único y mantener el aviso administrativo existente.
+7. dejar el chat pausado para mensajes normales; el asesor continúa manualmente por el mismo WhatsApp.
 
-- Siempre debe enviarse video cuando exista multimedia configurada.
+- Los videos de funcionamiento y empaque posteriores a la confirmación los envía MANUALMENTE el asesor durante human_takeover. Se sustituye la antigua obligación de enviar siempre video automáticamente cuando exista multimedia configurada.
+- El bot no tiene obligación de enviar multimedia automática en esta etapa ni de incluirla en la primera consulta comercial.
 - No existe delivery local. Todo Ecuador usa contraentrega por Servientrega.
 - El bot NO selecciona agencia de Servientrega. Informa que un asesor la confirmará posteriormente.
 
@@ -157,9 +167,9 @@ retirado = pagado.
 - permitir que Sheets descuente la cantidad completa a partir de las filas enviado, sin escribir stock directamente
 - guardar guía
 - cambiar a enviado
-- avisar al cliente
-- activar human_takeover automáticamente
-- el administrador luego usa LIBERAR cuando termina de enviar manualmente fotos/videos/guía.
+- mantener human_takeover=true; GUIA no reactiva el bot.
+- conservar la notificación logística correspondiente pendiente si el chat está bajo takeover; no interrumpir la atención humana.
+- el administrador luego usa LIBERAR cuando termina la coordinación y el envío manual de fotos/videos/guía; el bot queda en logística, no en venta.
 
 Si stock insuficiente al recibir GUIA:
 - NO descontar
@@ -184,11 +194,11 @@ Si stock insuficiente al recibir GUIA:
 - texto base:
   “Qué tal, buenos días. Le escribo para saber si aún está interesado en poder registrar su pedido.”
 - si responde, continuar desde el punto previo.
-- Después de enviar el segundo mensaje a las 96h, cerrar esa oportunidad para seguimientos automáticos. Una nueva compra explícita posterior crea otra oportunidad.
+- Después de enviar el segundo mensaje a las 96h, cerrar esa oportunidad para seguimientos automáticos. Una nueva compra explícita posterior crea otra oportunidad solo si no hay un pedido activo en fase logística.
 - un pedido confirmado cancela todos los seguimientos comerciales.
 
 ## Llego / retiro
-- LLEGO avisa inmediatamente que el producto está disponible.
+- LLEGO persiste llegada y timers. Si human_takeover=false, avisa que el producto está disponible; si human_takeover=true, no avisa al cliente y conserva el aviso pendiente para emitirlo una sola vez al LIBERAR.
 - después comienza seguimiento cada 4 horas.
 - lunes a viernes: 08:00 a 17:00.
 - sábado: 08:00 a 12:00.
@@ -237,6 +247,11 @@ Si stock insuficiente al recibir GUIA:
   next_pickup_reminder_at
   pickup_deadline
 - tras reinicio de Render, los seguimientos deben poder reconstruirse.
+- la pausa human_takeover y el estado real del pedido deben persistirse para sobrevivir reinicios.
+
+### Deuda técnica: deduplicación Meta
+
+La deduplicación Meta todavía tiene un componente en RAM. La presencia de persistencia en otras partes de la entrada no implica que toda la deduplicación Meta sobreviva a reinicios. Se documenta como deuda técnica; no se modifica en esta reconciliación. YCloud es el proveedor principal actual. La regla de deduplicar por message_id sigue siendo el objetivo, sin presentar esa deuda como resuelta.
 
 ## Modelos openai
 - OpenAI es el único proveedor que responde a clientes en producción.
@@ -254,6 +269,8 @@ Si stock insuficiente al recibir GUIA:
 ## Multimedia
 Crear/preparar estructura para hoja MULTIMEDIA:
 PRODUCTO | CAPACIDAD | COLOR | TIPO | URL
+
+Esta estructura no impone envío automático después de confirmar. Los videos de funcionamiento y empaque de esa etapa son responsabilidad manual del asesor durante human_takeover.
 
 ## Pruebas
 - TEST_MODE debe existir.
@@ -280,20 +297,20 @@ Registrar:
 2. human_takeover
 3. postventa
 4. no_contactar / spam / estados cerrados
-5. nueva compra explícita
-6. logística
+5. logística/post-envío del pedido activo: impedir apertura automática de otra oportunidad, incluso ante nueva intención de compra
+6. nueva compra explícita solo cuando no hay un pedido activo en fase logística
 7. conversación comercial
 8. OpenAI solo si ninguna regla determinística resuelve el mensaje
 
 ## Resoluciones oficiales — implementación #1
 
-Estas resoluciones precisan las secciones anteriores y prevalecen sobre cualquier descripción V1.
+Estas resoluciones precisan las secciones anteriores y prevalecen sobre cualquier descripción V1, salvo las sustituciones operativas más recientes documentadas aquí. La resolución 13 antigua queda reemplazada por la vigente.
 
 1. POSTVENTA:
 postventa_humano representa el estado/motivo funcional.
 human_takeover=true representa el bloqueo efectivo de respuestas.
 Conservar información/estado previo del pedido para no perder trazabilidad.
-Postventa siempre activa human_takeover.
+Con el bot activo, postventa activa human_takeover. Si human_takeover ya es true, el mensaje no provoca respuesta, otra intervención ni nuevo aviso automático: el asesor ya atiende el mismo chat.
 
 2. LLEGO DURANTE HUMAN TAKEOVER:
 Si llega un comando LLEGO válido mientras human_takeover=true:
@@ -320,7 +337,7 @@ Si total > 300:
 48h = primer mensaje fijo.
 96h = segundo y último mensaje fijo.
 Después de enviar el mensaje de 96h, esa oportunidad queda cerrada para seguimientos automáticos.
-Si el usuario posteriormente inicia explícitamente una nueva compra, se crea nueva oportunidad.
+Si el usuario posteriormente inicia explícitamente una nueva compra, se crea nueva oportunidad solo si no hay un pedido activo en fase logística.
 
 6. DÍAS LABORALES DE RETIRO:
 Lunes a sábado cuentan como laborales.
@@ -361,19 +378,17 @@ No romper todo el flujo de venta por un archivo multimedia fallido.
 PAGO y RETIRADO ya NO son comandos administrativos válidos en V2.
 No deben cambiar estados.
 
-13. NUEVA COMPRA DURANTE LOGÍSTICA:
-Un número puede tener más de una oportunidad/pedido.
-Si cliente con pedido enviado/disponible expresa intención inequívoca de NUEVA compra:
-- crear nueva oportunidad independiente;
-- no modificar el pedido anterior.
-Si el mensaje es sobre el producto anterior, es postventa.
+13. NUEVA COMPRA DURANTE LOGÍSTICA — RESOLUCIÓN SUSTITUIDA:
+Queda sin efecto la autorización antigua de crear inmediatamente una oportunidad independiente para un cliente con pedido enviado/disponible, incluso después de LIBERAR.
+LIBERAR recupera el estado real confirmado/enviado y habilita exclusivamente logística/post-envío. Mientras exista el pedido activo en fase logística, «quiero comprar otro» NO crea automáticamente otra oportunidad.
+El manejo de nuevas compras con múltiples pedidos simultáneos se definirá en una etapa futura. Con el bot activo, una consulta de postventa sobre el producto anterior pasa a humano; durante takeover se mantiene silencio.
 
 14. RESPUESTAS MÍNIMAS A FOLLOW-UP:
 “ok”, emoji, “gracias” cuentan como actividad pero NO como intención suficiente para avanzar.
 No llamar un modelo caro solo por ellas.
 
 15. DEDUPLICACIÓN:
-message_id se valida y deduplica ANTES del buffer de agrupación de 5 segundos.
+message_id se valida y deduplica ANTES del buffer de agrupación de 5 segundos. Esto no elimina la deuda técnica del componente de deduplicación Meta en RAM, descrita en Persistencia. YCloud sigue siendo el proveedor principal actual; no cambiar deduplicación en esta reconciliación.
 
 16. DERIVAR:
 debe cancelar todos los timers/jobs/next actions asociados al pedido.
@@ -629,9 +644,9 @@ si esas celdas contienen fórmulas.
 
 11. Guardar guía en el pedido.
 12. estado pedido = enviado.
-13. human_takeover = true.
-14. enviar notificación correspondiente al cliente según SPEC.
-15. admin luego usa LIBERAR.
+13. mantener human_takeover = true; GUIA no reactiva el bot.
+14. conservar la notificación logística correspondiente pendiente durante el takeover; no interrumpir la atención humana.
+15. admin luego usa LIBERAR: recuperar estado real y logística/post-envío, sin abrir otra oportunidad comercial mientras exista el pedido activo.
 
 IDEMPOTENCIA GUIA
 
@@ -732,6 +747,8 @@ No revelar cantidades exactas entre 2 y 5.
 
 ## Historial de cambios
 
+- Reconciliación posterior a auditoría de 2777fb1989edcfd2007add353c1407c853cfdf8a: pausa tras confirmar, videos manuales, GUIA sin liberar, LIBERAR solo logístico, sustitución de nueva oportunidad durante logística, silencio en postventa durante takeover y deuda Meta en RAM. Cambio exclusivamente documental, sin despliegue.
+
 - 2026-09-16: especificación inicial y auditoría.
 - 2026-09-16: incorporadas las 18 resoluciones oficiales; autorizado Día 1, implementación #1.
 - 2026-09-16: implementación #1 verificada localmente; detalles y límites técnicos en IMPLEMENTACION_DIA1.md, sin cambios adicionales de reglas.
@@ -762,7 +779,7 @@ Texto y transcripción comparten estas reglas. Una confirmación ya respondida n
 
 Después de persistir ID_PEDIDO y estado confirmado, guardar human_takeover=true en la misma operación. Emitir únicamente el cierre breve que indica que un asesor coordinará por el mismo chat la agencia de Servientrega y el envío. El aviso administrativo existente conserva destinatario, proveedor e idempotencia.
 
-Texto y audio Meta/YCloud comparten el reconocimiento determinístico aprobado. La entrada común admite la composición «sí, confirmo los datos del pedido» sin un clasificador de audio separado. El pedido conserva estado confirmado durante la pausa; GUIA continúa registrando la venta y deja estado enviado con pausa. LIBERAR restaura el estado real del pedido y habilita solo logística para pedidos confirmados/enviados. No reiniciar ventas ni captura de datos. No modificar LLEGO, inventario, fórmulas ni ID_PEDIDO.
+Texto y audio Meta/YCloud comparten el reconocimiento determinístico aprobado. La entrada común admite la composición «sí, confirmo los datos del pedido» sin un clasificador de audio separado. El pedido conserva estado confirmado durante la pausa; GUIA continúa registrando la venta y deja estado enviado con pausa. LIBERAR restaura el estado real del pedido y habilita solo logística para pedidos confirmados/enviados. No reiniciar ventas ni captura de datos, ni abrir otra oportunidad por «quiero comprar otro» mientras exista el pedido activo en logística. Los videos posteriores a confirmar los envía manualmente el asesor durante human_takeover; el bot no tiene obligación de multimedia automática en esa etapa. No modificar LLEGO, inventario, fórmulas ni ID_PEDIDO.
 
 La conversación comercial se entrega por etapas: producto/precio con hasta 2–4 características; características o accesorios solo cuando se consultan; intención de compra con explicación breve de envío gratis, contraentrega y videos de prueba/empaque; aceptación de registro antes de solicitar únicamente los datos faltantes; resumen único y confirmación. No anteponer el antiguo bloque largo ni enviar video comercial automáticamente en la primera consulta. Conservar historial y marcadores de explicación/registro en MEMORIA.
 
