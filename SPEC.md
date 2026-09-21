@@ -749,3 +749,21 @@ Confirmar solo persiste el pedido interno y su ID; no escribe REGISTRO DE VENTAS
 El aviso NUEVO PEDIDO CONFIRMADO se dirige a ASESOR_WHATSAPP por el proveedor del flujo de origen: YCloud para YCloud y Meta para Meta. Debe incluir ID, nombre, teléfono, líneas/productos, cantidades y total. Persistir el aviso junto al pedido antes de enviarlo, conservar idempotencia por pedido y recuperación tras reinicio. No registrar datos personales completos. TEST_MODE no hace envíos reales. No cambiar ID_PEDIDO, GUIA, LLEGO ni reglas comerciales. No desplegar.
 
 Los rechazos explícitos se reintentan con espera progresiva. Si un timeout, error 5xx o reinicio deja incierta la aceptación, conservar el aviso para conciliación y no reenviar ciegamente: el registro interno no constituye una transacción compartida con el proveedor.
+
+## Confirmación determinística prioritaria — 2026-09-21
+
+En esperando_confirmacion, resolver confirmaciones explícitas, negaciones, correcciones y solicitudes explícitas de asesor antes de la clasificación OpenAI. Normalizar tildes, caso, puntuación y espacios. Se aceptan confirmo/confirmado/confirmar, sí/si, correcto/es correcto/está correcto, todo correcto/todo está correcto/todo bien, confirmo los datos, confirmo los datos del pedido, confirmar los datos del pedido y los datos están correctos. Negaciones y cambios tienen prioridad sobre una aceptación dentro del mismo mensaje.
+
+Mantener el flujo existente de corrección y asesor. Solo los mensajes no resueltos localmente usan LOW para clasificación; la extracción de datos del flujo de corrección conserva su implementación. Ambos clasificadores de compra disponen de 512 tokens máximos de salida. Una respuesta incompleta, vacía, inválida o un error conserva borrador/pedido/estado y emite una sola indicación para continuar con una opción explícita. El marcador persistido evita repetir la pregunta o llamadas de clasificación fallidas: confirmar/corregir/pedir asesor explícitamente sigue funcionando y un nuevo resumen permite volver a clasificar ambigüedades.
+
+Texto y transcripción comparten estas reglas. Una confirmación ya respondida no vuelve a emitir el mismo aviso al cliente. No cambiar GUIA, LLEGO, inventario ni otras reglas comerciales. Confirmar no escribe REGISTRO DE VENTAS ni descuenta stock. Sin despliegue.
+
+## Cierre, pausa y conversación progresiva — 2026-09-21
+
+Después de persistir ID_PEDIDO y estado confirmado, guardar human_takeover=true en la misma operación. Emitir únicamente el cierre breve que indica que un asesor coordinará por el mismo chat la agencia de Servientrega y el envío. El aviso administrativo existente conserva destinatario, proveedor e idempotencia.
+
+Texto y audio Meta/YCloud comparten el reconocimiento determinístico aprobado. La entrada común admite la composición «sí, confirmo los datos del pedido» sin un clasificador de audio separado. El pedido conserva estado confirmado durante la pausa; GUIA continúa registrando la venta y deja estado enviado con pausa. LIBERAR restaura el estado real del pedido y habilita solo logística para pedidos confirmados/enviados. No reiniciar ventas ni captura de datos. No modificar LLEGO, inventario, fórmulas ni ID_PEDIDO.
+
+La conversación comercial se entrega por etapas: producto/precio con hasta 2–4 características; características o accesorios solo cuando se consultan; intención de compra con explicación breve de envío gratis, contraentrega y videos de prueba/empaque; aceptación de registro antes de solicitar únicamente los datos faltantes; resumen único y confirmación. No anteponer el antiguo bloque largo ni enviar video comercial automáticamente en la primera consulta. Conservar historial y marcadores de explicación/registro en MEMORIA.
+
+El cierre del cliente se reserva antes del transporte en pedido.cierreCliente. Rechazos explícitos permiten reintento diferido; aceptación incierta o reserva sobreviviente a un reinicio se conservan sin repetir automáticamente. No hay transacción compartida entre Sheets y los proveedores: la conciliación humana de estados inciertos evita duplicados. TEST_MODE no envía mensajes reales. Sin despliegue.

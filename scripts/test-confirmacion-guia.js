@@ -28,6 +28,7 @@ async function setup(options={}) {
 }
 test('caso real 110: resumen -> confirmar sin venta/stock -> reinicio -> GUIA -> stock calculado 3 a 2',async()=>{
   const e=await setup();e.control.data=data();assert.equal(await e.message('Quiero el IPAD AIR 1 de 32 GB plateado',{provider:'ycloud'}),200);
+  await e.message('sí',{provider:'ycloud'});
   assert.equal((await e.load()).estado,'esperando_confirmacion');assert.equal(await e.available(),3);
   const before=e.writes.length;assert.equal(await e.message('sí confirmo',{provider:'ycloud'}),200);
   const c=await e.load();assert.equal(c.estado,'confirmado');assert.equal(c.pedido.estado,'confirmado');assert.match(c.pedido.id,/^LU\d+$/);assert.equal(c.pedido.total,110);

@@ -51,18 +51,25 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
         const fallo = (asesor && falloAsesor) || (body.type === 'video' && falloVideo) || (!asesor && body.type === 'text' && falloCliente);
         return { ok: !fallo, status: fallo ? 500 : 200, text: async () => sinJson ? '<html>error</html>' : JSON.stringify({ error: { code: 131000, message:'Persona Ficticia 000000000002' } }) };
     } });
-    vm.runInContext(fs.readFileSync(path.join(__dirname,'../server.js'),'utf8')+'\nthis.api={procesarMensajeV2,conversaciones,esConfirmacionAfirmativa};',context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname,'../server.js'),'utf8')+'\nthis.api={procesarMensajeV2,conversaciones,esConfirmacionAfirmativa,guardarConversacion,obtenerConversacion};',context);
     async function turno(texto, respuesta, id = `msg-${++secuencia}`, esperado = 200) {
         if (respuesta) respuestas.push(respuesta);
         let status;
         await context.api.procesarMensajeV2({ body:{entry:[{changes:[{value:{messages:[{id,from:'000000000002',type:'text',text:{body:texto}}]}}]}]} },{ sendStatus(code) { status=code; }, status(code) { status=code; return this; }, json() {} });
         assert.equal(status,esperado);
     }
-    return { control, turno, eventos, mensajes, logs, prompts, api:context.api, memoria:()=>JSON.parse(memoria.find(row=>row[0]==='000000000002')[1]), aprendizaje:()=>aprendizaje };
+    // Confirmation-focused fixtures start after the separate registration acceptance.
+    async function registrar(...args) {
+        const c=await context.api.obtenerConversacion('000000000002',true);
+        c.commerce={registrationAccepted:true};
+        await context.api.guardarConversacion('000000000002',c);
+        return turno(...args);
+    }
+    return { control, turno, registrar, eventos, mensajes, logs, prompts, api:context.api, memoria:()=>JSON.parse(memoria.find(row=>row[0]==='000000000002')[1]), aprendizaje:()=>aprendizaje };
 }
 
 test('turno A persiste espera; turno B confirma sin frase de IA, incluso recargando MEMORIA', async () => {
-    const e=entorno(); await e.turno('Estos son mis datos',resumen);
+    const e=entorno(); await e.registrar('Estos son mis datos',resumen);
     assert.equal(e.memoria().esperandoConfirmacionPedido,true);
     assert.equal(e.memoria().confirmado,false);
     e.api.conversaciones.clear();
@@ -73,12 +80,12 @@ test('turno A persiste espera; turno B confirma sin frase de IA, incluso recarga
 test('sí sin contexto y sí con objeción no crean pedido', async () => {
     const e=entorno(); await e.turno('sí','¿Qué producto buscas?');
     assert.equal(e.memoria().pedido,undefined);
-    await e.turno('mis datos',resumen);
+    await e.registrar('mis datos',resumen);
     await e.turno('sí, pero cambia la capacidad','Revisemos la capacidad.');
     assert.equal(e.memoria().pedido,undefined);
 });
 test('mensajes repetidos y concurrentes no duplican pedido ni APRENDIZAJE', async () => {
-    const e=entorno(); await e.turno('datos',resumen);
+    const e=entorno(); await e.registrar('datos',resumen);
     await Promise.all([e.turno('confirmo',null,'repetido'),e.turno('confirmo',null,'repetido')]);
     const id=e.memoria().pedido.id; await e.turno('confirmo');
     assert.equal(e.memoria().pedido.id,id);
@@ -86,12 +93,12 @@ test('mensajes repetidos y concurrentes no duplican pedido ni APRENDIZAJE', asyn
     assert.equal(e.aprendizaje().length,2);
 });
 test('cierre persiste MEMORIA, notifica asesor y después registra aprendizaje', async () => {
-    const e=entorno(); await e.turno('datos',resumen); await e.turno('está correcto');
+    const e=entorno(); await e.registrar('datos',resumen); await e.turno('está correcto');
     const i=e.eventos.indexOf('asesor'); assert.equal(e.eventos[i-1],'memoria'); assert.equal(e.eventos[i+1],'memoria'); assert.ok(e.eventos.indexOf('aprendizaje',i)>i+1);
     assert.ok(e.logs.some(args=>args[1]?.event==='admin_notice_sent'));
 });
 test('error WhatsApp al asesor conserva pedido y aprendizaje sin PII en logs', async () => {
-    const e=entorno({falloAsesor:true}); await e.turno('datos',resumen); await e.turno('de acuerdo');
+    const e=entorno({falloAsesor:true}); await e.registrar('datos',resumen); await e.turno('de acuerdo');
     assert.equal(e.memoria().confirmado,true); assert.equal(e.aprendizaje().length,2);
     assert.doesNotMatch(JSON.stringify(e.logs),/Persona Ficticia|000000000002|0000000000/);
     assert.ok(!e.logs.flat().includes('Notificación al asesor enviada'));
@@ -99,23 +106,23 @@ test('error WhatsApp al asesor conserva pedido y aprendizaje sin PII en logs', a
 test('prompt de objeción limita afirmaciones a catálogo y no garantiza apps o nube gratuita', async () => {
     const e=entorno(); await e.turno('32 GB me parece poco');
     const p=e.prompts[0];
-    for (const regla of ['Nunca cierres una objeción con una negativa seca','No inventes características','No garantices compatibilidad','ni inventes cantidades gratuitas','antes de pedir datos de compra','video de funcionamiento/prueba','*nombre destacado*']) assert.ok(p.includes(regla),regla);
+    for (const regla of ['Nunca cierres una objeción con una negativa seca','No inventes características','No garantices compatibilidad','ni inventes cantidades gratuitas','No solicites datos personales']) assert.ok(p.includes(regla),regla);
 });
 test('sin video configurado continúa respuesta normal', async () => {
     const e=entorno(); await e.turno('Me interesa iPad Air 1','*iPad Air 1*\n32 GB — $100');
     assert.equal(e.mensajes.length,1); assert.equal(e.mensajes[0].type,'text');
 });
-test('video configurado precede ficha y se envía una sola vez', async () => {
+test('consulta de producto entrega solo texto aunque haya video configurado', async () => {
     const e=entorno({video:'123456789'}); await e.turno('Me interesa iPad Air 1','*iPad Air 1*\n32 GB — $100');
-    assert.deepEqual(e.mensajes.map(m=>m.type),['video','text']);
+    assert.deepEqual(e.mensajes.map(m=>m.type),['text']);
     await e.turno('Me interesa iPad Air 1');
-    assert.equal(e.mensajes.filter(m=>m.type==='video').length,1);
+    assert.equal(e.mensajes.filter(m=>m.type==='video').length,0);
 });
 
-test('fallo de video no impide ficha ni marca video enviado', async () => {
+test('consulta de producto no intenta transportar video', async () => {
     const e=entorno({video:'123456789',falloVideo:true});
     await e.turno('Me interesa iPad Air 1','*iPad Air 1*\n32 GB — $100');
-    assert.deepEqual(e.mensajes.map(m=>m.type),['video','text']);
+    assert.deepEqual(e.mensajes.map(m=>m.type),['text']);
     assert.equal(e.memoria().videoIpadAir1Enviado,undefined);
 });
 test('un sí anterior al primer resumen no confirma en ese mismo turno', async () => {
@@ -126,7 +133,7 @@ test('un sí anterior al primer resumen no confirma en ese mismo turno', async (
 
 for (const frase of ['sí', 'si', 'confirmo', 'Confirmo mi pedido', 'sí, confirmo', 'Sí, está todo correcto', 'está correcto', 'todo correcto', 'de acuerdo', 'estoy de acuerdo', 'adelante', 'Sí, adelante', 'procedamos', 'correcto', 'correcto, procedamos', 'De acuerdo, procedamos', 'SÍ, CONFIRMO MI PEDIDO, MUCHAS GRACIAS!']) {
     test(`aceptación contextual sin OpenAI: ${frase}`, async () => {
-        const e=entorno(); await e.turno('Estos son mis datos');
+        const e=entorno(); await e.registrar('Estos son mis datos');
         assert.equal(e.memoria().esperandoConfirmacionPedido,true);
         const llamadas=e.control.llamadasOpenAI;
         e.control.openaiCaido=true;
@@ -143,7 +150,7 @@ for (const frase of ['sí', 'si', 'confirmo', 'Confirmo mi pedido', 'sí, confir
 for (const sinJson of [false,true]) {
     test(`resumen con Meta 500 ${sinJson ? 'sin' : 'con'} JSON no activa espera`, async () => {
         const e=entorno({falloCliente:true,sinJson});
-        await e.turno('Estos son mis datos',null,'fallido',500);
+        await e.registrar('Estos son mis datos',null,'fallido',500);
         assert.ok(!e.memoria().esperandoConfirmacionPedido);
         assert.ok(e.logs.some(args => args[0]==='Error de envío WhatsApp' && args[1].http===500));
         assert.ok(!e.memoria().historial.some(m=>m.role==='assistant'));
@@ -151,7 +158,7 @@ for (const sinJson of [false,true]) {
 }
 test('asesor con Meta 500 sin JSON conserva status y pedido', async () => {
     const e=entorno({falloAsesor:true,sinJson:true});
-    await e.turno('Estos son mis datos'); await e.turno('Confirmo mi pedido');
+    await e.registrar('Estos son mis datos'); await e.turno('Confirmo mi pedido');
     assert.equal(e.memoria().confirmado,true);
     assert.ok(e.logs.some(args=>args[1]?.event==='admin_notice_uncertain' && args[1].status===500));
     assert.equal(e.memoria().pedido.avisoConfirmacion.estado,'incierta');
@@ -167,7 +174,7 @@ test('espera sin datos obligatorios no confirma ni llama a OpenAI', async () => 
 
 for (const frase of ['dale', 'todo bien por mí', 'me parece correcto', 'así está bien', 'sí, hagámoslo', 'perfecto, continuemos']) {
     test(`semántica ACEPTA en contexto: ${frase}`, async () => {
-        const e=entorno(); await e.turno('Estos son mis datos');
+        const e=entorno(); await e.registrar('Estos son mis datos');
         e.control.etiqueta='ACEPTA'; await e.turno(frase);
         assert.equal(e.memoria().confirmado,true);
         assert.equal(e.control.llamadasClasificador,1);
@@ -180,10 +187,10 @@ for (const [frase,etiqueta] of [
     ['corrige mi número','CORRIGE'], ['no quiero comprar','RECHAZA']
 ]) {
     test(`semántica ${etiqueta} no confirma: ${frase}`, async () => {
-        const e=entorno(); await e.turno('Estos son mis datos');
+        const e=entorno(); await e.registrar('Estos son mis datos');
         e.control.etiqueta=etiqueta; await e.turno(frase);
         assert.ok(!e.memoria().pedido);
-        assert.equal(e.control.llamadasClasificador, frase === 'no quiero comprar' ? 0 : 1);
+        assert.equal(e.control.llamadasClasificador, ['no quiero comprar','sí, pero cambia la ciudad','todo bien menos el precio','no estoy seguro','corrige mi número'].includes(frase) ? 0 : 1);
         if (frase === 'no quiero comprar') assert.equal(e.memoria().estado, 'no_interesado');
     });
 }
@@ -191,24 +198,23 @@ test('sin espera perfecto no crea pedido ni consulta clasificador', async () => 
     const e=entorno(); e.control.etiqueta='ACEPTA'; await e.turno('perfecto');
     assert.ok(!e.memoria().pedido); assert.equal(e.control.llamadasClasificador,0);
 });
-test('bloque comercial entregado antes de pedir datos y no repetido', async () => {
-    const e=entorno(); await e.turno('Quiero comprar','Dime nombre, cédula, teléfono, provincia y ciudad.');
+test('intención ofrece proceso breve sin datos y no repite explicación', async () => {
+    const e=entorno(); await e.turno('Quiero comprar');
     const texto=e.mensajes[0].text.body;
-    for (const dato of ['GRATIS','todas las provincias del Ecuador','Servientrega','contraentrega','asesor','video de funcionamiento/prueba','video del empaque']) {
-        assert.ok(texto.indexOf(dato)>=0 && texto.indexOf(dato)<texto.indexOf('Dime nombre'));
-    }
-    assert.equal(e.memoria().bloqueComercialEnviado,true);
-    await e.turno('otra pregunta','Seguimos.');
-    assert.ok(!e.mensajes[1].text.body.includes('Envíos GRATIS'));
+    for (const dato of ['Servientrega','contraentrega','prueba','empaque','¿Deseas registrar']) assert.ok(texto.includes(dato));
+    assert.doesNotMatch(texto,/nombre|cédula|provincia|ciudad/);
+    await e.turno('Quiero comprar');
+    assert.equal(e.mensajes[1].text.body,'¿Deseas registrar el pedido?');
 });
-test('post-confirmación menciona ambos videos y luego Servientrega', async () => {
-    const e=entorno(); await e.turno('Estos son mis datos'); await e.turno('sí');
+test('post-confirmación solo cierre breve y pausa', async () => {
+    const e=entorno(); await e.registrar('Estos son mis datos'); await e.turno('sí');
     const texto=e.mensajes.at(-1).text.body;
-    for (const dato of ['Pedido confirmado','asesor','video de funcionamiento/prueba','video del empaque','antes del despacho','Servientrega']) assert.ok(texto.includes(dato));
+    assert.equal(texto,'¡Pedido confirmado! 😊 Un asesor se pondrá en contacto contigo por este mismo chat para coordinar la agencia de Servientrega y continuar con el proceso de envío.');
+    assert.equal(e.memoria().human_takeover,true);
 });
 test('clasificador inválido o caído no confirma y conserva espera', async () => {
     for (const caido of [false,true]) {
-        const e=entorno(); await e.turno('Estos son mis datos');
+        const e=entorno(); await e.registrar('Estos son mis datos');
         e.control.etiqueta='ACEPTA porque quiere comprar'; e.control.openaiCaido=caido;
         await e.turno('dale');
         assert.ok(!e.memoria().pedido); assert.equal(e.memoria().esperandoConfirmacionPedido,true);
@@ -216,7 +222,7 @@ test('clasificador inválido o caído no confirma y conserva espera', async () =
 });
 for (const frase of ['todo bien','me parece bien','todo en orden']) {
     test(`aceptación obvia local: ${frase}`, async () => {
-        const e=entorno(); await e.turno('Estos son mis datos');
+        const e=entorno(); await e.registrar('Estos son mis datos');
         e.control.openaiCaido=true; await e.turno(frase);
         assert.equal(e.memoria().confirmado,true); assert.equal(e.control.llamadasClasificador,0);
     });
@@ -243,27 +249,26 @@ test('solicitud equivalente usa clasificador de atención humana', async () => {
     assert.ok(!e.eventos.includes('asesor'));
 });
 test('pedido registrado no exige registrarse otra vez al pedir asesor', async () => {
-    const e=entorno(); await e.turno('Estos son mis datos'); await e.turno('sí');
+    const e=entorno(); await e.registrar('Estos son mis datos'); await e.turno('sí');
     const notificaciones=e.eventos.filter(x=>x==='asesor').length;
+    const antes=e.mensajes.length;
     await e.turno('Quiero hablar con un asesor');
-    assert.match(e.mensajes.at(-1).text.body,/pedido ya está registrado/);
+    assert.equal(e.mensajes.length,antes);
     assert.doesNotMatch(e.mensajes.at(-1).text.body,/Primero|registrar tu pedido/);
     assert.equal(e.eventos.filter(x=>x==='asesor').length,notificaciones);
 });
 test('pedido pendiente: pedir asesor no activa clasificador de confirmación', async () => {
-    const e=entorno(); await e.turno('Estos son mis datos'); e.control.etiqueta='ACEPTA';
+    const e=entorno(); await e.registrar('Estos son mis datos'); e.control.etiqueta='ACEPTA';
     await e.turno('Quiero hablar con un asesor');
     assert.equal(e.control.llamadasClasificador,0);
     assert.ok(!e.memoria().pedido); assert.ok(!e.eventos.includes('asesor'));
     assert.equal(e.memoria().esperandoConfirmacionPedido,true);
     await e.turno('sí'); assert.equal(e.memoria().confirmado,true);
 });
-test('bloque previo incluye coordinación, zona y dos videos antes del primer dato', async () => {
-    const e=entorno(); await e.turno('Quiero comprar','Dime nombre, cédula, teléfono, provincia y ciudad.');
-    const texto=e.mensajes.at(-1).text.body;
-    for (const dato of ['personalmente','mismo chat','coordinar la opción de entrega','agencias/puntos disponibles en tu zona','video de funcionamiento/prueba','video del empaque']) {
-        assert.ok(texto.indexOf(dato)>=0 && texto.indexOf(dato)<texto.indexOf('Dime nombre'));
-    }
+test('aceptación de registro habilita únicamente datos faltantes', async () => {
+    const e=entorno(); await e.turno('Quiero comprar'); await e.turno('sí');
+    assert.match(e.mensajes.at(-1).text.body,/nombre completo, cédula, provincia, ciudad/);
+    assert.doesNotMatch(e.mensajes.at(-1).text.body,/Servientrega|video|teléfono/);
 });
 test('mención sin solicitud no desvía flujo de venta', async () => {
     const e=entorno(); await e.turno('Es para una persona que estudia','Ficha para estudio');
@@ -271,7 +276,7 @@ test('mención sin solicitud no desvía flujo de venta', async () => {
 });
 
 test('solicitud semántica pendiente no se interpreta como aprobación', async () => {
-    const e=entorno(); await e.turno('Estos son mis datos');
+    const e=entorno(); await e.registrar('Estos son mis datos');
     e.control.atencion='SOLICITA'; e.control.etiqueta='ACEPTA';
     await e.turno('Quiero tratar esto con quien está a cargo');
     assert.ok(!e.memoria().pedido); assert.ok(!e.eventos.includes('asesor'));
@@ -279,7 +284,7 @@ test('solicitud semántica pendiente no se interpreta como aprobación', async (
     assert.equal(e.memoria().esperandoConfirmacionPedido,true);
 });
 test('fallo de detección humana conserva pendiente sin confirmar', async () => {
-    const e=entorno(); await e.turno('Estos son mis datos');
+    const e=entorno(); await e.registrar('Estos son mis datos');
     e.control.openaiCaido=true;
     await e.turno('Quiero tratar esto con quien está a cargo');
     assert.ok(!e.memoria().pedido); assert.ok(!e.eventos.includes('asesor'));

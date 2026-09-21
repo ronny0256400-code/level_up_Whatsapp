@@ -43,7 +43,8 @@ test('output_text de tipo inválido se distingue de error de llamada',async()=>{
 });
 test('JSON inválido conserva SyntaxError y frames sin filtrar contenido generado',async()=>{
   const e=runtime({respond:async args=>({output_text:args.text?'customer-secret 0999999999':args.instructions.startsWith('Clasifica')?'NO_SOLICITA':'Respuesta'})});
-  assert.equal(await e.message('consulta sintética'),200); // Existing extraction fallback remains unchanged.
+  await e.seed({estado:'recopilando_datos'});
+  assert.equal(await e.message('consulta sintética'),200); // Extraction diagnostic in its authorized phase.
   const error=events(e).find(x=>x.stage==='model.parse_order');assert.equal(error.name,'SyntaxError');assert.ok(error.stack.length);assert.doesNotMatch(JSON.stringify(e.logs),/customer-secret|0999999999/);
 });
 test('fallo YCloud se identifica después del modelo con error original',async()=>{
