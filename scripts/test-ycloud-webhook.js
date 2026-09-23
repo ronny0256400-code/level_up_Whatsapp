@@ -24,7 +24,7 @@ test('YCloud y Meta conviven en el servidor real con dependencias simuladas', as
     .map(name => [name, 'fixture']));
   env.GOOGLE_SERVICE_ACCOUNT_JSON = '{}'; env.WHATSAPP_APP_SECRET='fixture'; env.MODEL_LOW='fixture';env.MODEL_NORMAL='fixture';env.MODEL_HIGH='fixture';
   const forbidden = () => assert.fail('El webhook no debe llamar a dependencias externas');
-  const context = vm.createContext({ process: { env }, console: { log() {}, error() {} },
+  const context = vm.createContext({ __dirname:path.join(__dirname,'..'), Buffer, FormData, Blob, process: { env }, console: { log() {}, error() {} },
     fetch: forbidden, require(name) {
       if(name==='node:async_hooks') return require(name);
       if(name==='./lib/v2-ingress') return {...require('../lib/v2-ingress'),createIngress:()=>({accept:async m=>queued.push(m)})};

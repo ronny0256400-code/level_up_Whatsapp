@@ -3,7 +3,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {runtime}=require('./helpers/v2-runtime');
 const CLIENT='000000000002',ADMIN='000000000099';
-const draft=()=>({nombre:'Cliente sintético',cedula:'0012345678',telefono:CLIENT,provincia:'Guayas',ciudad:'Guayaquil',lineas:[{id_producto:'EQUIPO',producto:'Equipo de prueba',capacidad:'32 GB',color:'plateado',cantidad:1,precio_unitario:100}],cantidad:1,precio:100});
+const draft=()=>({agencia:{id:'fixture-agency',nombre:'Agencia sintética',direccion:'Dirección sintética'},nombre:'Cliente sintético',cedula:'0012345678',telefono:CLIENT,provincia:'Guayas',ciudad:'Guayaquil',lineas:[{id_producto:'EQUIPO',producto:'Equipo de prueba',capacidad:'32 GB',color:'plateado',cantidad:1,precio_unitario:100}],cantidad:1,precio:100});
 async function fixture(options={}){const e=runtime({...options,env:{...options.env,ASESOR_WHATSAPP:ADMIN}});await e.inventoryReady;await e.seed({estado:'esperando_confirmacion',esperandoConfirmacionPedido:true,borradorPedido:draft(),historial:[]});return e;}
 const notices=e=>e.sent.filter(m=>m.to===ADMIN&&m.text.body.includes('NUEVO PEDIDO CONFIRMADO'));
 for(const provider of ['ycloud','meta'])test(`${provider}: aviso usa canal de origen, destino configurado y datos persistidos`,async()=>{
@@ -47,7 +47,7 @@ test('aviso guardado antes del primer envío sobrevive a caída y se recupera',a
   await e.message('sí confirmo',{provider:'ycloud'});assert.equal(notices(e).length,0);
   const restart=runtime({sheets:e.sheets,env:{ASESOR_WHATSAPP:ADMIN}});await restart.api.revisarSeguimientos();assert.equal(notices(restart).length,1);assert.equal((await restart.load()).pedido.avisoConfirmacion.estado,'enviada');
 });
-test('pedido histórico sin outbox no genera avisos retroactivos',async()=>{const e=await fixture();await e.seed({estado:'confirmado',pedido:{id:'LU0001',estado:'confirmado'},historial:[]});await e.api.revisarSeguimientos();assert.equal(notices(e).length,0);});
+test('pedido histórico sin outbox no genera avisos retroactivos',async()=>{const e=await fixture();await e.seed({estado:'confirmado',pedido:{id_chat:'CH000001',id:'LU0001',estado:'confirmado'},historial:[]});await e.api.revisarSeguimientos();assert.equal(notices(e).length,0);});
 test('Meta rechazado temporalmente reintenta por Meta y no YCloud',async()=>{
   const e=await fixture({failSendTo:ADMIN,failSendStatus:429});await e.message('sí confirmo',{provider:'meta'});assert.equal((await e.load()).pedido.avisoConfirmacion.estado,'pendiente');
   const restart=runtime({sheets:e.sheets,env:{ASESOR_WHATSAPP:ADMIN}});restart.control.time+=60000;await restart.api.revisarSeguimientos();assert.equal(notices(restart).length,1);assert.equal(notices(restart)[0].messaging_product,'whatsapp');assert.equal(notices(restart)[0].provider,undefined);

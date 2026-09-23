@@ -20,7 +20,7 @@ test('reproduce LOW 185/0 seguido de InventoryError: etapa y stack identifican c
   const rows=events(e),call=rows.find(x=>x.event==='model_call'),error=e.logs.find(x=>x[0]==='Webhook falló')[1];
   assert.equal(call.input_tokens,185);assert.equal(call.output_tokens,0);assert.equal(e.calls.length,1);
   assert.equal(error.stage,'inventory.catalog');assert.equal(error.code,'CATALOGO_INVALIDO');assert.equal(error.message,'CATALOGO_INVALIDO');
-  assert.ok(error.stack.some(x=>x.includes('v2-inventory.js:')));assert.equal(e.sent.length,0);
+  assert.ok(error.stack.some(x=>x.includes('v2-inventory.js:')));assert.equal(e.sent.length,2);assert.equal((await e.load()).pendingQuestion.estado,'pendiente');
 });
 test('LOW sin texto con catálogo válido no causa por sí solo el fallo del webhook',async()=>{
   const e=runtime({respond:emptyLow});assert.equal(await e.message('consulta sintética'),200);
@@ -43,7 +43,7 @@ test('output_text de tipo inválido se distingue de error de llamada',async()=>{
 });
 test('JSON inválido conserva SyntaxError y frames sin filtrar contenido generado',async()=>{
   const e=runtime({respond:async args=>({output_text:args.text?'customer-secret 0999999999':args.instructions.startsWith('Clasifica')?'NO_SOLICITA':'Respuesta'})});
-  await e.seed({estado:'recopilando_datos'});
+  await e.seed({estado:'recopilando_datos',commerce:{selected:'EQUIPO',stage:'datos'},borradorPedido:{lineas:[{id_producto:'EQUIPO',cantidad:1,precio_unitario:100}]}});
   assert.equal(await e.message('consulta sintética'),200); // Extraction diagnostic in its authorized phase.
   const error=events(e).find(x=>x.stage==='model.parse_order');assert.equal(error.name,'SyntaxError');assert.ok(error.stack.length);assert.doesNotMatch(JSON.stringify(e.logs),/customer-secret|0999999999/);
 });
@@ -53,7 +53,7 @@ test('fallo YCloud se identifica después del modelo con error original',async()
   const error=e.logs.find(x=>x[0]==='Webhook falló')[1];assert.equal(error.stage,'transport.ycloud');assert.equal(error.status,403);
 });
 test('fallo de persistencia posterior se distingue de transporte y OpenAI',async()=>{
-  const e=runtime();await e.inventoryReady;const update=e.sheets.spreadsheets.values.update;
+  const e=runtime();await e.inventoryReady;e.control.data={nombre:'Persona',cedula:'fixture',lineas:[{id_producto:'EQUIPO',producto:'Equipo de prueba',cantidad:1,precio_unitario:100}]};await e.seed({estado:'recopilando_datos',commerce:{selected:'EQUIPO',stage:'datos'},borradorPedido:{telefono:'000000000002',provincia:'Provincia',ciudad:'Ciudad',agencia:{id:'fixture'},lineas:e.control.data.lineas}});const update=e.sheets.spreadsheets.values.update;
   e.sheets.spreadsheets.values.update=async args=>{if(args.range.startsWith('MEMORIA')&&e.sent.length)throw Object.assign(new Error('private payload'),{status:503});return update(args);};
   assert.equal(await e.message('consulta sintética'),500);const error=e.logs.find(x=>x[0]==='Webhook falló')[1];assert.equal(error.stage,'memory.save');assert.equal(error.status,503);assert.equal(e.sent.length,1);
 });

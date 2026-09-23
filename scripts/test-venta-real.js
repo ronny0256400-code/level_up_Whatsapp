@@ -20,11 +20,12 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
     const routes = {}; const app = { use() {}, get() {}, post(r,h) { routes[r]=h; }, listen() { return { on() {} }; } };
     function express() { return app; } express.json = () => {};
     const env = Object.fromEntries(['OPENAI_API_KEY','VERIFY_TOKEN','PHONE_NUMBER_ID','WHATSAPP_TOKEN','STOCK_SPREADSHEET_ID','MEMORIA_SPREADSHEET_ID'].map(k => [k,'dummy']));
-    env.ASESOR_WHATSAPP='000000000001'; env.GOOGLE_SERVICE_ACCOUNT_JSON='{}'; env.MODEL_LOW='fixture'; env.MODEL_NORMAL='fixture'; env.MODEL_HIGH='fixture'; env.IPAD_AIR_1_VIDEO_MEDIA_ID=video;
-    const context = vm.createContext({ require(name) {
+    env.ASESOR_WHATSAPP='000000000001'; env.GOOGLE_SERVICE_ACCOUNT_JSON='{}'; env.MODEL_LOW='fixture'; env.MODEL_NORMAL='fixture'; env.MODEL_HIGH='fixture'; env.AGENCIES_ROOT=path.join(__dirname,'fixtures/agencias');env.OPENAI_TTS_ENABLED='false';env.PRODUCT_MEDIA_ROOT='/tmp/level-up-empty-test-media';
+    const context = vm.createContext({ __dirname:path.join(__dirname,'..'), Buffer, FormData, Blob, require(name) {
         if (name.startsWith('./lib/')) return require('../' + name.slice(2));
         if (name === 'node:async_hooks') return require(name);
         if (name === './lib/ycloud-webhook') return require('../lib/ycloud-webhook');
+        if (name === 'node:path') return require(name);
         if (name === 'node:crypto') return require(name);
         if (name === 'express') return express;
         if (name === 'googleapis') return { google: { auth: { GoogleAuth: class {} }, sheets: () => sheets } };
@@ -61,7 +62,7 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
     // Confirmation-focused fixtures start after the separate registration acceptance.
     async function registrar(...args) {
         const c=await context.api.obtenerConversacion('000000000002',true);
-        c.commerce={registrationAccepted:true};
+        c.commerce={selected:'IPADAIR1-32-PLA',stage:'datos'};c.borradorPedido={telefono:'000000000002',provincia:'Prueba',ciudad:'Prueba',agencia:{id:'fixture-agency',nombre:'Agencia sintética'},lineas:[{id_producto:'IPADAIR1-32-PLA',producto:'iPad Air 1',capacidad:'32 GB',color:'plateado',cantidad:1,precio_unitario:100}]};
         await context.api.guardarConversacion('000000000002',c);
         return turno(...args);
     }
@@ -103,18 +104,14 @@ test('error WhatsApp al asesor conserva pedido y aprendizaje sin PII en logs', a
     assert.doesNotMatch(JSON.stringify(e.logs),/Persona Ficticia|000000000002|0000000000/);
     assert.ok(!e.logs.flat().includes('Notificación al asesor enviada'));
 });
-test('prompt de objeción limita afirmaciones a catálogo y no garantiza apps o nube gratuita', async () => {
-    const e=entorno(); await e.turno('32 GB me parece poco');
-    const p=e.prompts[0];
-    for (const regla of ['Nunca cierres una objeción con una negativa seca','No inventes características','No garantices compatibilidad','ni inventes cantidades gratuitas','No solicites datos personales']) assert.ok(p.includes(regla),regla);
-});
+test('objeción no inventa apps, nube ni capacidades fuera del catálogo',async()=>{const e=entorno();await e.turno('32 GB me parece poco');const answer=e.mensajes.at(-1).text.body;assert.match(answer,/32 GB/);assert.doesNotMatch(answer,/128 GB|nube gratuita|compatible con todas/);assert.ok(!e.memoria().pedido);});
 test('sin video configurado continúa respuesta normal', async () => {
     const e=entorno(); await e.turno('Me interesa iPad Air 1','*iPad Air 1*\n32 GB — $100');
-    assert.equal(e.mensajes.length,1); assert.equal(e.mensajes[0].type,'text');
+    assert.equal(e.mensajes.length,3); assert.ok(e.mensajes.every(m=>m.type==='text'));
 });
 test('consulta de producto entrega solo texto aunque haya video configurado', async () => {
     const e=entorno({video:'123456789'}); await e.turno('Me interesa iPad Air 1','*iPad Air 1*\n32 GB — $100');
-    assert.deepEqual(e.mensajes.map(m=>m.type),['text']);
+    assert.deepEqual(e.mensajes.map(m=>m.type),['text','text','text']);
     await e.turno('Me interesa iPad Air 1');
     assert.equal(e.mensajes.filter(m=>m.type==='video').length,0);
 });
@@ -122,7 +119,7 @@ test('consulta de producto entrega solo texto aunque haya video configurado', as
 test('consulta de producto no intenta transportar video', async () => {
     const e=entorno({video:'123456789',falloVideo:true});
     await e.turno('Me interesa iPad Air 1','*iPad Air 1*\n32 GB — $100');
-    assert.deepEqual(e.mensajes.map(m=>m.type),['text']);
+    assert.deepEqual(e.mensajes.map(m=>m.type),['text','text','text']);
     assert.equal(e.memoria().videoIpadAir1Enviado,undefined);
 });
 test('un sí anterior al primer resumen no confirma en ese mismo turno', async () => {
@@ -177,7 +174,7 @@ for (const frase of ['dale', 'todo bien por mí', 'me parece correcto', 'así es
         const e=entorno(); await e.registrar('Estos son mis datos');
         e.control.etiqueta='ACEPTA'; await e.turno(frase);
         assert.equal(e.memoria().confirmado,true);
-        assert.equal(e.control.llamadasClasificador,1);
+        assert.equal(e.control.llamadasClasificador,['dale','perfecto, continuemos'].includes(frase)?0:1);
         assert.equal(e.eventos.filter(x=>x==='asesor').length,1);
     });
 }
@@ -190,7 +187,7 @@ for (const [frase,etiqueta] of [
         const e=entorno(); await e.registrar('Estos son mis datos');
         e.control.etiqueta=etiqueta; await e.turno(frase);
         assert.ok(!e.memoria().pedido);
-        assert.equal(e.control.llamadasClasificador, ['no quiero comprar','sí, pero cambia la ciudad','todo bien menos el precio','no estoy seguro','corrige mi número'].includes(frase) ? 0 : 1);
+        assert.equal(e.control.llamadasClasificador, ['creo que sí','déjame pensarlo','no quiero comprar','sí, pero cambia la ciudad','todo bien menos el precio','no estoy seguro','corrige mi número'].includes(frase) ? 0 : 1);
         if (frase === 'no quiero comprar') assert.equal(e.memoria().estado, 'no_interesado');
     });
 }
@@ -198,25 +195,18 @@ test('sin espera perfecto no crea pedido ni consulta clasificador', async () => 
     const e=entorno(); e.control.etiqueta='ACEPTA'; await e.turno('perfecto');
     assert.ok(!e.memoria().pedido); assert.equal(e.control.llamadasClasificador,0);
 });
-test('intención ofrece proceso breve sin datos y no repite explicación', async () => {
-    const e=entorno(); await e.turno('Quiero comprar');
-    const texto=e.mensajes[0].text.body;
-    for (const dato of ['Servientrega','contraentrega','prueba','empaque','¿Deseas registrar']) assert.ok(texto.includes(dato));
-    assert.doesNotMatch(texto,/nombre|cédula|provincia|ciudad/);
-    await e.turno('Quiero comprar');
-    assert.equal(e.mensajes[1].text.body,'¿Deseas registrar el pedido?');
-});
+test('intención sin producto muestra catálogo antes de pedir datos',async()=>{const e=entorno();await e.turno('Quiero comprar');assert.match(e.mensajes[0].text.body,/opciones disponibles/);assert.doesNotMatch(e.mensajes[0].text.body,/nombre|cédula/);await e.turno('Quiero comprar iPad Air 1');assert.match(e.mensajes.at(-1).text.body,/ciudad y provincia/);});
 test('post-confirmación solo cierre breve y pausa', async () => {
     const e=entorno(); await e.registrar('Estos son mis datos'); await e.turno('sí');
-    const texto=e.mensajes.at(-1).text.body;
-    assert.equal(texto,'¡Pedido confirmado! 😊 Un asesor se pondrá en contacto contigo por este mismo chat para coordinar la agencia de Servientrega y continuar con el proceso de envío.');
+    assert.equal(e.mensajes.filter(m=>m.text?.body==='✅ Pedido confirmado correctamente.').length,1);
+    assert.match(e.mensajes.at(-1).text.body,/bodega/);
     assert.equal(e.memoria().human_takeover,true);
 });
 test('clasificador inválido o caído no confirma y conserva espera', async () => {
     for (const caido of [false,true]) {
         const e=entorno(); await e.registrar('Estos son mis datos');
         e.control.etiqueta='ACEPTA porque quiere comprar'; e.control.openaiCaido=caido;
-        await e.turno('dale');
+        await e.turno('adelante con lo que revisamos');
         assert.ok(!e.memoria().pedido); assert.equal(e.memoria().esperandoConfirmacionPedido,true);
     }
 });
@@ -238,7 +228,7 @@ for (const frase of ['Quiero hablar con un asesor', '¿Puedo hablar con una pers
         assert.ok(!e.eventos.includes('asesor'));
         assert.equal(e.control.llamadasClasificador,0);
         await e.turno('Me interesa iPad Air 1','Ficha del producto');
-        assert.match(e.mensajes.at(-1).text.body,/Ficha del producto/);
+        assert.match(e.mensajes.at(-1).text.body,/ciudad y provincia/);
     });
 }
 test('solicitud equivalente usa clasificador de atención humana', async () => {
@@ -265,14 +255,10 @@ test('pedido pendiente: pedir asesor no activa clasificador de confirmación', a
     assert.equal(e.memoria().esperandoConfirmacionPedido,true);
     await e.turno('sí'); assert.equal(e.memoria().confirmado,true);
 });
-test('aceptación de registro habilita únicamente datos faltantes', async () => {
-    const e=entorno(); await e.turno('Quiero comprar'); await e.turno('sí');
-    assert.match(e.mensajes.at(-1).text.body,/nombre completo, cédula, provincia, ciudad/);
-    assert.doesNotMatch(e.mensajes.at(-1).text.body,/Servientrega|video|teléfono/);
-});
+test('datos personales se piden solo después de agencia',async()=>{const e=entorno();await e.turno('Quiero comprar iPad Air 1');assert.match(e.mensajes.at(-1).text.body,/ciudad y provincia/);assert.doesNotMatch(e.mensajes.at(-1).text.body,/nombre completo|cédula/);});
 test('mención sin solicitud no desvía flujo de venta', async () => {
     const e=entorno(); await e.turno('Es para una persona que estudia','Ficha para estudio');
-    assert.match(e.mensajes.at(-1).text.body,/Ficha para estudio/);
+    assert.match(e.mensajes.at(-1).text.body,/opciones disponibles/);
 });
 
 test('solicitud semántica pendiente no se interpreta como aprobación', async () => {

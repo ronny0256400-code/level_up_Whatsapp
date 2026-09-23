@@ -14,7 +14,7 @@ function fixture({text='consulta sintética',seconds=10,...options}={}){
   const e=runtime({env:{MODEL_TRANSCRIPTION:'fixture-transcriber',YCLOUD_API_KEY:'secret-fixture'},fetchMedia:async(url,args)=>{downloads.push({url,args});return response(seconds);},transcribe:async args=>{files.push(args.file.path);assert.equal(args.model,'fixture-transcriber');assert.ok(fs.existsSync(args.file.path));return{text,usage:{input_tokens:7,output_tokens:2}};},...options});
   return Object.assign(e,{downloads,files,audio:(opts={})=>e.message('',{type:'audio',provider:'ycloud',audio:{link:LINK,mime_type:'audio/ogg'},...opts})});
 }
-const draft=()=>({nombre:'Persona sintética',cedula:'0012345678',telefono:CLIENT,provincia:'Guayas',ciudad:'Guayaquil',producto:'IPAD AIR 1',variante:'32 GB plateado',cantidad:1,precio:110,lineas:[{id_producto:'IPADAIR1-32-PLA',producto:'IPAD AIR 1',capacidad:'32 GB',color:'plateado',cantidad:1,precio_unitario:110}]});
+const draft=()=>({agencia:{id:'fixture-agency',nombre:'Agencia sintética',direccion:'Dirección sintética'},nombre:'Persona sintética',cedula:'0012345678',telefono:CLIENT,provincia:'Guayas',ciudad:'Guayaquil',producto:'IPAD AIR 1',variante:'32 GB plateado',cantidad:1,precio:110,lineas:[{id_producto:'IPADAIR1-32-PLA',producto:'IPAD AIR 1',capacidad:'32 GB',color:'plateado',cantidad:1,precio_unitario:110}]});
 async function stock(e){await e.inventoryReady;await seedInventory(e.sheets,[['IPADAIR1-32-PLA','IPAD AIR 1','32 GB','plateado',3,110,'']]);}
 test('audio YCloud válido descarga, transcribe, limpia archivo y entra al router comercial',async()=>{
   const e=fixture();assert.equal(await e.audio(),200);assert.equal(e.control.audio,1);assert.equal(e.downloads.length,1);
@@ -23,9 +23,9 @@ test('audio YCloud válido descarga, transcribe, limpia archivo y entra al route
   assert.ok(e.logs.some(row=>row[1]?.event==='transcription'&&row[1].seconds===10));assert.equal((await e.load()).metrics.by_model['fixture-transcriber'].calls,1);
   assert.doesNotMatch(JSON.stringify(e.logs),/private-signature|secret-fixture|consulta sintética/);
 });
-test('audio durante captura de datos conserva contexto y produce resumen',async()=>{
-  const e=fixture();await stock(e);await e.seed({estado:'recopilando_datos',historial:[{role:'user',content:'contexto previo'}]});e.control.data=draft();await e.audio();
-  const c=await e.load();assert.equal(c.estado,'esperando_confirmacion');assert.equal(c.borradorPedido.lineas[0].id_producto,'IPADAIR1-32-PLA');assert.ok(c.historial.some(m=>m.content==='contexto previo'));
+test('audio durante captura conserva contexto y solicita datos personales por texto',async()=>{
+  const e=fixture();await stock(e);await e.seed({estado:'recopilando_datos',commerce:{selected:'IPADAIR1-32-PLA',stage:'datos'},borradorPedido:draft(),historial:[{role:'user',content:'contexto previo'}]});e.control.data=draft();await e.audio();
+  const c=await e.load();assert.equal(c.estado,'recopilando_datos');assert.match(e.sent.at(-1).text.body,/por texto/);assert.equal(c.borradorPedido.lineas[0].id_producto,'IPADAIR1-32-PLA');assert.ok(c.historial.some(m=>m.content==='contexto previo'));
 });
 test('audio de confirmación usa el mismo flujo y persiste pedido confirmado',async()=>{
   const e=fixture({text:'sí confirmo'});await stock(e);await e.seed({estado:'esperando_confirmacion',esperandoConfirmacionPedido:true,borradorPedido:draft(),historial:[]});await e.audio();

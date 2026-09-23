@@ -9,11 +9,12 @@ function entorno() {
     const memoria = [['0991234567', JSON.stringify(original), 'fecha-original']];
     let aprendizaje = []; let creada = false;
     const escrituras = [], mensajes = [];
+    const inventory=require('./helpers/inventory-fixture').inventoryFixture().sheets;
     const sheets = { spreadsheets: {
-        get: async () => ({ data: { sheets: creada ? [{ properties: { title: 'APRENDIZAJE' } }] : [] } }),
+        get: async () => ({ data: { sheets: [...(creada ? [{ properties: { title: 'APRENDIZAJE' } }] : []),{properties:{title:'REGISTRO DE VENTAS',sheetId:1,gridProperties:{rowCount:100}}}] } }),
         batchUpdate: async args => { escrituras.push(args); creada = true; },
         values: {
-            get: async ({ range }) => ({ data: { values: range.startsWith('APRENDIZAJE') ? aprendizaje : memoria } }),
+            get: async ({ range }) => ({ data: { values: range.startsWith('APRENDIZAJE') ? aprendizaje : range.startsWith('MEMORIA')?memoria:[] } }),
             update: async args => { escrituras.push(args); if (args.range.startsWith('APRENDIZAJE')) aprendizaje = args.requestBody.values; else memoria[0] = args.requestBody.values[0]; },
             append: async args => { escrituras.push(args); aprendizaje.push(...args.requestBody.values); }
         }
@@ -23,7 +24,7 @@ function entorno() {
     function express() { return app; } express.json = () => {};
     const env = Object.fromEntries(['OPENAI_API_KEY','VERIFY_TOKEN','PHONE_NUMBER_ID','WHATSAPP_TOKEN','STOCK_SPREADSHEET_ID','MEMORIA_SPREADSHEET_ID'].map(k => [k, 'dummy']));
     env.ASESOR_WHATSAPP = '593999999999'; env.GOOGLE_SERVICE_ACCOUNT_JSON = '{}'; env.MODEL_LOW='fixture'; env.MODEL_NORMAL='fixture'; env.MODEL_HIGH='fixture';
-    const context = vm.createContext({ require(name) {
+    const context = vm.createContext({ __dirname:path.join(__dirname,'..'), Buffer, FormData, Blob, require(name) {
         if (name.startsWith('./lib/')) return require('../' + name.slice(2));
         if (name === 'node:async_hooks') return require(name);
         if (name === './lib/ycloud-webhook') return require('../lib/ycloud-webhook');
@@ -52,7 +53,7 @@ test('V2: PAGO no modifica campos ni envía mensajes', async () => {
 });
 
 test('LLEGO envía aviso al cliente y termina el webhook', async () => {
-    const e = entorno(); await e.comando('LLEGO GUIA-OTRA');
+    const e = entorno(); await e.comando('LLEGO (GUIA-OTRA)');
     assert.equal(e.mensajes.length, 1);
     assert.equal(e.mensajes[0].to, '0991234567');
     assert.match(e.mensajes[0].text.body, /Tu pedido ya llegó/);

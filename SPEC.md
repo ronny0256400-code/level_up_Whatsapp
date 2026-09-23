@@ -1,786 +1,297 @@
-# SPEC — Chatbot WhatsApp Level Up Store V2
-
-Versión funcional inicial: 2026-09-16. Estado: Día 1 — implementación #1 completada localmente; ver IMPLEMENTACION_DIA1.md. Integración de inventario final autorizada; calendario completo de retiro pendiente.
-
-## Autoridad y mantenimiento
-
-Este archivo es la única fuente de verdad funcional del proyecto. Ninguna IA puede cambiar reglas por iniciativa propia. Las reglas se implementan tal como están definidas aquí. Los cambios funcionales requieren instrucciones explícitas del propietario y actualización de esta especificación. README, prompts, pruebas V1 e informes históricos describen la implementación; no reemplazan estas reglas.
-
-La implementación #1 del Día 1 está autorizada: router, estados compatibles, controles humanos, entrada protegida, privacidad y preparación de pedidos/modelos. El bloque posterior de integración final autoriza registrar ventas y actualizar estados para que Sheets recalcule stock; prohíbe tocar RE-STOCK o DATOS!P y no autoriza el calendario completo de retiro. Conservar funcionalidades que no entren en conflicto con esta especificación.
-
-## Precedencia operativa vigente — reconciliación de auditoría
-
-Las decisiones operativas más recientes del propietario sustituyen las resoluciones antiguas contradictorias, incluida la resolución 13 de implementación #1. Esta reconciliación del commit auditado 2777fb1989edcfd2007add353c1407c853cfdf8a (PASS CON OBSERVACIONES) es exclusivamente documental: no autoriza cambios funcionales ni despliegue.
-
-Confirmar persiste pedido.estado=confirmado y human_takeover=true. Tras el cierre breve único, el bot queda completamente silencioso ante mensajes normales del cliente, incluida postventa. El asesor continúa manualmente por el mismo WhatsApp y envía personalmente los videos de funcionamiento y empaque durante la pausa. No existe obligación de multimedia automática en esta etapa.
-
-GUIA registra envío/venta y mantiene human_takeover=true. LIBERAR quita la pausa y recupera el estado real del pedido: un pedido confirmado/enviado permanece exclusivamente en logística/post-envío. Mientras exista ese pedido activo en fase logística, «quiero comprar otro» tampoco abre automáticamente otra oportunidad. El manejo de compras adicionales y múltiples pedidos simultáneos se definirá en una etapa futura.
-
-LLEGO durante takeover persiste llegada/timers sin avisar al cliente; al LIBERAR se emite el aviso pendiente una sola vez. La postventa recibida durante takeover no provoca otra intervención automática: el asesor ya atiende ese chat. Los comandos administrativos necesarios conservan su procesamiento.
-
-## Corrección definitiva de catálogo — 2026-09-17
-
-Esta aclaración del propietario prevalece sobre las referencias históricas al catálogo maestro: PAGINA DE STOCK tiene encabezados en fila 2 y datos exclusivamente en A3:G (ID-PRODUCTO, PRODUCTO, CAPACIDAD, COLOR, STOCK, PRECIO, INFORMACION DEL PRODUCTO). ID-PRODUCTO es la clave; la disponibilidad y los atributos de cada variante provienen de esa misma fila, sin consultar DATOS ni estructuras antiguas. Se leen valores evaluados sin formato para admitir fórmulas y precios monetarios de Sheets.
-
-PAGINA DE STOCK se genera mediante fórmulas desde DATOS: se usan sus resultados evaluados, sin interpretar FILTER ni exigir celdas literales. Las columnas auxiliares H:I, incluida «Ultima actualización» en I, quedan fuera del catálogo. En DATOS, los encabezados están en fila 2: B:G son entradas manuales de RE-STOCK y L:R es el catálogo maestro, tablas distintas. REGISTRO DE VENTAS conserva encabezados en fila 4 y datos en B5:W.
-
-Solo se ofrecen variantes válidas con stock mayor que cero. Se omiten filas vacías e inválidas aisladas; información del producto puede estar vacía. Columnas esenciales ausentes o ninguna fila válida producen CATALOGO_INVALIDO. Un catálogo válido con todas sus existencias en cero queda sin disponibilidad. Esta corrección no modifica GUIA, YCloud ni reglas comerciales y no autoriza despliegue.
-
-## Estados oficiales
-- nuevo
-- interesado
-- recopilando_datos
-- esperando_confirmacion
-- confirmado
-- enviado
-- disponible_retiro
-- retirado
-- cerrado
-- abandono
-- no_interesado
-- postventa_humano
-- human_takeover
-- no_retirado
-- spam
-
-retirado = pagado.
-
-## Reglas principales
-
-- El bot solo atiende ventas nuevas y logística.
-- Con el bot activo, cualquier consulta de postventa sobre la compra anterior pasa a humano. Durante human_takeover prevalece el silencio, sin otra intervención automática.
-- Un chat cerrado que diga solamente hola, gracias, ok, emojis, etc. se ignora sin llamar a OpenAI.
-- Un chat cerrado puede reactivarse únicamente si existe intención positiva explícita de NUEVA COMPRA y no hay un pedido activo en fase logística. LIBERAR no autoriza abrir otra oportunidad para ese pedido activo.
-- Ejemplos: “quiero comprar”, “me interesa”, “quiero otra”, “quiero otro equipo”, etc.
-- Las negaciones deben impedir falsos positivos: “no quiero comprar otra” NO reactiva.
-- “No estoy interesado” cierra esa oportunidad y cancela seguimientos. Si en el futuro el cliente inicia expresamente una nueva compra y no hay un pedido activo en fase logística, puede abrirse una nueva oportunidad.
-- “No me escriban” activa NO_CONTACTAR. Nosotros no iniciamos más mensajes. Si posteriormente el propio cliente inicia explícitamente una nueva compra y no hay un pedido activo en fase logística, puede reactivarse.
-- Con human_takeover=false, postventa (garantía, devolución, daño, configuración, cargador, equipo anterior, reclamo, “me estafaron”, etc.) => human_takeover y aviso al administrador. Con human_takeover=true, mantener silencio; no generar otra intervención ni aviso automático por ese mensaje.
-- Aviso POSTVENTA al administrador: nombre si existe + número + último mensaje.
-- Si un mensaje mezcla postventa y nueva compra, POSTVENTA tiene prioridad.
-- Insulto sin relación con compra => spam/silencio.
-- Reclamo relacionado con compra => postventa humana.
-- Empleo, proveedores, alianzas o mensajes que no sean intención de compra => silencio.
-- Imágenes y documentos del cliente NO se interpretan en V2.
-- Audios máximo 3 minutos.
-- Ventana de agrupación de mensajes: 5 segundos.
-- Rate limit inicial: 20 mensajes/minuto por número.
-- Los webhooks duplicados deben detectarse mediante message_id.
-- Nunca responder a mensajes generados por el propio bot.
-- Los comandos administrativos solo pueden venir del número autorizado configurado por variable de entorno.
-- No hardcodear el número administrativo directamente en múltiples archivos.
-
-## Comandos del administrador
-- GUIA <ID_PEDIDO> <NUMERO_GUIA>
-- LLEGO <NUMERO_GUIA>
-- TOMAR <NUMERO>
-- LIBERAR <NUMERO>
-- DERIVAR <ID_PEDIDO>
-
-## Tomar
-- activa human_takeover
-- el bot deja de contestar completamente.
-
-## Liberar
-- desactiva human_takeover.
-- recupera el estado real del pedido, incluido confirmado aunque todavía no tenga guía.
-- si el pedido está confirmado/enviado, queda exclusivamente en modo logístico/post-envío; no vuelve a venta, captura de datos ni esperando_confirmacion.
-- mientras exista el pedido activo en fase logística, incluso «quiero comprar otro» NO inicia otra oportunidad automáticamente. Múltiples pedidos simultáneos quedan para una definición futura.
-- si LLEGO dejó un aviso pendiente durante takeover, emitirlo una sola vez conservando llegada/timers.
-
-## Pedidos
-- ID formato LU0001, LU0002, etc.
-- Puede haber múltiples productos en una misma orden.
-- Cada línea contiene:
-  producto
-  capacidad
-  color si aplica
-  cantidad
-  precio
-- Datos obligatorios del cliente:
-  nombre completo
-  cédula
-  teléfono tomado automáticamente del número de WhatsApp
-  provincia
-  ciudad
-- Antes de confirmar mostrar:
-  nombre
-  cédula
-  teléfono
-  provincia
-  ciudad
-  producto(s)
-  cantidad(es)
-  precio
-- Pedir confirmación expresamente.
-- Aceptar confirmaciones como:
-  CONFIRMO
-  sí
-  correcto
-  todo bien
-  y equivalentes inequívocos.
-- Si existen datos contradictorios, usar el dato más reciente.
-- Antes de GUIA pueden modificarse los datos del pedido.
-- Después de GUIA cualquier cambio pasa a humano.
-
-## Flujo de venta
-1. responder la consulta de producto/precio brevemente, con variante relevante y hasta 2–4 características principales.
-2. responder características o qué incluye únicamente según lo consultado.
-3. ante intención de compra, explicar brevemente envío gratis por Servientrega, contraentrega al retirar y videos de prueba/empaque; preguntar si desea registrar el pedido.
-4. después de aceptar el registro, recopilar solamente datos faltantes.
-5. mostrar un resumen y pedir confirmación expresamente.
-6. al confirmar, persistir pedido.estado=confirmado, ID_PEDIDO y human_takeover=true; emitir el cierre breve único y mantener el aviso administrativo existente.
-7. dejar el chat pausado para mensajes normales; el asesor continúa manualmente por el mismo WhatsApp.
-
-- Los videos de funcionamiento y empaque posteriores a la confirmación los envía MANUALMENTE el asesor durante human_takeover. Se sustituye la antigua obligación de enviar siempre video automáticamente cuando exista multimedia configurada.
-- El bot no tiene obligación de enviar multimedia automática en esta etapa ni de incluirla en la primera consulta comercial.
-- No existe delivery local. Todo Ecuador usa contraentrega por Servientrega.
-- El bot NO selecciona agencia de Servientrega. Informa que un asesor la confirmará posteriormente.
-
-## Pedidos > $300
-- Contraentrega soporta máximo $300.
-- $300 exactos pueden continuar.
-- Si total > $300:
-  avisar al administrador
-  congelar chat
-  pasar a gestión humana
-  no completar cierre automático.
-
-## Stock
-- Fuente oficial: Google Sheets / PAGINA DE STOCK / DATOS.
-- Precio y stock jamás se inventan.
-- Stock no se reserva al confirmar pedido.
-- El stock SOLO se descuenta al ejecutar GUIA, mediante las fórmulas de Sheets al registrar ventas enviadas; nunca con un segundo descuento del backend.
-- Puede haber varios pedidos confirmados aunque quede 1 unidad.
-- <=5 unidades: “Nos quedan muy pocas unidades disponibles”.
-- 1 unidad: “Nos queda la última unidad disponible”.
-- 0 unidades para un cliente nuevo: agotado temporalmente y no permitir registrar nuevo pedido.
-- Pedidos previamente confirmados que luego encuentran stock 0: congelar y esperar decisión humana.
-- Stock negativo está prohibido.
-- En pedidos multi-producto, GUIA debe validar todas las líneas antes de descontar alguna.
-- Si falta stock en una línea, no hacer descuento parcial.
-
-## Guia
-- validar pedido
-- validar stock
-- registrar venta en Sheets
-- permitir que Sheets descuente la cantidad completa a partir de las filas enviado, sin escribir stock directamente
-- guardar guía
-- cambiar a enviado
-- mantener human_takeover=true; GUIA no reactiva el bot.
-- conservar la notificación logística correspondiente pendiente si el chat está bajo takeover; no interrumpir la atención humana.
-- el administrador luego usa LIBERAR cuando termina la coordinación y el envío manual de fotos/videos/guía; el bot queda en logística, no en venta.
-
-Si stock insuficiente al recibir GUIA:
-- NO descontar
-- NO enviar al cliente
-- congelar pedido
-- avisar administrador
-- opciones humanas:
-  actualizar stock
-  DERIVAR
-
-## Derivar
-- se usa para pedidos confirmados que se pasan a competencia/proveedor.
-- cerrar pedido
-- closure_reason=derivado_competencia
-- cancelar seguimientos
-- no volver a llamar OpenAI para ese pedido.
-
-## Seguimiento comercial
-- 48 horas exactas desde último mensaje del cliente.
-- segundo seguimiento a 96 horas exactas.
-- mensajes fijos, sin modelo caro.
-- texto base:
-  “Qué tal, buenos días. Le escribo para saber si aún está interesado en poder registrar su pedido.”
-- si responde, continuar desde el punto previo.
-- Después de enviar el segundo mensaje a las 96h, cerrar esa oportunidad para seguimientos automáticos. Una nueva compra explícita posterior crea otra oportunidad solo si no hay un pedido activo en fase logística.
-- un pedido confirmado cancela todos los seguimientos comerciales.
-
-## Llego / retiro
-- LLEGO persiste llegada y timers. Si human_takeover=false, avisa que el producto está disponible; si human_takeover=true, no avisa al cliente y conserva el aviso pendiente para emitirlo una sola vez al LIBERAR.
-- después comienza seguimiento cada 4 horas.
-- lunes a viernes: 08:00 a 17:00.
-- sábado: 08:00 a 12:00.
-- domingo: sin seguimiento.
-- si las 4 horas caen fuera de horario, mover al siguiente horario permitido.
-- si cliente da hora exacta de retiro, pausar recordatorios repetitivos y verificar después de esa hora.
-- si dice algo ambiguo como “en la tarde”, “esta semana”, “en estos días”, mantener seguimiento normal.
-- primeros 3 días laborales: seguimiento automático.
-- al terminar el tercer día sin confirmación: avisar NO RETIRÓ al administrador y silenciar bot.
-- el cuarto día laboral queda exclusivamente para gestión humana.
-- una imagen NO confirma retiro.
-- aceptar frases textuales como:
-  confirmo
-  ya retiré
-  ya lo tengo
-  ya lo recogí
-  gracias, ya me llegó
-  y equivalentes inequívocos.
-- estas frases solo cierran si el estado es disponible_retiro.
-- al confirmar retiro:
-  asumir pagado
-  mandar último “Gracias por su compra”
-  avisar al administrador:
-    nombre
-    número
-    producto
-    guía
-    precio
-  cerrar chat.
-
-## Datos
-- La cédula se elimina 30 días después de created_at del pedido.
-- Conservar teléfono y datos operativos necesarios del pedido.
-- Lead abandonado: limpiar a los 30 días desde abandoned_at/closed_at.
-- cerrar chat significa no llamar modelo y cancelar automatizaciones, no necesariamente borrar información operativa.
-
-## Persistencia
-- Google Sheets sigue siendo memoria operativa en V2.
-- Render sigue siendo backend.
-- Los timers NO pueden depender solo de RAM.
-- Deben persistirse datos como:
-  last_customer_message_at
-  next_followup_at
-  followup_stage
-  arrived_at
-  next_pickup_reminder_at
-  pickup_deadline
-- tras reinicio de Render, los seguimientos deben poder reconstruirse.
-- la pausa human_takeover y el estado real del pedido deben persistirse para sobrevivir reinicios.
-
-### Deuda técnica: deduplicación Meta
-
-La deduplicación Meta todavía tiene un componente en RAM. La presencia de persistencia en otras partes de la entrada no implica que toda la deduplicación Meta sobreviva a reinicios. Se documenta como deuda técnica; no se modifica en esta reconciliación. YCloud es el proveedor principal actual. La regla de deduplicar por message_id sigue siendo el objetivo, sin presentar esa deuda como resuelta.
-
-## Modelos openai
-- OpenAI es el único proveedor que responde a clientes en producción.
-- Preparar arquitectura configurable con niveles:
-  LOW
-  NORMAL
-  HIGH
-- modelos concretos deben venir de .env.
-- LOW para conversaciones sencillas.
-- NORMAL para conversación comercial habitual.
-- HIGH solo para casos realmente complejos.
-- reglas determinísticas no deben llamar modelo.
-- Grok solo se utiliza en desarrollo/auditoría.
-
-## Multimedia
-Crear/preparar estructura para hoja MULTIMEDIA:
-PRODUCTO | CAPACIDAD | COLOR | TIPO | URL
-
-Esta estructura no impone envío automático después de confirmar. Los videos de funcionamiento y empaque de esa etapa son responsabilidad manual del asesor durante human_takeover.
-
-## Pruebas
-- TEST_MODE debe existir.
-- pruebas automáticas no deben escribir a clientes reales ni modificar stock real.
-- pruebas finales reales sí pueden utilizar stock real.
-
-## Logs y métricas
-Registrar:
-- número
-- pedido
-- estado anterior
-- estado nuevo
-- regla disparada
-- llamada o no a modelo
-- modelo utilizado
-- tokens de entrada
-- tokens de salida
-- transcripción si aplica
-- costo estimado por conversación/pedido
-- errores.
-
-## Prioridad del router
-1. comandos administrativos
-2. human_takeover
-3. postventa
-4. no_contactar / spam / estados cerrados
-5. logística/post-envío del pedido activo: impedir apertura automática de otra oportunidad, incluso ante nueva intención de compra
-6. nueva compra explícita solo cuando no hay un pedido activo en fase logística
-7. conversación comercial
-8. OpenAI solo si ninguna regla determinística resuelve el mensaje
-
-## Resoluciones oficiales — implementación #1
-
-Estas resoluciones precisan las secciones anteriores y prevalecen sobre cualquier descripción V1, salvo las sustituciones operativas más recientes documentadas aquí. La resolución 13 antigua queda reemplazada por la vigente.
-
-1. POSTVENTA:
-postventa_humano representa el estado/motivo funcional.
-human_takeover=true representa el bloqueo efectivo de respuestas.
-Conservar información/estado previo del pedido para no perder trazabilidad.
-Con el bot activo, postventa activa human_takeover. Si human_takeover ya es true, el mensaje no provoca respuesta, otra intervención ni nuevo aviso automático: el asesor ya atiende el mismo chat.
-
-2. LLEGO DURANTE HUMAN TAKEOVER:
-Si llega un comando LLEGO válido mientras human_takeover=true:
-- actualizar estado/timers persistentemente;
-- NO enviar mensaje al cliente todavía;
-- al LIBERAR, ejecutar la notificación logística pendiente una sola vez.
-TOMAR significa silencio real.
-
-3. MULTI-PRODUCTO:
-Toda validación de stock para GUIA debe ser atómica.
-Primero validar todas las líneas.
-No realizar ninguna escritura/descuento hasta confirmar que todas son válidas.
-No permitir descuentos parciales.
-
-4. PEDIDOS > $300:
-Se pueden conservar/registrar los datos del pedido internamente.
-Si total > 300:
-- human_takeover=true
-- avisar administrador
-- no continuar cierre/logística automática.
-300 exactos continúan normalmente.
-
-5. SEGUIMIENTO 48/96:
-48h = primer mensaje fijo.
-96h = segundo y último mensaje fijo.
-Después de enviar el mensaje de 96h, esa oportunidad queda cerrada para seguimientos automáticos.
-Si el usuario posteriormente inicia explícitamente una nueva compra, se crea nueva oportunidad solo si no hay un pedido activo en fase logística.
-
-6. DÍAS LABORALES DE RETIRO:
-Lunes a sábado cuentan como laborales.
-Domingo no.
-El día de LLEGO cuenta como día laboral 1 únicamente si la activación/notificación ocurre dentro de una ventana operativa.
-Si ocurre fuera de horario, el conteo empieza en la siguiente ventana/día laboral válido.
-
-7. RETENCIÓN:
-Cédula: eliminar 30 días después de created_at del pedido.
-Lead abandonado: limpiar 30 días después de abandoned_at/closed_at.
-Conservar teléfono y datos operativos permitidos.
-
-8. PRECIO MULTI-PRODUCTO:
-Cada línea:
-- precio_unitario
-- cantidad
-- subtotal
-Total pedido = suma de subtotales.
-
-9. ID PEDIDO:
-Formato LU0001...
-Debe ser persistente.
-Antes de asignarlo verificar en Sheets que no exista.
-No depender solo de un contador en RAM.
-
-10. AUDIO > 3 MIN:
-No transcribir.
-Usar respuesta fija económica indicando que el audio debe durar máximo 3 minutos o que puede escribir su consulta.
-No llamar modelo para ese contenido.
-
-11. MULTIMEDIA FALLIDA:
-No inventar URL.
-Registrar error técnico.
-Continuar con información textual disponible.
-No romper todo el flujo de venta por un archivo multimedia fallido.
-
-12. COMANDOS V1:
-PAGO y RETIRADO ya NO son comandos administrativos válidos en V2.
-No deben cambiar estados.
-
-13. NUEVA COMPRA DURANTE LOGÍSTICA — RESOLUCIÓN SUSTITUIDA:
-Queda sin efecto la autorización antigua de crear inmediatamente una oportunidad independiente para un cliente con pedido enviado/disponible, incluso después de LIBERAR.
-LIBERAR recupera el estado real confirmado/enviado y habilita exclusivamente logística/post-envío. Mientras exista el pedido activo en fase logística, «quiero comprar otro» NO crea automáticamente otra oportunidad.
-El manejo de nuevas compras con múltiples pedidos simultáneos se definirá en una etapa futura. Con el bot activo, una consulta de postventa sobre el producto anterior pasa a humano; durante takeover se mantiene silencio.
-
-14. RESPUESTAS MÍNIMAS A FOLLOW-UP:
-“ok”, emoji, “gracias” cuentan como actividad pero NO como intención suficiente para avanzar.
-No llamar un modelo caro solo por ellas.
-
-15. DEDUPLICACIÓN:
-message_id se valida y deduplica ANTES del buffer de agrupación de 5 segundos. Esto no elimina la deuda técnica del componente de deduplicación Meta en RAM, descrita en Persistencia. YCloud sigue siendo el proveedor principal actual; no cambiar deduplicación en esta reconciliación.
-
-16. DERIVAR:
-debe cancelar todos los timers/jobs/next actions asociados al pedido.
-
-17. PRIVACIDAD:
-No registrar indiscriminadamente:
-- cuerpos completos de mensajes
-- cédulas
-- tokens
-- credenciales
-- secretos
-- URLs sensibles
-Usar logs minimizados/redactados.
-
-18. YCLOUD:
-La auditoría encontró que YCloud puede responder aunque la documentación/reglas indiquen silencio.
-Localiza esa ruta.
-Asegúrate de que todas las salidas hacia cliente pasen por el router/guardas de estado.
-Ningún proveedor/ruta secundaria puede saltarse human_takeover, estados cerrados o silencio.
-
-## Alcance pendiente
-
-La estructura final de DATOS, PAGINA DE STOCK y REGISTRO DE VENTAS queda definida en la siguiente sección. No ejecutar migración masiva de IDs antiguos ni descuentos manuales. Retención, calendario laboral completo y seguimientos comerciales se implementarán en bloques posteriores conforme a las reglas ya resueltas.
-
-## Integración final de inventario y ventas — resolución oficial
-
-ARQUITECTURA FINAL DE GOOGLE SHEETS
-
-Tenemos 3 hojas principales dentro de STOCK_SPREADSHEET_ID:
-
-1. DATOS
-2. PAGINA DE STOCK
-3. REGISTRO DE VENTAS
-
-1. HOJA DATOS
-
-Esta hoja es administrada manualmente por el usuario para RE-STOCK.
-
-ChatGPT/backend NO debe modificar RE-STOCK.
-
-Estructura relevante:
-
-B = FECHA
-C = PRODUCTO
-D = CAPACIDAD
-E = COLOR
-F = RE-STOCK
-G = ID-PRODUCTO
-
-Catálogo maestro:
-
-L = ID-PRODUCTO
-M = PRODUCTO
-N = CAPACIDAD
-O = COLOR
-P = STOCK
-Q = PRECIO
-R = INFORMACION DEL PRODUCTO
-
-Cada combinación producto + capacidad + color tiene un ID-PRODUCTO único.
-
-Ejemplos:
-IPADAIR1-16-BLA
-IPADAIR1-16-PLA
-IPADAIR1-32-BLA
-IPADAIR1-32-PLA
-
-No se permiten celdas de COLOR como:
-“blanco, plateado”
-
-Cada color debe tener su propia fila/ID único.
-
-STOCK en DATOS es calculado por fórmula de Sheets.
-
-El backend NO debe escribir directamente sobre DATOS!P.
-
-2. HOJA PAGINA DE STOCK
-
-Esta hoja es de lectura para el chatbot.
-
-Solo muestra productos con STOCK > 0.
-
-Estructura:
-
-A = ID-PRODUCTO
-B = PRODUCTO
-C = CAPACIDAD
-D = COLOR
-E = STOCK
-F = PRECIO
-G = INFORMACION DEL PRODUCTO
-
-REGLA:
-El chatbot debe usar PAGINA DE STOCK como fuente principal para saber:
-- qué productos están disponibles;
-- qué variante exacta está disponible;
-- stock actual;
-- precio;
-- información/características.
-
-Si un ID-PRODUCTO no aparece en PAGINA DE STOCK:
-se considera sin stock disponible.
-
-No inventar disponibilidad.
-
-3. HOJA REGISTRO DE VENTAS
-
-Datos empiezan en fila 5.
-
-Estructura final:
-
-B = FECHA
-C = ID PEDIDO
-D = METODO
-E = GUIA
-F = ESTADO
-G = FECHA ENVIO
-H = DIA RETIRO
-I = NOMBRE DE CLIENTE
-J = TELEFONO
-K = CEDULA
-L = PROV
-M = CIUDAD
-N = SERVIENTREGA
-O = ID-PRODUCTO
-P = PRODUCTO
-Q = CAPACIDAD
-R = COLOR
-S = CANT
-T = PRECIO UNITARIO
-U = VALOR
-V = ENVIO
-W = NETO
-
-En esta hoja:
-- ID-PRODUCTO se escribe/selecciona.
-- PRODUCTO se completa por fórmula desde ID-PRODUCTO.
-- CAPACIDAD se completa por fórmula desde ID-PRODUCTO.
-- COLOR se completa por fórmula desde ID-PRODUCTO.
-- PRECIO UNITARIO se completa por fórmula desde ID-PRODUCTO.
-- VALOR se calcula automáticamente.
-- NETO se calcula automáticamente.
-
-NO sobrescribir fórmulas preexistentes en P/Q/R/T/U/W.
-
-ESTADOS válidos operativos:
-- enviado
-- en agencia
-- pagado
-- devuelto
-
-La lógica de stock en Sheets ya está configurada así:
-
-RE-STOCK
-- enviado
-- en agencia
-- pagado
-+ devuelto
-
-Por tanto:
-- enviado resta;
-- en agencia sigue restado;
-- pagado sigue restado;
-- devuelto suma de nuevo esa cantidad al stock.
-
-MUY IMPORTANTE:
-El backend NO debe hacer un “segundo descuento” manual.
-Registrar la fila con estado enviado es lo que hace que Sheets recalculé el stock.
-
-FUNCIÓN DEL CHATBOT RESPECTO AL INVENTARIO
-
-El backend/ChatGPT:
-
-SÍ:
-- lee PAGINA DE STOCK;
-- lee DATOS como catálogo maestro;
-- responde características desde Sheets;
-- valida stock antes de confirmar operaciones;
-- registra ventas en REGISTRO DE VENTAS cuando llega GUIA;
-- actualiza estados de la venta;
-- usa ID-PRODUCTO como clave principal.
-
-NO:
-- modifica RE-STOCK;
-- inventa stock;
-- modifica directamente DATOS!P;
-- combina colores en una sola variante;
-- usa nombre/capacidad/color como llave principal cuando existe ID-PRODUCTO.
-
-COMANDO GUIA
-
-Formato:
-
-GUIA <ID_PEDIDO> <NUMERO_GUIA>
-
-Ejemplo:
-GUIA LU0001 123456789
-
-Al recibir GUIA:
-
-1. Validar administrador autorizado.
-2. Buscar pedido por ID PEDIDO.
-3. Leer todas las líneas del pedido.
-4. Cada línea debe tener ID-PRODUCTO.
-5. Leer PAGINA DE STOCK y validar disponibilidad de cada ID-PRODUCTO.
-6. Validar que stock disponible >= cantidad solicitada para TODAS las líneas.
-7. La validación debe ser atómica a nivel lógico:
-   si falla una línea, no registrar ninguna.
-
-Si stock insuficiente:
-- no escribir ninguna fila en REGISTRO DE VENTAS;
-- no cambiar stock;
-- no enviar confirmación al cliente;
-- congelar pedido;
-- avisar administrador;
-- esperar decisión:
-  actualizar stock o DERIVAR.
-
-Si stock suficiente:
-
-8. Encontrar N filas consecutivas disponibles desde fila 5.
-No usar append ciego porque hay fórmulas prellenadas.
-
-9. Una fila por cada línea/producto del pedido.
-
-10. Escribir en cada fila:
-
-B FECHA = fecha actual America/Guayaquil
-C ID PEDIDO
-D METODO = CONTRAENTREGA
-E GUIA
-F ESTADO = enviado
-G FECHA ENVIO = fecha actual America/Guayaquil
-H DIA RETIRO = vacío
-I NOMBRE DE CLIENTE
-J TELEFONO
-K CEDULA
-L PROV
-M CIUDAD
-N SERVIENTREGA = vacío por ahora
-O ID-PRODUCTO
-S CANT
-V ENVIO = vacío por ahora
-
-NO escribir manualmente en:
-P PRODUCTO
-Q CAPACIDAD
-R COLOR
-T PRECIO UNITARIO
-U VALOR
-W NETO
-si esas celdas contienen fórmulas.
-
-11. Guardar guía en el pedido.
-12. estado pedido = enviado.
-13. mantener human_takeover = true; GUIA no reactiva el bot.
-14. conservar la notificación logística correspondiente pendiente durante el takeover; no interrumpir la atención humana.
-15. admin luego usa LIBERAR: recuperar estado real y logística/post-envío, sin abrir otra oportunidad comercial mientras exista el pedido activo.
-
-IDEMPOTENCIA GUIA
-
-Si llega de nuevo:
-GUIA LU0001 123456789
-
-y ya fue registrada:
-- no crear duplicados;
-- no registrar segunda vez;
-- no descontar stock otra vez;
-- devolver resultado idempotente.
-
-Si mismo ID PEDIDO llega con una guía diferente:
-- no reemplazar silenciosamente;
-- congelar;
-- avisar administrador;
-- no escribir cambios hasta resolución humana.
-
-PEDIDOS MULTIPRODUCTO
-
-Ejemplo:
-LU0005:
-- 2 x IPADAIR1-32-PLA
-- 1 x CHROMEBOOK-DELL
-
-Debe crear 2 filas:
-una por línea/producto.
-
-Mismo:
-- ID PEDIDO
-- GUIA
-- datos cliente
-
-Diferente:
-- ID-PRODUCTO
-- CANT
-
-Toda validación de stock debe ocurrir antes de escribir una sola fila.
-
-ACTUALIZACIÓN DE ESTADOS
-
-Preparar/ajustar funciones para localizar una venta por:
-- ID PEDIDO
-o
-- GUIA
-
-y actualizar ESTADO en REGISTRO DE VENTAS.
-
-ESTADOS:
-enviado
-en agencia
-pagado
-devuelto
-
-Cuando estado cambia:
-NO modificar stock directamente.
-Sheets recalcula stock automáticamente.
-
-Ejemplo:
-enviado -> pagado
-sigue restado.
-
-pagado -> devuelto
-Sheets devuelve automáticamente la cantidad al stock.
-
-FECHAS
-
-El Apps Script manual ya coloca fechas cuando una persona edita la hoja,
-pero las escrituras del backend NO deben depender de onEdit.
-
-Por eso:
-- GUIA debe escribir FECHA y FECHA ENVIO explícitamente.
-- cuando backend marque pagado/retiro, debe escribir DIA RETIRO explícitamente si está vacío.
-
-Timezone:
-America/Guayaquil
-
-LECTURA PARA RESPUESTAS DEL BOT
-
-Actualizar la capa que consulta inventario para que:
-
-1. lea PAGINA DE STOCK;
-2. use ID-PRODUCTO como clave;
-3. solo ofrezca filas visibles/disponibles con stock > 0;
-4. use PRECIO de la hoja;
-5. use INFORMACION DEL PRODUCTO de la hoja;
-6. no use valores hardcodeados si existe dato en Sheets.
-
-Si hay:
-stock <= 5
-puede indicar:
-“Nos quedan muy pocas unidades disponibles.”
-
-Si stock == 1:
-“Nos queda la última unidad disponible.”
-
-No revelar cantidades exactas entre 2 y 5.
-
-## Historial de cambios
-
-- Reconciliación posterior a auditoría de 2777fb1989edcfd2007add353c1407c853cfdf8a: pausa tras confirmar, videos manuales, GUIA sin liberar, LIBERAR solo logístico, sustitución de nueva oportunidad durante logística, silencio en postventa durante takeover y deuda Meta en RAM. Cambio exclusivamente documental, sin despliegue.
-
-- 2026-09-16: especificación inicial y auditoría.
-- 2026-09-16: incorporadas las 18 resoluciones oficiales; autorizado Día 1, implementación #1.
-- 2026-09-16: implementación #1 verificada localmente; detalles y límites técnicos en IMPLEMENTACION_DIA1.md, sin cambios adicionales de reglas.
-- 2026-09-16: autorizada integración con estructura final de inventario/ventas; Sheets calcula existencias a partir del registro, sin escritura del backend sobre RE-STOCK ni DATOS!P. Sin despliegue ni calendario completo de retiro.
-- 2026-09-16: GUIA conectado al flujo real con intención durable, reconciliación por pedido/guía y exclusión con DERIVAR. Insuficiencia: cero ventas, estado del pedido conservado y alerta humana. Alcance de concurrencia: una instancia Node. Se mantienen fuera de este bloque LLEGO y calendario de retiro. Ver IMPLEMENTACION_INVENTARIO.md para pruebas y límites de APIs externas.
-
-## Audio YCloud y verificación confirmado/GUIA — 2026-09-18
-
-Autorizado audio real YCloud: normalizar audio/voice, descargar medios autenticados de forma segura, verificar máximo 3 minutos, transcribir con MODEL_TRANSCRIPTION y continuar por el mismo router respetando estado, contexto y controles. Errores de descarga/transcripción solicitan texto; exceso de duración solicita audio más corto o texto. No guardar binarios permanentemente ni registrar enlaces, contenido de cliente o secretos. TEST_MODE no hace llamadas reales.
-
-Confirmar solo persiste el pedido interno y su ID; no escribe REGISTRO DE VENTAS ni modifica existencias. GUIA sigue registrando la venta y Sheets calcula el stock. Se verifica el ejemplo IPADAIR1-32-PLA, cantidad 1, precio 110, existencias 3: confirmar mantiene 3; GUIA produce 2 mediante fórmulas. Reportar gaps en la comunicación del ID al administrador sin implementar un mecanismo nuevo. Sin cambios de LLEGO, reglas comerciales ni despliegue.
-
-## Aviso administrativo de confirmación — 2026-09-18
-
-El aviso NUEVO PEDIDO CONFIRMADO se dirige a ASESOR_WHATSAPP por el proveedor del flujo de origen: YCloud para YCloud y Meta para Meta. Debe incluir ID, nombre, teléfono, líneas/productos, cantidades y total. Persistir el aviso junto al pedido antes de enviarlo, conservar idempotencia por pedido y recuperación tras reinicio. No registrar datos personales completos. TEST_MODE no hace envíos reales. No cambiar ID_PEDIDO, GUIA, LLEGO ni reglas comerciales. No desplegar.
-
-Los rechazos explícitos se reintentan con espera progresiva. Si un timeout, error 5xx o reinicio deja incierta la aceptación, conservar el aviso para conciliación y no reenviar ciegamente: el registro interno no constituye una transacción compartida con el proveedor.
-
-## Confirmación determinística prioritaria — 2026-09-21
-
-En esperando_confirmacion, resolver confirmaciones explícitas, negaciones, correcciones y solicitudes explícitas de asesor antes de la clasificación OpenAI. Normalizar tildes, caso, puntuación y espacios. Se aceptan confirmo/confirmado/confirmar, sí/si, correcto/es correcto/está correcto, todo correcto/todo está correcto/todo bien, confirmo los datos, confirmo los datos del pedido, confirmar los datos del pedido y los datos están correctos. Negaciones y cambios tienen prioridad sobre una aceptación dentro del mismo mensaje.
-
-Mantener el flujo existente de corrección y asesor. Solo los mensajes no resueltos localmente usan LOW para clasificación; la extracción de datos del flujo de corrección conserva su implementación. Ambos clasificadores de compra disponen de 512 tokens máximos de salida. Una respuesta incompleta, vacía, inválida o un error conserva borrador/pedido/estado y emite una sola indicación para continuar con una opción explícita. El marcador persistido evita repetir la pregunta o llamadas de clasificación fallidas: confirmar/corregir/pedir asesor explícitamente sigue funcionando y un nuevo resumen permite volver a clasificar ambigüedades.
-
-Texto y transcripción comparten estas reglas. Una confirmación ya respondida no vuelve a emitir el mismo aviso al cliente. No cambiar GUIA, LLEGO, inventario ni otras reglas comerciales. Confirmar no escribe REGISTRO DE VENTAS ni descuenta stock. Sin despliegue.
-
-## Cierre, pausa y conversación progresiva — 2026-09-21
-
-Después de persistir ID_PEDIDO y estado confirmado, guardar human_takeover=true en la misma operación. Emitir únicamente el cierre breve que indica que un asesor coordinará por el mismo chat la agencia de Servientrega y el envío. El aviso administrativo existente conserva destinatario, proveedor e idempotencia.
-
-Texto y audio Meta/YCloud comparten el reconocimiento determinístico aprobado. La entrada común admite la composición «sí, confirmo los datos del pedido» sin un clasificador de audio separado. El pedido conserva estado confirmado durante la pausa; GUIA continúa registrando la venta y deja estado enviado con pausa. LIBERAR restaura el estado real del pedido y habilita solo logística para pedidos confirmados/enviados. No reiniciar ventas ni captura de datos, ni abrir otra oportunidad por «quiero comprar otro» mientras exista el pedido activo en logística. Los videos posteriores a confirmar los envía manualmente el asesor durante human_takeover; el bot no tiene obligación de multimedia automática en esa etapa. No modificar LLEGO, inventario, fórmulas ni ID_PEDIDO.
-
-La conversación comercial se entrega por etapas: producto/precio con hasta 2–4 características; características o accesorios solo cuando se consultan; intención de compra con explicación breve de envío gratis, contraentrega y videos de prueba/empaque; aceptación de registro antes de solicitar únicamente los datos faltantes; resumen único y confirmación. No anteponer el antiguo bloque largo ni enviar video comercial automáticamente en la primera consulta. Conservar historial y marcadores de explicación/registro en MEMORIA.
-
-El cierre del cliente se reserva antes del transporte en pedido.cierreCliente. Rechazos explícitos permiten reintento diferido; aceptación incierta o reserva sobreviviente a un reinicio se conservan sin repetir automáticamente. No hay transacción compartida entre Sheets y los proveedores: la conciliación humana de estados inciertos evita duplicados. TEST_MODE no envía mensajes reales. Sin despliegue.
+# Level Up Store WhatsApp — SPEC V2.5
+
+Esta especificación sustituye las resoluciones V1/V2 contradictorias. El código
+controla estados y escrituras; la IA interpreta lenguaje; Sheets calcula stock.
+YCloud es el proveedor principal. Meta permanece disponible. No se despliega
+esta migración sin revisar la fórmula de inventario y las pruebas reales.
+
+## Seguridad, entrada y persistencia
+
+- Webhooks Meta/YCloud autenticados con sus firmas sobre bytes originales.
+- Deduplicación persistente en ENTRADAS_V2, buffer fijo de cinco segundos,
+  rate limit de 20 entradas/minuto y aislamiento por número.
+- Los fallos permanentes se ponen en cuarentena; los transitorios tienen
+  backoff y un máximo de tres intentos. No hay loop infinito de ingress_retry.
+- MEMORIA!A2:C mantiene el snapshot JSON, oportunidades e intents/outboxes.
+- TEST_MODE sustituye Sheets por memoria y bloquea API/modelos/transporte real.
+- Meta conserva además deduplicación en RAM: es deuda técnica. Los locks de
+  cliente, inventario y contadores presuponen una sola instancia de backend.
+- Logs: eventos, etapa, estado, IDs internos, códigos, métricas y fingerprints.
+  Nunca cuerpos completos, cédulas, teléfonos completos, transcripciones,
+  credenciales, audio, contenido TTS ni URLs firmadas.
+
+## Identidades
+
+ID_PEDIDO conserva LU0001, LU0002… y su contador persistente __V2_COUNTER__.
+ID_CHAT usa CH000001, CH000002… con __V25_CHAT_COUNTER__ y comprobación de
+colisiones contra pedidos vigentes e históricos. Ambos contadores se reservan
+antes de confirmar; los huecos después de una caída son válidos.
+
+ID_CHAT nace exclusivamente al confirmar el resumen de un pedido normal.
+No se crea al saludar, seleccionar producto, elegir agencia ni pedir ayuda.
+Se persiste en pedido.id_chat, vinculado a pedido.id y posteriormente a guía.
+Un ciclo posterior genera otra identidad y conserva los pedidos normales previos.
+
+## Estados
+
+Estados nuevos: nuevo, interesado, recopilando_datos, esperando_confirmacion,
+confirmado, enviado, disponible_retiro, retirado, cancelado, cerrado, abandono,
+no_interesado, postventa_humano, human_takeover y spam.
+
+Lectura histórica: pagado → retirado; sin_respuesta/no_retirado → cancelado.
+Se conserva legacy_estado, fechaPago e historia; legacy_terminal impide reabrir
+esos pedidos o reactivar seguimientos. No se escriben nuevos estados legacy.
+Un cancelado nuevo puede pasar a retirado si el retiro se confirma realmente;
+la transición agrega evento, fecha y cancela timers. No cambia a devuelto.
+
+## Flujo comercial
+
+1. Saludo abierto sin asumir producto.
+2. Selección entre variantes disponibles del catálogo. Matching local y, cuando
+   hace falta, interpretación LOW limitada a candidatos existentes. No se elige
+   arbitrariamente color/capacidad entre variantes. Cantidad inicial: uno.
+3. Características reales, fotos por orden numérico, video comercial, precio y
+   promoción, AudioComercial1. La multimedia comercial no representa el equipo
+   individual que será despachado.
+4. Ciudad/provincia: inferir provincia si la ciudad es inequívoca, admitiendo
+   un typo seguro. Pedir aclaración ante homónimos. Elección expresa de agencia.
+5. Solo después se solicita nombre completo y cédula por texto. El teléfono
+   proviene de WhatsApp. No se solicita otra vez. Cédula sin checksum ni
+   validación legal; el administrador revisa antes de GUIA.
+6. Resumen por texto: contraentrega, nombre, cédula, teléfono, provincia, ciudad,
+   agencia/dirección, líneas, capacidad, color, cantidad, unitario, subtotal,
+   total y envío gratis. Se pregunta si está correcto.
+7. Confirmación híbrida: matcher local primero; LOW solo para lenguaje ambiguo.
+   Admite sí, sí amigo, correcto, está bien, dale, mándelo, proceda, confirmo,
+   dale de una, hágale, envíelo, está coredto, perfecto continuemos y equivalentes claros. Negaciones, correcciones,
+   preguntas, dudas y condiciones nunca confirman automáticamente.
+8. Incomplete/sin texto de LOW es un fallo controlado: conserva el resumen,
+   emite una instrucción una vez y permite confirmación local posterior.
+
+Correcciones invalidan el dato relacionado. Cambiar ciudad/provincia/agencia
+obliga a elegir de nuevo una agencia válida; no conserva la de otra localidad.
+La IA no crea precios, productos, agencias, guías, estados ni mutaciones.
+
+Las preguntas cuyo dato no consta de forma verificable, contradicciones y
+casos que necesitan decisión humana generan pendingQuestion, conservando
+etapa y contexto. El aviso urgente va al asesor configurado por el proveedor
+de origen. Se envía una sola alerta por pregunta pendiente. RESPONDER entrega
+el contenido humano literal, por texto o TTS según longitud/tipo, y reanuda esa etapa, sin convertirlo en takeover real.
+
+## Confirmación normal y atención humana
+
+Sin límite monetario: revalidar datos/SKU/precio, reservar LU y CH, persistir
+pedido.estado=confirmado y human_takeover=true; cancelar followups comerciales.
+No escribir REGISTRO DE VENTAS ni modificar stock al confirmar.
+
+El cierre envía «✅ Pedido confirmado correctamente.» y luego audio logístico.
+Ambas etapas tienen persistencia independiente. Fecha calculada en Guayaquil:
+lunes-viernes hasta 17:00 inclusive sale hoy; después, siguiente día operativo.
+Sábado hasta 11:00 inclusive sale hoy; después y domingo, lunes. Se evalúa por
+minuto civil (17:01/11:01 ya fuera), no se suman 24 h ciegamente.
+El contenido logístico se fija al confirmar y se conserva para reintentos.
+Fallo TTS anterior al envío permite el mismo contenido por texto; aceptación
+incierta no se duplica. La excepción de salida durante takeover solo sirve para
+estos avisos persistidos del mismo pedido, nunca para TOMAR/postventa.
+El aviso NUEVO PEDIDO CONFIRMADO incluye CH, LU, nombre, cédula, teléfono,
+provincia, ciudad, agencia, líneas/SKU, capacidad/color, cantidades, precios,
+subtotales, total, contraentrega y guía pendiente.
+
+Con takeover activo el bot queda silencioso para mensajes normales, audios y
+postventa. El asesor envía manualmente los videos del equipo real/empaque y
+la guía. GUIA no reactiva el bot. LIBERAR un confirmado/enviado habilita solo
+logística. No abre otra compra automática mientras exista un pedido activo
+no retirado, incluido cancelado con guía. Después de retirado puede abrirse
+otro ciclo cuando el humano haya liberado el chat.
+
+Postventa tiene prioridad sobre nueva compra; con bot activo deriva y pausa,
+con takeover existente guarda silencio sin otra alerta automática.
+
+## Monto y ofertas manuales
+
+No existe límite monetario ni purga/derivación por monto. Todos los pedidos
+conservan IDs y datos y siguen el mismo flujo; inventario limita cantidades.
+No hay excepción de LIBERAR por teléfono.
+
+Una oferta explícita del administrador se vincula solo al SKU y cantidad exacta
+del borrador actual. No se aprende como promoción global ni se extrapola a otras
+cantidades/clientes. Se recalcula el resumen y requiere confirmación nueva.
+El parser solo aplica automáticamente ofertas inequívocas de total para un SKU,
+con cantidad explícita y centavos divisibles; ofertas complejas requieren revisión.
+Se conserva el precio de catálogo de referencia y GUIA lo revalida. Si cambió,
+la oferta no autoriza usar un precio desactualizado.
+T/U/W siguen siendo fórmulas: el descuento del pedido no cambia esas columnas.
+Conciliar manualmente importes comerciales y contables antes de despachar ofertas.
+
+## Comandos administrativos
+
+Solo ASESOR_WHATSAPP. Paréntesis obligatorios; comando indiferente a mayúsculas.
+Referencias ambiguas/cero candidatos no producen mutaciones ni mensajes al cliente.
+
+| Comando | Efecto |
+| --- | --- |
+| GUIA (CH000001) (GUIA) | Resuelve exactamente un pedido; registra envío/venta |
+| LLEGO (GUIA) | enviado → disponible_retiro; persiste llegada y seguimiento |
+| RETIRADO (GUIA) | Transición central de retiro, idéntica a la entrada del cliente |
+| CANCELADO (CH000001) | Solo antes de guía |
+| CANCELADO (GUIA) | Solo después de guía |
+| LIBERAR (CH000001) | Quita takeover; conserva fase del pedido |
+| RESPONDER (CH000001): respuesta | Resuelve pregunta puntual; no salta takeover real |
+| RESPONDER (TELÉFONO): respuesta | Excepción exclusiva para preconfirmación |
+| TOMAR (CH000001) / TOMAR (TELÉFONO) | Toma humana explícita |
+| DERIVAR (LU0001) / DERIVAR (CH000001) | Cierra confirmado no registrado ni con GUIA incierta |
+
+PAGO no es comando ni alias. No existe comando DEVUELTO.
+RESPONDER conserva literal el contenido: largo explicativo usa TTS; cifras,
+precios, códigos, datos sensibles/precisos y respuestas cortas usan texto.
+Mensajes del administrador sin sintaxis válida permanecen silenciosos.
+RESPONDER usa outbox para rechazos reintentables;
+un resultado incierto nunca se reproduce ciegamente.
+
+## GUIA y contrato de Sheets
+
+PAGINA DE STOCK: encabezados fila 2, datos exclusivamente A3:G evaluados:
+ID-PRODUCTO, PRODUCTO, CAPACIDAD, COLOR, STOCK, PRECIO, INFORMACION DEL PRODUCTO.
+H:I son auxiliares. Stock >0 para ofrecer; información vacía permitida. Filas
+vacías/aisladas inválidas no destruyen las válidas; IDs duplicados se excluyen.
+No usar DATOS como catálogo. DATOS B:G es RE-STOCK; L:R es maestro.
+
+REGISTRO DE VENTAS: encabezados fila 4, filas desde 5, rango B:W.
+
+| Columna | Uso |
+| --- | --- |
+| B | FECHA |
+| C | ID PEDIDO |
+| D | METODO |
+| E | GUIA |
+| F | ESTADO |
+| G | FECHA ENVIO |
+| H | DIA RETIRO |
+| I/J/K | NOMBRE / TELEFONO / CEDULA |
+| L/M/N | PROV / CIUDAD / SERVIENTREGA |
+| O | ID-PRODUCTO |
+| P/Q/R | PRODUCTO / CAPACIDAD / COLOR: fórmulas intactas |
+| S | CANT |
+| T/U | PRECIO UNITARIO / VALOR: fórmulas intactas |
+| V | ENVIO |
+| W | NETO: fórmula intacta |
+
+GUIA valida todas las líneas, stock agregado por SKU y precios antes de una
+única batchUpdate atómica de B:O, S y V. No hay append parcial. La guía debe ser
+única; misma guía/pedido es idempotente, distinta guía congela y alerta.
+Un intent persistente y la reconciliación de filas existentes recuperan una
+respuesta perdida de Sheets. Lock global de inventario evita competir por la
+última unidad dentro de la instancia; lock de cliente coordina GUIA/DERIVAR.
+
+Estados nuevos de ventas: enviado, en agencia, retirado y cancelado.
+LLEGO actualiza F; retiro actualiza F/H; cancelación actualiza F. Cancelar no
+reincorpora stock. Devuelto es exclusivamente físico/manual.
+Nunca escribir DATOS!P, RE-STOCK ni fórmulas P/Q/R/T/U/W de ventas.
+Antes de desplegar aplicar la [migración manual](docs/MIGRACION-V2.5.md).
+
+## Retiro, timers y cierres
+
+LLEGO repetido conserva la primera fecha y no reinicia el plazo. En takeover
+persiste todo y deja aviso pendiente. LIBERAR lo entrega una vez.
+
+America/Guayaquil: lunes-viernes 08:00–17:00, sábado 08:00–12:00, domingo sin
+envíos. Intervalo ordinario: cuatro horas; fuera de ventana pasa a la siguiente.
+Tres días laborales: el día de llegada cuenta si está dentro de ventana; si no,
+se cuenta desde la siguiente apertura. Sábado cuenta, domingo no. Al cierre del
+tercer día: cancelado, F actualizada, timers cancelados y aviso al asesor.
+El cuarto día corresponde a gestión humana. Takeover no extiende el plazo.
+
+Hora concreta: comprobar diez minutos después, ajustando ventana. Franja como
+mañana/en la tarde es aproximada y no asigna una hora declarada al cliente.
+Retiro local inequívoco admite ya retiré/recogí/tengo el equipo/fui a buscarlo/
+ya pagué. Complejos pasan por LOW con etiquetas cerradas. Preguntas, promesas,
+creo que sí, tener la guía o tener claro algo e imágenes no confirman retiro.
+
+Ambas entradas llaman transitionOrderToRetired. Persistir intent antes de Sheets,
+recuperar tras reinicio, conservar IDs/guía/eventos, cancelar acciones, guardar
+fechaRetiro y un aviso administrativo; agradecimiento separado cuando la guarda
+permite salida. No reescribir fechaPago para retiros nuevos.
+
+Comercial: primer seguimiento a las 48 horas desde el último mensaje del cliente,
+segundo y último a las 96; ejecutar en ventana operativa. Textos fijos, sin IA.
+El segundo cierra como abandono. Confirmación/takeover cancelan este seguimiento.
+
+## Agencias y multimedia
+
+resources/agencias/Ecuador/<Provincia>/<Ciudad>/SERVIENTREGA.html: único origen.
+Los HTML importados ya están filtrados por el propietario para contraentrega.
+No buscar afuera, no ejecutar JS ni cargar recursos externos. Parsear las 14
+columnas, conservar filas válidas, normalizar tildes/caso/puntuación y usar fuzzy
+acotado de una edición. Ambigüedad exige elección; jamás adivinar.
+Tarjetas PNG priorizan nombre, dirección, sector y horarios; excluyen supervisor,
+email y otros datos internos. Render SVG con @resvg/resvg-js y Noto Sans local,
+sin Chromium. Caché limitada. Fallback de tarjeta a texto legible. En ciudades
+con muchas agencias se presentan páginas; también se acepta nombre/dirección.
+
+resources/productos/<SKU>/imagen/*.jpg|jpeg|png y video/*.mp4. SKU debe estar
+actualmente disponible. Fotos ordenadas numéricamente; falla individual no
+bloquea las restantes. Ledger por oportunidad evita reenviar archivos ya
+entregados o cuyo resultado sea incierto. Nunca usar flags/env de video iPad.
+YCloud sube media por multipart y envía por ID; caché de upload de 25 días,
+inferior a los 30 días del proveedor. Imágenes máximo 5 MiB; audio/video 16 MiB.
+Cada salida respeta proveedor, takeover, no_contactar y estado cerrado.
+
+## Audio y TTS
+
+Audio entrante Meta/YCloud: descarga autenticada y acotada, duración verificable
+máxima de 180 segundos, transcripción MODEL_TRANSCRIPTION y mismo router que
+texto. Más de tres minutos no se transcribe. Fallo: pedir texto/audio más corto.
+Temporales privados borrados al terminar; dedup y cache de transcripción evitan
+llamadas repetidas tras un fallo posterior. Datos personales se solicitan por texto.
+
+TTS: gpt-4o-mini-tts, cedar, speed 1.15, WAV de generación, Opus de entrega,
+umbral 250 caracteres. Instrucciones paisas de Medellín/Antioquia, cálidas,
+claras, ágiles y naturales. AudioComercial1 usa TTS explícitamente. Las demás
+respuestas comerciales largas pueden usar TTS; cortas quedan por texto.
+Datos, resumen, agencia elegida, confirmación breve, precio crítico, IDs,
+admin y errores son texto. El bloque logístico postconfirmación usa TTS. Se informa que la voz es generada por IA.
+
+WAV → OGG/Opus mediante ffmpeg cuando existe; si falta/falla, pedir Opus directo
+a OpenAI. Si generación/conversión falla, enviar el mismo contenido una vez por
+texto. Error inequívoco de transporte permite texto; timeout con posible entrega
+queda incierto, evitando una duplicación. No enviar WAV directamente a YCloud.
+No se necesita custom voice. TEST_MODE no genera ni envía audio real.
+
+## Outboxes y límites de recuperación
+
+Avisos de confirmación conservan el proveedor original y ASESOR_WHATSAPP,
+reserva antes de enviar, retry de rechazo explícito y estado incierto ante timeout
+u otra aceptación desconocida. No hay garantía de exactamente una entrega entre
+un proveedor sin idempotency key y una caída local: se conserva el pendiente para
+reconciliación humana y se evita replay ciego. RESPONDER y cierres nuevos aplican
+la misma distinción. Los avisos de llegada conservan sus reservas e intentos limitados y también
+marcan incierta una reserva sobreviviente o un resultado desconocido. Los
+recordatorios reservan su siguiente fecha antes del envío para no repetirlo.
+
+## Variables nuevas y validación
+
+Defaults: OPENAI_TTS_ENABLED=true, OPENAI_TTS_MODEL=gpt-4o-mini-tts,
+OPENAI_TTS_VOICE=cedar, OPENAI_TTS_SPEED=1.15, OPENAI_TTS_FORMAT=wav,
+OPENAI_TTS_DELIVERY_FORMAT=opus, OPENAI_TTS_MIN_CHARS=250,
+AGENCIES_ROOT=resources/agencias/Ecuador, PRODUCT_MEDIA_ROOT=resources/productos.
+No modificar secretos existentes. MODEL_LOW/NORMAL/HIGH/TRANSCRIPTION siguen por env.
+
+Validación obligatoria sin APIs reales: npm run check, npm test,
+npm run test:v2, npm run test:ycloud y git diff --check.
+
+## Ajustes conversacionales finales
+
+Conceptos comerciales tienen marcador persistente de comunicación reciente;
+el audio inicial complementa el precio/promoción y no repite envío gratis.
+Bodegas: Guayaquil, sin atención dentro por seguridad; video de empaque y
+garantía según contenido aprobado. No se inventa dirección ni duración de garantía.
+Mayor capacidad agotada: se explica la alternativa de archivos en Google Drive/
+iCloud sin afirmar aumento de memoria física ni almacenamiento interno gratuito.
+Características solo de G, precio F, stock E y SKU A. Datos ausentes se escalan.
+Agencias: ordinales y nombre/sector desde candidatos mostrados; «esa/la anterior»
+solo cuando una única referencia es segura. Terminar opciones con «Indíqueme por
+favor a cuál de estas agencias desea que le enviemos el equipo 😊».
+Cambios de producto/variante/cantidad invalidan una oferta que ya no corresponda,
+recalculan contra catálogo y generan resumen coherente antes de confirmar.
+Compra futura/sin dinero: conversación normal, sin nuevo estado/seguimiento ni
+reserva por $10. Esa mejora queda fuera de alcance.
