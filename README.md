@@ -107,7 +107,7 @@ Nuevos defaults, sin credenciales:
 | PRODUCT_MEDIA_ROOT | resources/productos |
 
 Audio entrante máximo 180 segundos. TTS comercial usa voz paisa cálida/ágil y
-avisa que es generada por IA. Datos, resúmenes, confirmación breve, precios críticos y avisos administrativos
+empieza directamente con el contenido comercial aprobado. Datos, resúmenes, confirmación breve, precios críticos y avisos administrativos
 siguen por texto. El bloque logístico posterior a confirmar se envía por TTS.
 
 WAV se convierte a OGG/Opus con ffmpeg cuando está disponible. Si no lo está,
@@ -152,3 +152,15 @@ comercial; no hay Grok ni fallback alternativo para clientes.
 La auditoría de dependencias reporta seis avisos moderados heredados (Express,
 googleapis y transitivas); no se aplicaron actualizaciones mayores automáticas.
 Consultar la migración para los demás límites y pruebas reales pendientes.
+
+## Hotfix comercial
+
+Saludo sin catálogo; ficha/media siempre del SKU exacto; preguntas se atienden
+antes de avanzar. Captura escrita de nombre/cédula se persiste antes de responder
+preguntas agrupadas. Entrega ordinaria: 24–48 h posteriores al despacho.
+
+Agencias en una imagen completa o páginas numeradas si el tamaño lo exige,
+sin lista textual duplicada. Selección natural por nombre/sector, sin adivinar.
+RESPONDER acepta teléfono ecuatoriano local, internacional con/sin +, siempre
+entre paréntesis; compara alias de MEMORIA y conserva etapa/datos. Resultados
+ambiguos no se ejecutan. [Informe del hotfix](docs/HOTFIX-V2.5.md).

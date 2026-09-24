@@ -1194,8 +1194,9 @@ function ttsService(){return ttsV25 ||= require('./lib/v2-tts').createTTS({env:p
 async function preguntaPendiente(number,c,text){
     if(c.human_takeover||c.pendingQuestion&&c.pendingQuestion.estado!=='resuelta')return;
     const question=String(text).replace(/https?:\/\/\S+|(?:sk-|Bearer\s+)\S+/gi,'[omitido]').slice(0,1000);
+    logV2({event:'pending_question_created',commercial_stage:c.commerce?.stage||'unknown'});
     c.pendingQuestion={estado:'pendiente',stage:c.commerce?.stage,question,notice:{estado:'pendiente'}};
-    await guardarConversacion(number,c);await enviarPreguntaAdmin(number,c);await enviarMensajeWhatsApp(number,'Permítame verificar ese dato para darle la información correcta.',c);
+    await guardarConversacion(number,c);await enviarPreguntaAdmin(number,c);await enviarMensajeWhatsApp(number,'Permítame verificar ese dato para darle la información correcta 😊',c);
 }
 async function enviarPreguntaAdmin(number,c){const q=c.pendingQuestion;if(!q||q.estado==='resuelta')return;await require('./lib/v2-outbox').deliver({box:q.notice,save:()=>guardarConversacion(number,c),send:()=>enviarMensajeWhatsApp(ASESOR_WHATSAPP,`🚨 URGENTE — RESPUESTA REQUERIDA\nCliente: ${c.datosCliente?.nombre||c.borradorPedido?.nombre||'Pendiente'}\nChat: ${c.pedido?.id_chat||number}\nPregunta: ${q.question}`,{provider:c.provider}),now:()=>new Date(),log:logV2});}
 async function enviarRespuestaPendiente(number,c){
@@ -1203,7 +1204,7 @@ async function enviarRespuestaPendiente(number,c){
     const delivered=await require('./lib/v2-outbox').deliver({box:q.responseBox,save:()=>guardarConversacion(number,c),send:async()=>{const result=await ttsService().deliver(number,c,q.answer,{critical:require('./lib/v2-final-rules').criticalAnswer(q.answer),key:q.deliveryKey});if(result===false)throw Error('TTS_DELIVERY_UNCERTAIN');return result;},now:()=>new Date(),log:logV2});
     if(delivered||q.responseBox.estado==='enviada'){
       if(q.offerSummary){c.esperandoConfirmacionPedido=true;c.estado='esperando_confirmacion';q.summaryBox||={estado:'pendiente'};await guardarConversacion(number,c);await require('./lib/v2-outbox').deliver({box:q.summaryBox,save:()=>guardarConversacion(number,c),send:()=>enviarMensajeWhatsApp(number,q.offerSummary,c),log:logV2});if(q.summaryBox.estado!=='enviada')return;}
-      c.historial||=[];c.historial.push({role:'assistant',content:q.answer});q.estado='resuelta';delete q.question;delete q.answer;await guardarConversacion(number,c);}
+      c.historial||=[];c.historial.push({role:'assistant',content:q.answer});q.estado='resuelta';delete q.question;delete q.answer;await guardarConversacion(number,c);logV2({event:'admin_response_sent',commercial_stage:c.commerce?.stage||'unknown'});}
 }
 async function followupComercial(number,c,now){
     if(c.human_takeover||c.no_contactar||c.pedido||c.pendingQuestion?.estado==='pendiente'||!['interesado','recopilando_datos','esperando_confirmacion'].includes(c.estado))return;
@@ -1214,7 +1215,7 @@ async function followupComercial(number,c,now){
     await enviarMensajeWhatsApp(number,count===0?'¿Deseas continuar con tu pedido? Si necesitas aclarar algo, puedes escribirnos.':'Cerramos este seguimiento. Cuando quieras iniciar una nueva compra, puedes escribirnos.',c);
     if(count===1){c.estado='abandono';v2.cancel(c);await guardarConversacion(number,c);}
 }
-function comercialV25(){if(!flowV25){const media=require('./lib/v2-product-media').createProductMedia({root:process.env.PRODUCT_MEDIA_ROOT||require('node:path').join(__dirname,'resources/productos'),catalog:()=>inventarioFinal().catalog(),save:guardarConversacion,send:enviarMediaV25,log:logV2});flowV25=require('./lib/v2-commercial-flow').createCommercialFlow({agencies:agenciasV25(),save:guardarConversacion,sendText:enviarMensajeWhatsApp,sendMedia:enviarMediaV25,media,tts:ttsService(),extract:(c,stock)=>extraerDatosPedido(c,stock),resolve:d=>inventarioFinal().resolve(d),summary:generarResumenPedido,complete:datosPedidoCompletos,pending:preguntaPendiente,language:require('./lib/v2-language').createLanguage(respuestaModelo),now:()=>new Date()});}return flowV25;}
+function comercialV25(){if(!flowV25){const media=require('./lib/v2-product-media').createProductMedia({root:process.env.PRODUCT_MEDIA_ROOT||require('node:path').join(__dirname,'resources/productos'),catalog:()=>inventarioFinal().catalog(),save:guardarConversacion,send:enviarMediaV25,log:logV2});flowV25=require('./lib/v2-commercial-flow').createCommercialFlow({agencies:agenciasV25(),save:guardarConversacion,sendText:enviarMensajeWhatsApp,sendMedia:enviarMediaV25,media,tts:ttsService(),extract:(c,stock)=>extraerDatosPedido(c,stock),resolve:d=>inventarioFinal().resolve(d),summary:generarResumenPedido,complete:datosPedidoCompletos,pending:preguntaPendiente,language:require('./lib/v2-language').createLanguage(respuestaModelo),log:logV2,now:()=>new Date()});}return flowV25;}
 
 async function confirmarPedidoSiCorresponde(from, conversacion, texto, clasificacion = null) {
     if (conversacion.confirmado || conversacion.pedido?.id ||
@@ -1485,13 +1486,16 @@ async function routearV2(numero, c, text) {
     return !result.proceed;
 }
 async function resolveAdmin(command){
-    if(/^\d{7,15}$/.test(command.ref) && ['RESPONDER','TOMAR'].includes(command.command))return{numero:command.ref,conversacion:await obtenerConversacion(command.ref,true)};
+    if(/^\d{7,15}$/.test(command.ref) && ['RESPONDER','TOMAR'].includes(command.command)){
+      const matches=(await leerMemoriaCiclo()).filter(row=>adminCommands.canonicalPhone(row.numero)===adminCommands.canonicalPhone(command.ref));
+      return matches.length===1?matches[0]:null;
+    }
     const matches=[];for(const row of await leerMemoriaCiclo())for(const c of contextosPedido(row.conversacion))if((['GUIA','LIBERAR','RESPONDER','TOMAR'].includes(command.command)?[c.pedido?.id_chat]:command.command==='DERIVAR'?[c.pedido?.id,c.pedido?.id_chat]:['LLEGO','RETIRADO'].includes(command.command)?[c.pedido?.guia]:[c.pedido?.id_chat,c.pedido?.guia]).filter(Boolean).includes(command.ref))matches.push({numero:row.numero,conversacion:c});
     return matches.length===1?matches[0]:null;
 }
 async function comandoControlV2(message){
-    const cmd=adminCommands.parse(message.text?.body);if(!cmd)return true;
-    const found=await resolveAdmin(cmd);if(!found){await enviarMensajeWhatsApp(ASESOR_WHATSAPP,'Referencia inexistente o ambigua. No se aplicó el comando.',{provider:message.provider});return true;}
+    logV2({event:'admin_command_received'});const cmd=adminCommands.parse(message.text?.body);logV2({event:'admin_command_valid',valid:!!cmd});if(!cmd)return true;
+    const found=await resolveAdmin(cmd);logV2({event:'admin_target_resolved',resolved:!!found,command:cmd.command});if(!found){await enviarMensajeWhatsApp(ASESOR_WHATSAPP,'Referencia inexistente o ambigua. No se aplicó el comando.',{provider:message.provider});return true;}
     const {numero,conversacion:c}=found,p=c.pedido;
     if(cmd.command==='GUIA') {if(p.id_chat!==cmd.ref)return true;const r=await actualizarGuiaPedido(p.id,cmd.guide);if(!r.encontrado&&!r.bloqueado)await enviarMensajeWhatsApp(ASESOR_WHATSAPP,'No se pudo aplicar GUIA. Revisar pedido e inventario.',{provider:message.provider});}
     else if(cmd.command==='LLEGO'&&p?.guia===cmd.ref){const r=await actualizarLlegadaPedido(cmd.ref);if(r.encontrado)await enviarAvisoLlegada(numero,r.conversacion);}
@@ -1743,13 +1747,22 @@ else {
     if (message.type === 'audio' && await routearV2(from, conversacion, text)) return res.sendStatus(200);
     req.v2Conversation = conversacion;
     modelContext.enterWith(conversacion);
+    const commercialInput=require('./lib/v2-commercial-input');
+    if(!conversacion.pedido && commercialInput.greeting(text)){
+      await enviarMensajeWhatsApp(from,'Hola 😊 ¿Cómo está? Cuénteme, ¿qué equipo está buscando o en qué le puedo ayudar?',conversacion);
+      logV2({event:'commercial_stage',commercial_stage:conversacion.commerce?.stage||'saludo',rule_used:'greeting',model_called:false});return res.sendStatus(200);
+    }
+    const commercialQuestion=!conversacion.pedido && commercialInput.question(text) && !/\b(corregir|corrige|cambi[ae]r?|asesor|persona|humano)\b/.test(normalizarTexto(text));
+    if(conversacion.esperandoConfirmacionPedido && commercialQuestion){
+      await comercialV25()(from,conversacion,text,await inventarioFinal().catalog(),{audio:message.type==='audio',messageKey:'reply:'+message.id});return res.sendStatus(200);
+    }
     const enConfirmacion = conversacion.esperandoConfirmacionPedido && !conversacion.confirmado;
     const textoConfirmacion = commerce.confirmationInput(text);
     const localConfirmacion = enConfirmacion ? clasificacionLocalConfirmacion(textoConfirmacion) : null;
     if (conversacion.confirmado && conversacion.pedido?.confirmationReplySent && clasificacionLocalConfirmacion(text) === 'ACEPTA') return res.sendStatus(200);
     if (enConfirmacion && !localConfirmacion && conversacion.confirmationClassifierFailed) return res.sendStatus(200);
     const intencionRetiro = ["disponible_retiro","cancelado"].includes(conversacion.pedido?.estado) ? await clasificarRetiroCliente(text) : null;
-    const pideAsesor = localConfirmacion ? localConfirmacion === "ASESOR" : intencionRetiro !== null ? intencionRetiro === "SOLICITA" : await solicitaAtencionHumana(text);
+    const pideAsesor = localConfirmacion ? localConfirmacion === "ASESOR" : intencionRetiro !== null ? intencionRetiro === "SOLICITA" : commercialQuestion ? false : await solicitaAtencionHumana(text);
     if (pideAsesor === true) {
         const registrado = !!(conversacion.confirmado || conversacion.pedido?.confirmado || conversacion.pedido?.id);
         let respuestaAsesor = registrado

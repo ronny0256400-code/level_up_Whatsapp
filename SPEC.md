@@ -225,8 +225,10 @@ columnas, conservar filas válidas, normalizar tildes/caso/puntuación y usar fu
 acotado de una edición. Ambigüedad exige elección; jamás adivinar.
 Tarjetas PNG priorizan nombre, dirección, sector y horarios; excluyen supervisor,
 email y otros datos internos. Render SVG con @resvg/resvg-js y Noto Sans local,
-sin Chromium. Caché limitada. Fallback de tarjeta a texto legible. En ciudades
-con muchas agencias se presentan páginas; también se acepta nombre/dirección.
+sin Chromium. Caché limitada. Fallback de tarjeta a texto legible. Una imagen vertical contiene todas las agencias de la ciudad si caben de forma
+legible; ciudades grandes se dividen en páginas completas numeradas. No se
+duplica la lista por texto; texto solo como fallback de render/upload rechazado.
+Caché acotada a cuatro ciudades, invalidada por contenido. Se acepta nombre/dirección.
 
 resources/productos/<SKU>/imagen/*.jpg|jpeg|png y video/*.mp4. SKU debe estar
 actualmente disponible. Fotos ordenadas numéricamente; falla individual no
@@ -249,7 +251,7 @@ umbral 250 caracteres. Instrucciones paisas de Medellín/Antioquia, cálidas,
 claras, ágiles y naturales. AudioComercial1 usa TTS explícitamente. Las demás
 respuestas comerciales largas pueden usar TTS; cortas quedan por texto.
 Datos, resumen, agencia elegida, confirmación breve, precio crítico, IDs,
-admin y errores son texto. El bloque logístico postconfirmación usa TTS. Se informa que la voz es generada por IA.
+admin y errores son texto. El bloque logístico postconfirmación usa TTS. El audio empieza directamente con el contenido comercial, sin presentación técnica.
 
 WAV → OGG/Opus mediante ffmpeg cuando existe; si falta/falla, pedir Opus directo
 a OpenAI. Si generación/conversión falla, enviar el mismo contenido una vez por
@@ -295,3 +297,35 @@ Cambios de producto/variante/cantidad invalidan una oferta que ya no corresponda
 recalculan contra catálogo y generan resumen coherente antes de confirmar.
 Compra futura/sin dinero: conversación normal, sin nuevo estado/seguimiento ni
 reserva por $10. Esa mejora queda fuera de alcance.
+
+## Hotfix comercial de producción
+
+Saludo simple recibe saludo abierto, sin catálogo ni llamada de modelo. Las
+opciones se restringen a la necesidad/producto mencionado. Reglas controlan
+operación; OpenAI sigue interpretando selección ambigua y preguntas cuya
+respuesta se puede verificar en la ficha, sin autorizar mutaciones.
+
+Cada selección y cambio presenta la fila exacta por SKU, incluyendo G y media.
+Una contradicción explícita de almacenamiento en G se escala sin publicar la
+capacidad de otra variante ni inventar una ficha corregida.
+Solicitudes de fotos/video se atienden antes del siguiente campo y conservan
+etapa/SKU. Una nueva solicitud explícita puede reenviar; el mismo mensaje no.
+
+Nombre/cédula escritos se guardan antes de atender preguntas del mismo bloque.
+No hay checksum. Datos y etapa sobreviven reinicio y espera humana. Un resumen
+idéntico no se vuelve a enviar; la espera se activa solo tras envío exitoso.
+Entrega ordinaria: aproximadamente 24–48 h después del despacho. Hora exacta,
+garantía absoluta o condición extraordinaria requiere revisión humana.
+
+RESPONDER mantiene paréntesis y acepta teléfono local ecuatoriano 09…, 593… y
++593…. La comparación usa dígitos canónicos 593…; resuelve una única fila real
+existente de MEMORIA y conserva su clave, sin crear un chat vacío. Alias ambiguos
+no se eligen arbitrariamente. CH mantiene semántica previa. Admin siempre se
+procesa antes del router comercial; texto no válido permanece silencioso.
+
+Agencias ignoran tildes, signos, guiones bajos, artículos y preposiciones para
+matching por tokens; solo un resultado permite selección. Provincia posterior
+a ciudad ya resuelta no repite presentación. Datos nunca se imprimen en logs.
+Diagnóstico: etapa, regla, modelo llamado, SKU, acción media, ciudad validada,
+resultado de matching, datos guardados (booleano), pregunta pendiente y etapas
+del comando administrativo. Sin cédulas/teléfonos/respuestas/URLs completas.
