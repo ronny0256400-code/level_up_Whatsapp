@@ -14,6 +14,7 @@ const { createIngress, verifyMeta } = require("./lib/v2-ingress");
 const { createInboxStore, memorySheets } = require("./lib/v2-storage");
 const { createYCloud } = require("./lib/ycloud-client");
 const { createModels } = require("./lib/v2-models");
+const { createRuntime: createV4Runtime } = require("./lib/v4-runtime");
 const path = require("node:path"),
   fs = require("node:fs");
 function createApp({
@@ -22,11 +23,13 @@ function createApp({
   openai,
   fetchImpl = globalThis.fetch,
   interpret,
+  v4Interpret,
   store: injectedStore,
   resources: injectedResources,
   wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
 } = {}) {
   const testMode = env.TEST_MODE === "true";
+  const useV4 = env.USE_V4 === "true";
   if (!sheets) {
     if (testMode) sheets = memorySheets();
     else {
@@ -190,7 +193,33 @@ function createApp({
     businessName: env.BUSINESS_NAME,
     malls: deliveryMalls(env),
   });
+  const v4 = useV4
+    ? createV4Runtime({
+        env,
+        sheets,
+        openai,
+        catalog,
+        resources,
+        ycloud,
+        wait,
+        interpret: v4Interpret,
+        log: (diagnostic) => console.warn("V4 diagnostic", diagnostic),
+      })
+    : null;
+  const v4Tasks = new Set();
+  function enqueueV4(message) {
+    const task = v4.handleMessage(message).catch((error) => {
+      console.warn("V4 processing failed", safeError(error, "v4.routing"));
+    });
+    v4Tasks.add(task);
+    task.finally(() => v4Tasks.delete(task));
+  }
+  const drainV4 = async () => {
+    while (v4Tasks.size) await Promise.all([...v4Tasks]);
+  };
   async function processMessage(message) {
+    if (useV4 && message.provider === "ycloud")
+      return v4.handleMessage(message);
     const number = phone(message.from);
     if (!number) return;
     if (command(message.text?.body)) {
@@ -270,6 +299,10 @@ function createApp({
       getSecret: () => env.YCLOUD_WEBHOOK_SECRET,
       onMessage: async (m) => {
         if (!phone(m.from)) return;
+        if (useV4) {
+          enqueueV4(m);
+          return;
+        }
         if (
           (await flow.load(phone(m.from))).pauseState !== "ACTIVE" &&
           !command(m.text?.body)
@@ -330,7 +363,18 @@ function createApp({
     for (const number of await flow.purge())
       await ingress.discardPending(number);
   };
-  return { app, flow, ingress, processMessage, store, resources, purge };
+  return {
+    app,
+    flow,
+    ingress,
+    processMessage,
+    store,
+    resources,
+    purge,
+    v4,
+    drainV4,
+    useV4,
+  };
 }
 if (require.main === module) {
   try {
@@ -349,9 +393,11 @@ if (require.main === module) {
         );
     const purge = () =>
       runtime.purge().catch(() => console.warn("Memory purge failed"));
-    purge().then(recover);
-    setInterval(recover, 5000).unref();
-    setInterval(purge, 3600000).unref();
+    if (!runtime.useV4) {
+      purge().then(recover);
+      setInterval(recover, 5000).unref();
+      setInterval(purge, 3600000).unref();
+    }
   } catch {
     console.error("Bot configuration invalid");
     process.exitCode = 1;
