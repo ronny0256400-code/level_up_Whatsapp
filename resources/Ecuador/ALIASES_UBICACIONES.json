@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "politica": "Los nombres originales de las carpetas se conservan. Este archivo permite relacionar distintas formas de escribir una ubicación con un único nombre canónico.",
+  "provincias": {
+    "Santo Domingo de los Tsáchilas": [
+      "Santo Domingo de los Tsáchilas",
+      "Santo Domingo de los Tsachilas",
+      "Santo Domingo",
+      "SANTO DOMINGO"
+    ],
+    "Zamora Chinchipe": [
+      "Zamora Chinchipe",
+      "Zamora",
+      "ZAMORA"
+    ],
+    "Bolívar": [
+      "Bolívar",
+      "Bolivar"
+    ],
+    "Cañar": [
+      "Cañar",
+      "Canar"
+    ],
+    "Galápagos": [
+      "Galápagos",
+      "Galapagos"
+    ],
+    "Los Ríos": [
+      "Los Ríos",
+      "Los Rios"
+    ],
+    "Manabí": [
+      "Manabí",
+      "Manabi"
+    ],
+    "Sucumbíos": [
+      "Sucumbíos",
+      "Sucumbios"
+    ]
+  },
+  "ciudades": {
+    "Orellana/La Joya de los Sachas": [
+      "La Joya de los Sachas",
+      "Joya de los Sachas",
+      "JOYA DE LOS SACHAS"
+    ],
+    "Tungurahua/Baños de Agua Santa": [
+      "Baños de Agua Santa",
+      "Baños",
+      "Banos",
+      "BANOS"
+    ],
+    "Tungurahua/San Pedro de Pelileo": [
+      "San Pedro de Pelileo",
+      "Pelileo",
+      "PELILEO"
+    ],
+    "Tungurahua/Santiago de Píllaro": [
+      "Santiago de Píllaro",
+      "Píllaro",
+      "Pillaro",
+      "PILLARO"
+    ],
+    "Los Ríos/Puebloviejo": [
+      "Puebloviejo",
+      "Pueblo Viejo",
+      "PUEBLO VIEJO"
+    ],
+    "Esmeraldas/Rioverde": [
+      "Rioverde",
+      "Río Verde",
+      "Rio Verde",
+      "RIO VERDE"
+    ],
+    "Cañar/El Tambo": [
+      "El Tambo",
+      "Tambo",
+      "TAMBO"
+    ],
+    "Chimborazo/Guano": [
+      "Guano",
+      "El Guano",
+      "EL GUANO"
+    ],
+    "Azuay/Camilo Ponce Enríquez": [
+      "Camilo Ponce Enríquez",
+      "Camilo Ponce Enriquez",
+      "Ponce Enríquez",
+      "Ponce Enriquez",
+      "PONCE ENRIQUEZ"
+    ],
+    "Guayas/Coronel Marcelino Maridueña": [
+      "Coronel Marcelino Maridueña",
+      "Coronel Marcelino Mariduena",
+      "Marcelino Maridueña",
+      "Marcelino Mariduena",
+      "MARCELINO MARIDUENA"
+    ],
+    "Guayas/San Jacinto de Yaguachi": [
+      "San Jacinto de Yaguachi",
+      "Yaguachi",
+      "YAGUACHI"
+    ],
+    "El Oro/Santa Rosa": [
+      "Santa Rosa",
+      "SANTA ROSA (EL ORO)"
+    ],
+    "Manabí/Santa Ana": [
+      "Santa Ana",
+      "SANTA ANA (MANABI)"
+    ],
+    "Manabí/Olmedo": [
+      "Olmedo",
+      "OLMEDO (MANABI)"
+    ],
+    "Imbabura/San Miguel de Urcuquí": [
+      "San Miguel de Urcuquí",
+      "San Miguel de Urcuqui",
+      "Urcuquí",
+      "Urcuqui",
+      "URCUQUI"
+    ],
+    "Santa Elena/Salinas": [
+      "Salinas",
+      "SALINAS (SANTA ELENA)"
+    ]
+  }
+}

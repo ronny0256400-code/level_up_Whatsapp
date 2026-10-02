@@ -68,7 +68,7 @@ function entorno({ inicial = venta(), disco, ahora = BASE } = {}) {
             return {ok:!control.falloEnvio,status:control.falloEnvio?429:200,text:async()=>control.falloEnvio?'error':'{}'};
         }
     });
-    vm.runInContext(fs.readFileSync(path.join(__dirname,'../server.js'),'utf8')+'\nthis.api={procesarMensajeV2,revisarSeguimientos,interpretarHorarioRetiro,siguienteHorarioOperativo,sigueRetiro,iniciarSchedulerRetiro,conversaciones};',context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname,'../legacy/server-v25.js'),'utf8')+'\nthis.api={procesarMensajeV2,revisarSeguimientos,interpretarHorarioRetiro,siguienteHorarioOperativo,sigueRetiro,iniciarSchedulerRetiro,conversaciones};',context);
     let serial=0;
     async function mensaje(texto,{admin=false,tipo='text',id,esperado=200,from=CLIENTE}={}) {
         const m={id:id||`msg-${++serial}`,from:admin?ADMIN:from,type:tipo,text:{body:texto},audio:{id:'media-sintetico'},image:{id:'imagen-sintetica'}};

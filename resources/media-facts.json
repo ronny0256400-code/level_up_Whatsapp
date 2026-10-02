@@ -1,0 +1,3465 @@
+{
+  "ACERN16Q13-NEG": {
+    "images": [
+      {
+        "shows": [
+          "Portátil Acer abierto"
+        ],
+        "visibleDetails": [
+          "Logo Acer, carcasa oscura, teclado, pantalla encendida con escritorio de Windows"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/ACERN16Q13-NEG-foto-1.jpg",
+        "type": "image",
+        "sha256": "0475cb83a416f749f7b1328f476964eb23a9e29e44ff8494d8ef3e3725a205d8",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "Portátil Acer abierto, vista frontal cercana"
+        ],
+        "visibleDetails": [
+          "Logo Acer, teclado negro, touchpad plateado, escritorio de Windows visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/ACERN16Q13-NEG-foto-2.jpg",
+        "type": "image",
+        "sha256": "ddceaa7c1088a02b694a3b37520b10026970421a391a78b126a28c2fe2b08f76",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "Portátil Acer encendido, aproximación a pantalla y teclado"
+        ],
+        "visibleDetails": [
+          "Logo Acer, carcasa oscura, teclado negro, escritorio Windows con fondo azul y rosa"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Iconos en escritorio no prueban instalación, licencia ni ejecución de aplicaciones"
+        ],
+        "file": "video/ACERN16Q13-NEG-video-1.mp4",
+        "type": "video",
+        "sha256": "df4a868df7b0ed3b252b64a1c4f69abc837dd1a2d3f5c308fb8995e810f7fc9b",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 15.148344671201814,
+          "sampleSeconds": [
+            0.0,
+            0.631,
+            1.262,
+            1.894,
+            2.525,
+            3.156,
+            3.787,
+            4.418,
+            5.049,
+            5.681,
+            6.312,
+            6.943,
+            7.574,
+            8.205,
+            8.837,
+            9.468,
+            10.099,
+            10.73,
+            11.361,
+            11.992,
+            12.624,
+            13.255,
+            13.886,
+            14.517
+          ]
+        }
+      }
+    ]
+  },
+  "ASUSC202S-NEG": {
+    "images": [
+      {
+        "shows": [
+          "Portátil ASUS cerrado"
+        ],
+        "visibleDetails": [
+          "Tapa oscura con logos ASUS y Chrome"
+        ],
+        "canAnswer": [
+          "cómo se ve la tapa",
+          "si se ve el logo ASUS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Logo Chrome exterior no demuestra sistema operativo instalado"
+        ],
+        "file": "imagen/ASUSC202S-NEG-foto-1.jpg",
+        "type": "image",
+        "sha256": "e7343db4aa97ac7a9e2b1a395fb74f9eb5ca4c56e898e578409080ac2f42d4f5",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "Portátil ASUS abierto"
+        ],
+        "visibleDetails": [
+          "Pantalla de inicio de sesión de Windows, teclado negro, touchpad gris"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el inicio de sesión de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/ASUSC202S-NEG-foto-2.jpg",
+        "type": "image",
+        "sha256": "c5ed9b6a82dfa6562b2cb988e1ed3121ede355e096c0beab98d1f282c5a20529",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "Portátil ASUS encendido, aproximación a pantalla y teclado"
+        ],
+        "visibleDetails": [
+          "Logo ASUS, carcasa oscura, teclado negro, escritorio Windows con fondo naranja"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Iconos en escritorio no prueban instalación, licencia ni ejecución de aplicaciones"
+        ],
+        "file": "video/ASUSC202S-NEG-video-1.mp4",
+        "type": "video",
+        "sha256": "9467613b33d2df862867eb1a6b87cd90eb06a86872620576eab1ca8c747e2ba3",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 15.81501133786848,
+          "sampleSeconds": [
+            0.0,
+            0.659,
+            1.318,
+            1.977,
+            2.636,
+            3.295,
+            3.954,
+            4.613,
+            5.272,
+            5.931,
+            6.59,
+            7.249,
+            7.908,
+            8.566,
+            9.225,
+            9.884,
+            10.543,
+            11.202,
+            11.861,
+            12.52,
+            13.179,
+            13.838,
+            14.497,
+            15.156
+          ]
+        }
+      }
+    ]
+  },
+  "ASUSC300S-NEG": {
+    "images": [
+      {
+        "shows": [
+          "Portátil ASUS abierto sobre mesa"
+        ],
+        "visibleDetails": [
+          "Carcasa oscura, teclado, touchpad y pantalla negra"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Pantalla negra no demuestra que el equipo esté encendido"
+        ],
+        "file": "imagen/ASUSC300S-NEG-foto-1.jpg",
+        "type": "image",
+        "sha256": "f896a83b18211ef287a79c06e5b58239a3ec41ec9ffff2371de2ace6a94e6771",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "Portátil ASUS encendido, aproximación a pantalla y teclado"
+        ],
+        "visibleDetails": [
+          "Logo ASUS, carcasa oscura, teclado negro, escritorio Windows con fondo lila"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Iconos en escritorio no prueban instalación, licencia ni ejecución de aplicaciones"
+        ],
+        "file": "video/ASUSC300S-NEG-video-1.mp4",
+        "type": "video",
+        "sha256": "32810a7fd844985487f77a316a989bd0bbfcbea7f2ec00971bc9f7acadb8470b",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.133333333333333,
+          "sampleSeconds": [
+            0.0,
+            0.797,
+            1.594,
+            2.392,
+            3.189,
+            3.986,
+            4.783,
+            5.581,
+            6.378,
+            7.175,
+            7.972,
+            8.769,
+            9.567,
+            10.364,
+            11.161,
+            11.958,
+            12.756,
+            13.553,
+            14.35,
+            15.147,
+            15.944,
+            16.742,
+            17.539,
+            18.336
+          ]
+        }
+      }
+    ]
+  },
+  "DELL3180-NEG": {
+    "images": [
+      {
+        "shows": [
+          "Portátil Dell abierto junto a otros equipos"
+        ],
+        "visibleDetails": [
+          "Logo Dell, teclado negro, touchpad, escritorio Windows"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/DELL3180-NEG-foto-1.jpg",
+        "type": "image",
+        "sha256": "c522a81b15e06968bddf077a9d49e1a8b4a9b08aa1ba140db44f165e7695ba00",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "Portátil Dell encendido, aproximación a pantalla y teclado",
+          "Excel abierto y presentación de accesorios empaquetados"
+        ],
+        "visibleDetails": [
+          "Logo Dell, carcasa oscura, teclado negro, escritorio Windows con fondo azul y lila",
+          "Ventana de hoja de cálculo, cargador con cable, empaque de memoria marcado 128 GB y caja de auriculares"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows",
+          "si Excel está visible",
+          "si se muestra un cargador",
+          "si se muestra un empaque de memoria",
+          "si se muestra una caja de auriculares"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Iconos en escritorio no prueban instalación, licencia ni ejecución de aplicaciones",
+          "Accesorios en publicidad no sustituyen política oficial de incluidos ni capacidad interna del equipo"
+        ],
+        "file": "video/DELL3180-NEG-video-1.mp4",
+        "type": "video",
+        "sha256": "47b97d1e30d0471d6b9778d317f083a4ca3bd5590bc7d07bc606bc16b676e9e3",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 33.54,
+          "sampleSeconds": [
+            0.0,
+            1.397,
+            2.795,
+            4.192,
+            5.59,
+            6.987,
+            8.385,
+            9.783,
+            11.18,
+            12.578,
+            13.975,
+            15.373,
+            16.77,
+            18.168,
+            19.565,
+            20.962,
+            22.36,
+            23.757,
+            25.155,
+            26.552,
+            27.95,
+            29.348,
+            30.745,
+            32.142
+          ]
+        }
+      }
+    ]
+  },
+  "DELLP22T-NEG": {
+    "images": [
+      {
+        "shows": [
+          "Portátil Dell cerrado sobre césped"
+        ],
+        "visibleDetails": [
+          "Tapa oscura con logos Dell y Chrome"
+        ],
+        "canAnswer": [
+          "cómo se ve la tapa",
+          "si se ve el logo Dell"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Logo Chrome exterior no demuestra sistema operativo instalado"
+        ],
+        "file": "imagen/DELLP22T-NEG-foto-1.jpg",
+        "type": "image",
+        "sha256": "4cc0771546085fab819a081f598c09ae3713ecb96ae130b14ef680c702b73c37",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "Portátil Dell abierto junto a otro"
+        ],
+        "visibleDetails": [
+          "Logo Dell, teclado, touchpad, escritorio Windows con fondo naranja"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/DELLP22T-NEG-foto-2.jpg",
+        "type": "image",
+        "sha256": "128c7d69033b9b553a4bfb060f2123135666e4042a82b5d65d79205b2de49c5f",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "Portátil Dell encendido, aproximación a pantalla y teclado",
+          "Presentación de accesorios empaquetados delante de pantalla"
+        ],
+        "visibleDetails": [
+          "Logo Dell, carcasa oscura, teclado negro, escritorio Windows con fondo naranja",
+          "Empaque de memoria marcado 128 GB y caja de auriculares"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows",
+          "si se muestra un empaque de memoria",
+          "si se muestra una caja de auriculares"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Iconos en escritorio no prueban instalación, licencia ni ejecución de aplicaciones",
+          "Accesorios en publicidad no sustituyen política oficial de incluidos ni capacidad interna del equipo"
+        ],
+        "file": "video/DELLP22T-NEG-video-1.mp4",
+        "type": "video",
+        "sha256": "046bf042f86de4b54fe033d752259dd202dfebd8ae6734be0901a891ee6237e9",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 32.571678004535144,
+          "sampleSeconds": [
+            0.0,
+            1.357,
+            2.714,
+            4.071,
+            5.429,
+            6.786,
+            8.143,
+            9.5,
+            10.857,
+            12.214,
+            13.572,
+            14.929,
+            16.286,
+            17.643,
+            19.0,
+            20.357,
+            21.714,
+            23.072,
+            24.429,
+            25.786,
+            27.143,
+            28.5,
+            29.857,
+            31.215
+          ]
+        }
+      }
+    ]
+  },
+  "HP11G5-NEG": {
+    "images": [
+      {
+        "shows": [
+          "Portátil HP abierto"
+        ],
+        "visibleDetails": [
+          "Logo HP, carcasa oscura, teclado, touchpad y pantalla negra"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Pantalla negra no demuestra que el equipo esté encendido"
+        ],
+        "file": "imagen/HP11G5-NEG-foto-1.jpg",
+        "type": "image",
+        "sha256": "f8e44888618169a1292049b5208a1a3eda8ebb509d1b6b9dbab0eed550735b17",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "Portátil HP encendido, aproximación a pantalla y teclado"
+        ],
+        "visibleDetails": [
+          "Logo HP, carcasa oscura, teclado negro, escritorio Windows con fondo bandas rosa y azul"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Iconos en escritorio no prueban instalación, licencia ni ejecución de aplicaciones"
+        ],
+        "file": "video/HP11G5-NEG-video-1.mp4",
+        "type": "video",
+        "sha256": "311776f1e54d06ebe3e646995b9668dfc5d8236f26f0d739f6a0ffac93e8d49b",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 18.785011337868482,
+          "sampleSeconds": [
+            0.0,
+            0.783,
+            1.565,
+            2.348,
+            3.131,
+            3.914,
+            4.696,
+            5.479,
+            6.262,
+            7.044,
+            7.827,
+            8.61,
+            9.393,
+            10.175,
+            10.958,
+            11.741,
+            12.523,
+            13.306,
+            14.089,
+            14.871,
+            15.654,
+            16.437,
+            17.22,
+            18.002
+          ]
+        }
+      }
+    ]
+  },
+  "IMAC2011-250": {
+    "images": [],
+    "videos": []
+  },
+  "IMAC2012-250": {
+    "images": [],
+    "videos": []
+  },
+  "IPADAIR1-16-BLA": {
+    "images": [
+      {
+        "shows": [
+          "iPad en vista frontal, pantalla encendida"
+        ],
+        "visibleDetails": [
+          "Tablet con marco frontal negro sobre superficie de piedra",
+          "Pantalla blanca con saludo «Hola» visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en la foto",
+          "cómo se ve la pantalla del iPad",
+          "si se ve el saludo Hola"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR1-16-BLA-foto-1.jpg",
+        "type": "image",
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      },
+      {
+        "shows": [
+          "iPad en vista posterior"
+        ],
+        "visibleDetails": [
+          "Parte trasera metálica gris con logo Apple negro",
+          "Inscripción iPad y cámara posterior visibles"
+        ],
+        "canAnswer": [
+          "cómo se ve la parte trasera del iPad",
+          "si se ve el logo Apple",
+          "si se observa la cámara posterior"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR1-16-BLA-foto-2.jpg",
+        "type": "image",
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "iPad encendido y manipulado; pantalla de aplicaciones y parte trasera"
+        ],
+        "visibleDetails": [
+          "Pantalla táctil con interacción, vistas de Word y Excel, tapa plateada y logo Apple"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en el video",
+          "si se observa interacción con la pantalla táctil",
+          "si Word está visible",
+          "si Excel está visible",
+          "cómo se ve la parte trasera del iPad"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Modelo, color y capacidad exactos de los cinco SKU que comparten este video"
+        ],
+        "file": "video/IPADAIR1-16-BLA-video.mp4",
+        "type": "video",
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 25.7257,
+          "sampleSeconds": [
+            0.0,
+            1.072,
+            2.144,
+            3.216,
+            4.288,
+            5.36,
+            6.431,
+            7.503,
+            8.575,
+            9.647,
+            10.719,
+            11.791,
+            12.863,
+            13.935,
+            15.007,
+            16.079,
+            17.15,
+            18.222,
+            19.294,
+            20.366,
+            21.438,
+            22.51,
+            23.582,
+            24.654
+          ]
+        }
+      }
+    ]
+  },
+  "IPADAIR1-16-PLA": {
+    "images": [
+      {
+        "shows": [
+          "iPad en vista frontal, pantalla encendida"
+        ],
+        "visibleDetails": [
+          "Tablet con marco frontal negro sobre superficie de piedra",
+          "Pantalla blanca con saludo «Hola» visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en la foto",
+          "cómo se ve la pantalla del iPad",
+          "si se ve el saludo Hola"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR1-16-PLA-foto-1.jpg",
+        "type": "image",
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      },
+      {
+        "shows": [
+          "iPad en vista posterior"
+        ],
+        "visibleDetails": [
+          "Parte trasera metálica gris con logo Apple negro",
+          "Inscripción iPad y cámara posterior visibles"
+        ],
+        "canAnswer": [
+          "cómo se ve la parte trasera del iPad",
+          "si se ve el logo Apple",
+          "si se observa la cámara posterior"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR1-16-PLA-foto-2.jpg",
+        "type": "image",
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "iPad encendido y manipulado; pantalla de aplicaciones y parte trasera"
+        ],
+        "visibleDetails": [
+          "Pantalla táctil con interacción, vistas de Word y Excel, tapa plateada y logo Apple"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en el video",
+          "si se observa interacción con la pantalla táctil",
+          "si Word está visible",
+          "si Excel está visible",
+          "cómo se ve la parte trasera del iPad"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Modelo, color y capacidad exactos de los cinco SKU que comparten este video"
+        ],
+        "file": "video/IPADAIR1-16-PLA-video.mp4",
+        "type": "video",
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 25.7257,
+          "sampleSeconds": [
+            0.0,
+            1.072,
+            2.144,
+            3.216,
+            4.288,
+            5.36,
+            6.431,
+            7.503,
+            8.575,
+            9.647,
+            10.719,
+            11.791,
+            12.863,
+            13.935,
+            15.007,
+            16.079,
+            17.15,
+            18.222,
+            19.294,
+            20.366,
+            21.438,
+            22.51,
+            23.582,
+            24.654
+          ]
+        }
+      }
+    ]
+  },
+  "IPADAIR1-32-BLA": {
+    "images": [
+      {
+        "shows": [
+          "iPad en vista frontal, pantalla encendida"
+        ],
+        "visibleDetails": [
+          "Tablet con marco frontal negro sobre superficie de piedra",
+          "Pantalla blanca con saludo «Hola» visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en la foto",
+          "cómo se ve la pantalla del iPad",
+          "si se ve el saludo Hola"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR1-32-BLA-foto-1.jpg",
+        "type": "image",
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      },
+      {
+        "shows": [
+          "iPad en vista posterior"
+        ],
+        "visibleDetails": [
+          "Parte trasera metálica gris con logo Apple negro",
+          "Inscripción iPad y cámara posterior visibles"
+        ],
+        "canAnswer": [
+          "cómo se ve la parte trasera del iPad",
+          "si se ve el logo Apple",
+          "si se observa la cámara posterior"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR1-32-BLA-foto-2.jpg",
+        "type": "image",
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "iPad encendido y manipulado; pantalla de aplicaciones y parte trasera"
+        ],
+        "visibleDetails": [
+          "Pantalla táctil con interacción, vistas de Word y Excel, tapa plateada y logo Apple"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en el video",
+          "si se observa interacción con la pantalla táctil",
+          "si Word está visible",
+          "si Excel está visible",
+          "cómo se ve la parte trasera del iPad"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Modelo, color y capacidad exactos de los cinco SKU que comparten este video"
+        ],
+        "file": "video/IPADAIR1-32-BLA-video.mp4",
+        "type": "video",
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 25.7257,
+          "sampleSeconds": [
+            0.0,
+            1.072,
+            2.144,
+            3.216,
+            4.288,
+            5.36,
+            6.431,
+            7.503,
+            8.575,
+            9.647,
+            10.719,
+            11.791,
+            12.863,
+            13.935,
+            15.007,
+            16.079,
+            17.15,
+            18.222,
+            19.294,
+            20.366,
+            21.438,
+            22.51,
+            23.582,
+            24.654
+          ]
+        }
+      }
+    ]
+  },
+  "IPADAIR1-32-PLA": {
+    "images": [
+      {
+        "shows": [
+          "iPad en vista frontal, pantalla encendida"
+        ],
+        "visibleDetails": [
+          "Tablet con marco frontal negro sobre superficie de piedra",
+          "Pantalla blanca con saludo «Hola» visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en la foto",
+          "cómo se ve la pantalla del iPad",
+          "si se ve el saludo Hola"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR1-32-PLA-foto-1.jpg",
+        "type": "image",
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      },
+      {
+        "shows": [
+          "iPad en vista posterior"
+        ],
+        "visibleDetails": [
+          "Parte trasera metálica gris con logo Apple negro",
+          "Inscripción iPad y cámara posterior visibles"
+        ],
+        "canAnswer": [
+          "cómo se ve la parte trasera del iPad",
+          "si se ve el logo Apple",
+          "si se observa la cámara posterior"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR1-32-PLA-foto-2.jpg",
+        "type": "image",
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "iPad encendido y manipulado; pantalla de aplicaciones y parte trasera"
+        ],
+        "visibleDetails": [
+          "Pantalla táctil con interacción, vistas de Word y Excel, tapa plateada y logo Apple"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en el video",
+          "si se observa interacción con la pantalla táctil",
+          "si Word está visible",
+          "si Excel está visible",
+          "cómo se ve la parte trasera del iPad"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Modelo, color y capacidad exactos de los cinco SKU que comparten este video"
+        ],
+        "file": "video/IPADAIR1-32-PLA-video.mp4",
+        "type": "video",
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 25.7257,
+          "sampleSeconds": [
+            0.0,
+            1.072,
+            2.144,
+            3.216,
+            4.288,
+            5.36,
+            6.431,
+            7.503,
+            8.575,
+            9.647,
+            10.719,
+            11.791,
+            12.863,
+            13.935,
+            15.007,
+            16.079,
+            17.15,
+            18.222,
+            19.294,
+            20.366,
+            21.438,
+            22.51,
+            23.582,
+            24.654
+          ]
+        }
+      }
+    ]
+  },
+  "IPADAIR2-16-PLA": {
+    "images": [
+      {
+        "shows": [
+          "iPad en vista frontal, pantalla encendida"
+        ],
+        "visibleDetails": [
+          "Tablet con marco frontal negro sobre superficie de piedra",
+          "Pantalla blanca con saludo «Hola» visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en la foto",
+          "cómo se ve la pantalla del iPad",
+          "si se ve el saludo Hola"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR2-16-PLA-foto-1.jpg",
+        "type": "image",
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      },
+      {
+        "shows": [
+          "iPad en vista posterior"
+        ],
+        "visibleDetails": [
+          "Parte trasera metálica gris con logo Apple negro",
+          "Inscripción iPad y cámara posterior visibles"
+        ],
+        "canAnswer": [
+          "cómo se ve la parte trasera del iPad",
+          "si se ve el logo Apple",
+          "si se observa la cámara posterior"
+        ],
+        "notVisible": [
+          "Modelo, RAM, capacidad, color comercial y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Autonomía real de batería",
+          "Funcionamiento de cámara, puertos y conectividad sin pruebas explícitas",
+          "Respuesta táctil o ejecución de aplicaciones en una foto estática",
+          "Estado de todas las unidades que serán entregadas; material compartido entre variantes"
+        ],
+        "file": "imagen/IPADAIR2-16-PLA-foto-2.jpg",
+        "type": "image",
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275",
+        "inspection": {
+          "method": "Inspección visual de foto completa; copia idéntica verificada por SHA-256"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "iPad encendido y manipulado; pantalla de aplicaciones y parte trasera"
+        ],
+        "visibleDetails": [
+          "Pantalla táctil con interacción, vistas de Word y Excel, tapa plateada y logo Apple"
+        ],
+        "canAnswer": [
+          "cómo se ve el iPad en el video",
+          "si se observa interacción con la pantalla táctil",
+          "si Word está visible",
+          "si Excel está visible",
+          "cómo se ve la parte trasera del iPad"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Modelo, color y capacidad exactos de los cinco SKU que comparten este video"
+        ],
+        "file": "video/IPADAIR2-16-PLA-video.mp4",
+        "type": "video",
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 25.7257,
+          "sampleSeconds": [
+            0.0,
+            1.072,
+            2.144,
+            3.216,
+            4.288,
+            5.36,
+            6.431,
+            7.503,
+            8.575,
+            9.647,
+            10.719,
+            11.791,
+            12.863,
+            13.935,
+            15.007,
+            16.079,
+            17.15,
+            18.222,
+            19.294,
+            20.366,
+            21.438,
+            22.51,
+            23.582,
+            24.654
+          ]
+        }
+      }
+    ]
+  },
+  "LENOVON22-20-NEG": {
+    "images": [
+      {
+        "shows": [
+          "Portátil Lenovo abierto, vista oblicua"
+        ],
+        "visibleDetails": [
+          "Logo Lenovo, teclado negro, escritorio Windows"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/LENOVON22-20-NEG-foto-1.jpg",
+        "type": "image",
+        "sha256": "bc37258df71d7177f5e5163cc4cf9bceb64ef5eb09c4650c33507ea8478c8acb",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "Portátil Lenovo abierto, vista frontal"
+        ],
+        "visibleDetails": [
+          "Logo Lenovo, teclado negro, touchpad, escritorio Windows"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/LENOVON22-20-NEG-foto-2.jpg",
+        "type": "image",
+        "sha256": "0bdb79df75d4f8c47ed87813bc1389c21ce9688d6b2d33b2ba4064532df9e3a8",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "Portátil Lenovo encendido, aproximación a pantalla y teclado",
+          "Manipulación de cámara en el borde superior de la pantalla"
+        ],
+        "visibleDetails": [
+          "Logo Lenovo, carcasa oscura, teclado negro, escritorio Windows con fondo lila",
+          "Módulo superior gira manualmente"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de Windows",
+          "si se ve mover la cámara del borde superior"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Iconos en escritorio no prueban instalación, licencia ni ejecución de aplicaciones",
+          "Mover el módulo no demuestra captura de imagen de la cámara"
+        ],
+        "file": "video/LENOVON22-20-NEG-video-1.mp4",
+        "type": "video",
+        "sha256": "71bdd6e8fe75742608bbe42b446f69b33f4763fbed37c814aa1a3cc95533eaf2",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 26.726666666666667,
+          "sampleSeconds": [
+            0.0,
+            1.114,
+            2.227,
+            3.341,
+            4.454,
+            5.568,
+            6.682,
+            7.795,
+            8.909,
+            10.022,
+            11.136,
+            12.25,
+            13.363,
+            14.477,
+            15.591,
+            16.704,
+            17.818,
+            18.931,
+            20.045,
+            21.159,
+            22.272,
+            23.386,
+            24.499,
+            25.613
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-1000-16Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-1000-16Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-1000-16Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-1000-16Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-1000-8Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-1000-8Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-1000-8Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-1000-8Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-160-4Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-160-4Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-160-4Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-160-4Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-160-8Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-160-8Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-160-8Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-160-8Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-250-16Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-250-16Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-250-16Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-250-16Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-250-8Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-250-8Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-250-8Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-250-8Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-320-16Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-320-16Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-320-16Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-320-16Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-320-4Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-320-4Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-320-4Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-320-4Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-320-8Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-320-8Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-320-8Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-320-8Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-500-4Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-500-4Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-500-4Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-500-4Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-500-8Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-500-8Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-500-8Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-500-8Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I5-750-8Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-750-8Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I5-750-8Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I5-750-8Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I7-1000-16Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I7-1000-16Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I7-1000-16Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I7-1000-16Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I7-160-16Ram-15\"": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto frontal"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado, touchpad, escritorio macOS"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I7-160-16Ram-15\"-foto-1.jpg",
+        "type": "image",
+        "sha256": "9c65f82df215eeef48ca781a32a833f68703ea6e4b14d9bc138c27603caf5d3e",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook cerrado visto desde arriba"
+        ],
+        "visibleDetails": [
+          "Tapa plateada, logo Apple, marcas superficiales visibles"
+        ],
+        "canAnswer": [
+          "cómo se ve la tapa",
+          "si se ve el logo Apple"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Severidad de marcas fuera de la foto o estado de todas las unidades"
+        ],
+        "file": "imagen/MAC-I7-160-16Ram-15\"-foto-2.jpg",
+        "type": "image",
+        "sha256": "fdec53c5daa8612c25a24684b69c0fde4a6a5ab5d4a870bb7e3877f40801063f",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido, escritorio y Microsoft Word abierto; movimiento de la tapa al final"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad, carcasa plateada, escritorio macOS, documento Word con texto"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Video general compartido: no prueba RAM ni almacenamiento de cada SKU"
+        ],
+        "file": "video/MAC-I7-160-16Ram-15\"-video-1.mp4",
+        "type": "video",
+        "sha256": "7dbe4668f82a615538ebf1ff283d302c9b60778e35169c95a545fcaa4f5c0b86",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 39.94,
+          "sampleSeconds": [
+            0.0,
+            1.664,
+            3.328,
+            4.992,
+            6.657,
+            8.321,
+            9.985,
+            11.649,
+            13.313,
+            14.977,
+            16.642,
+            18.306,
+            19.97,
+            21.634,
+            23.298,
+            24.962,
+            26.627,
+            28.291,
+            29.955,
+            31.619,
+            33.283,
+            34.947,
+            36.612,
+            38.276
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I7-250-16Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I7-250-16Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I7-250-16Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I7-250-16Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I7-250-8Ram-15\"": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto frontal"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado, touchpad, escritorio macOS"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I7-250-8Ram-15\"-foto-1.jpg",
+        "type": "image",
+        "sha256": "9c65f82df215eeef48ca781a32a833f68703ea6e4b14d9bc138c27603caf5d3e",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook cerrado visto desde arriba"
+        ],
+        "visibleDetails": [
+          "Tapa plateada, logo Apple, marcas superficiales visibles"
+        ],
+        "canAnswer": [
+          "cómo se ve la tapa",
+          "si se ve el logo Apple"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Severidad de marcas fuera de la foto o estado de todas las unidades"
+        ],
+        "file": "imagen/MAC-I7-250-8Ram-15\"-foto-2.jpg",
+        "type": "image",
+        "sha256": "fdec53c5daa8612c25a24684b69c0fde4a6a5ab5d4a870bb7e3877f40801063f",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido, escritorio y Microsoft Word abierto; movimiento de la tapa al final"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad, carcasa plateada, escritorio macOS, documento Word con texto"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Video general compartido: no prueba RAM ni almacenamiento de cada SKU"
+        ],
+        "file": "video/MAC-I7-250-8Ram-15\"-video-1.mp4",
+        "type": "video",
+        "sha256": "7dbe4668f82a615538ebf1ff283d302c9b60778e35169c95a545fcaa4f5c0b86",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 39.94,
+          "sampleSeconds": [
+            0.0,
+            1.664,
+            3.328,
+            4.992,
+            6.657,
+            8.321,
+            9.985,
+            11.649,
+            13.313,
+            14.977,
+            16.642,
+            18.306,
+            19.97,
+            21.634,
+            23.298,
+            24.962,
+            26.627,
+            28.291,
+            29.955,
+            31.619,
+            33.283,
+            34.947,
+            36.612,
+            38.276
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I7-500-4Ram-15\"": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto frontal"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado, touchpad, escritorio macOS"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I7-500-4Ram-15\"-foto-1.jpg",
+        "type": "image",
+        "sha256": "9c65f82df215eeef48ca781a32a833f68703ea6e4b14d9bc138c27603caf5d3e",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook cerrado visto desde arriba"
+        ],
+        "visibleDetails": [
+          "Tapa plateada, logo Apple, marcas superficiales visibles"
+        ],
+        "canAnswer": [
+          "cómo se ve la tapa",
+          "si se ve el logo Apple"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Severidad de marcas fuera de la foto o estado de todas las unidades"
+        ],
+        "file": "imagen/MAC-I7-500-4Ram-15\"-foto-2.jpg",
+        "type": "image",
+        "sha256": "fdec53c5daa8612c25a24684b69c0fde4a6a5ab5d4a870bb7e3877f40801063f",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido, escritorio y Microsoft Word abierto; movimiento de la tapa al final"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad, carcasa plateada, escritorio macOS, documento Word con texto"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "Video general compartido: no prueba RAM ni almacenamiento de cada SKU"
+        ],
+        "file": "video/MAC-I7-500-4Ram-15\"-video-1.mp4",
+        "type": "video",
+        "sha256": "7dbe4668f82a615538ebf1ff283d302c9b60778e35169c95a545fcaa4f5c0b86",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 39.94,
+          "sampleSeconds": [
+            0.0,
+            1.664,
+            3.328,
+            4.992,
+            6.657,
+            8.321,
+            9.985,
+            11.649,
+            13.313,
+            14.977,
+            16.642,
+            18.306,
+            19.97,
+            21.634,
+            23.298,
+            24.962,
+            26.627,
+            28.291,
+            29.955,
+            31.619,
+            33.283,
+            34.947,
+            36.612,
+            38.276
+          ]
+        }
+      }
+    ]
+  },
+  "MAC-I7-750-4Ram": {
+    "images": [
+      {
+        "shows": [
+          "MacBook abierto en vista frontal"
+        ],
+        "visibleDetails": [
+          "Teclado negro, touchpad y escritorio macOS visible"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I7-750-4Ram-foto-1.jpg",
+        "type": "image",
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      },
+      {
+        "shows": [
+          "MacBook abierto en vista oblicua"
+        ],
+        "visibleDetails": [
+          "Carcasa plateada, teclado negro, touchpad, pantalla encendida con escritorio y ventana"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software"
+        ],
+        "file": "imagen/MAC-I7-750-4Ram-foto-2.jpg",
+        "type": "image",
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+        "inspection": {
+          "method": "Inspección visual de foto completa"
+        }
+      }
+    ],
+    "videos": [
+      {
+        "shows": [
+          "MacBook encendido con Microsoft Word abierto"
+        ],
+        "visibleDetails": [
+          "Escritorio macOS, ventana de Word, teclado negro y carcasa plateada"
+        ],
+        "canAnswer": [
+          "cómo se ve el equipo abierto",
+          "si se observa el teclado",
+          "si se observa el touchpad",
+          "cómo se ve la pantalla",
+          "si Word está visible",
+          "si se ve el escritorio de macOS"
+        ],
+        "notVisible": [
+          "Autonomía real de batería",
+          "Funcionamiento de todos los puertos, cámara y conectividad sin pruebas explícitas",
+          "RAM, almacenamiento, procesador y precio exactos de cada SKU: consultar PAGINA DE STOCK",
+          "Ausencia total de defectos o estado de la unidad que será entregada",
+          "Licencia, activación o compatibilidad completa del software",
+          "No se muestran pruebas de puertos ni características exactas de cada variante"
+        ],
+        "file": "video/MAC-I7-750-4Ram-video-1.mp4",
+        "type": "video",
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+        "inspection": {
+          "method": "Inspección visual de 24 fotogramas distribuidos uniformemente; sin inferir audio ni intervalos no observados",
+          "durationSeconds": 19.333333333333332,
+          "sampleSeconds": [
+            0.0,
+            0.806,
+            1.611,
+            2.417,
+            3.222,
+            4.028,
+            4.833,
+            5.639,
+            6.444,
+            7.25,
+            8.056,
+            8.861,
+            9.667,
+            10.472,
+            11.278,
+            12.083,
+            12.889,
+            13.694,
+            14.5,
+            15.306,
+            16.111,
+            16.917,
+            17.722,
+            18.528
+          ]
+        }
+      }
+    ]
+  }
+}

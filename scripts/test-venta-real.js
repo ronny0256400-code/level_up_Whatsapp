@@ -12,7 +12,7 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
         get: async () => ({ data: { sheets: creada ? [{ properties: { title: 'APRENDIZAJE' } }] : [] } }),
         batchUpdate: async () => { creada = true; },
         values: {
-            get: async ({ range }) => ({ data: { values: range === "'PAGINA DE STOCK'!A2:G2" ? [require('./helpers/inventory-fixture').HEADERS] : range.startsWith('APRENDIZAJE') ? aprendizaje : range.startsWith('MEMORIA') ? memoria : [['IPADAIR1-32-PLA','iPad Air 1','32 GB','plateado',20,100,'Para lectura; incluye cable']] } }),
+            get: async ({ range }) => ({ data: { values: range === "'PAGINA DE STOCK'!A2:H2" ? [require('./helpers/inventory-fixture').HEADERS] : range.startsWith('APRENDIZAJE') ? aprendizaje : range.startsWith('MEMORIA') ? memoria : [['IPADAIR1-32-PLA','iPad Air 1','32 GB','','plateado',20,100,'Para lectura; incluye cable']] } }),
             update: async ({ range, requestBody }) => { if (range.startsWith('MEMORIA')) { requestBody.values.forEach((row,i)=>{memoria[Number(range.match(/A(\d+)/)[1])-2+i]=row;}); eventos.push('memoria'); } else aprendizaje = requestBody.values; },
             append: async ({ requestBody }) => { aprendizaje.push(...requestBody.values); eventos.push('aprendizaje'); }
         }
@@ -52,7 +52,7 @@ function entorno({ falloAsesor = false, falloVideo = false, falloCliente = false
         const fallo = (asesor && falloAsesor) || (body.type === 'video' && falloVideo) || (!asesor && body.type === 'text' && falloCliente);
         return { ok: !fallo, status: fallo ? 500 : 200, text: async () => sinJson ? '<html>error</html>' : JSON.stringify({ error: { code: 131000, message:'Persona Ficticia 000000000002' } }) };
     } });
-    vm.runInContext(fs.readFileSync(path.join(__dirname,'../server.js'),'utf8')+'\nthis.api={procesarMensajeV2,conversaciones,esConfirmacionAfirmativa,guardarConversacion,obtenerConversacion};',context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname,'../legacy/server-v25.js'),'utf8')+'\nthis.api={procesarMensajeV2,conversaciones,esConfirmacionAfirmativa,guardarConversacion,obtenerConversacion};',context);
     async function turno(texto, respuesta, id = `msg-${++secuencia}`, esperado = 200) {
         if (respuesta) respuestas.push(respuesta);
         let status;

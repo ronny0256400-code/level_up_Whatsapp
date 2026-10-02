@@ -33,7 +33,7 @@ function entorno() {
         if (name === 'googleapis') return { google: { auth: { GoogleAuth: class {} }, sheets: () => sheets } };
         throw new Error(name);
     }, process: { env }, console: { log() {}, error() {} }, fetch: async (url, args) => { mensajes.push(JSON.parse(args.body)); return { ok: true, text: async () => '{}' }; } });
-    vm.runInContext(fs.readFileSync(path.join(__dirname, '../server.js'), 'utf8') + '\nthis.api = { procesarMensajeV2, guardarAprendizaje, anonimizarHistorial };', context);
+    vm.runInContext(fs.readFileSync(path.join(__dirname, '../legacy/server-v25.js'), 'utf8') + '\nthis.api = { procesarMensajeV2, guardarAprendizaje, anonimizarHistorial };', context);
     async function comando(text) {
         let status;
         await context.api.procesarMensajeV2({ body: { entry: [{ changes: [{ value: { messages: [{ id: `msg-${text}`, from: env.ASESOR_WHATSAPP, type: 'text', text: { body: text } }] } }] }] } }, { sendStatus(code) { status = code; }, status(code) { status = code; return this; }, json() {} });

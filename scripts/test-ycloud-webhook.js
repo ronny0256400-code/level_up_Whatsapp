@@ -9,7 +9,7 @@ const { createHmac } = require('node:crypto');
 const express = require('express');
 const { createYCloudWebhook } = require('../lib/ycloud-webhook');
 
-test('YCloud y Meta conviven en el servidor real con dependencias simuladas', async t => {
+test('YCloud y Meta conviven en el runtime V2.5 archivado con dependencias simuladas', async t => {
   const secretFixture = 'local-test-signing-secret';
   let secret = secretFixture;
   const logs = [], queued = [];
@@ -39,7 +39,7 @@ test('YCloud y Meta conviven en el servidor real con dependencias simuladas', as
       throw new Error('Importación inesperada en test');
     }
   });
-  vm.runInContext(fs.readFileSync(path.join(__dirname, '../server.js'), 'utf8'), context);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '../legacy/server-v25.js'), 'utf8'), context);
   const server = http.createServer(app);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(() => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); }));

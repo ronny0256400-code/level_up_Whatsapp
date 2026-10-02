@@ -13,8 +13,8 @@ async function setup(options={}) {
   const ledger=async()=> (await read({range:"'REGISTRO DE VENTAS'!A5:W"})).data.values;
   e.sheets.spreadsheets.values.get=async args=>{
     const result=await read(args);
-    if(args.range==="'PAGINA DE STOCK'!A3:G"){
-      const sales=await ledger();result.data.values=result.data.values.map(row=>{const value=[...row];if(value[0]===SKU)value[4]=3-sales.filter(r=>r[14]===SKU&&['enviado','en agencia','retirado','cancelado','pagado'].includes(r[5])).reduce((n,r)=>n+Number(r[18]),0);return value;});
+    if(args.range==="'PAGINA DE STOCK'!A3:H"){
+      const sales=await ledger();result.data.values=result.data.values.map(row=>{const value=[...row];if(value[0]===SKU)value[5]=3-sales.filter(r=>r[14]===SKU&&['enviado','en agencia','retirado','cancelado','pagado'].includes(r[5])).reduce((n,r)=>n+Number(r[18]),0);return value;});
     }
     if(args.range==="'REGISTRO DE VENTAS'!A5:W"&&args.valueRenderOption!=='FORMULA'){
       result.data.values=result.data.values.map(row=>{const value=[...row];if(value[14]===SKU){value[15]='IPAD AIR 1';value[16]='32 GB';value[17]='plateado';value[19]=110;value[20]=Number(value[18])*value[19];}return value;});

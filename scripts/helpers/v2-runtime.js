@@ -27,7 +27,7 @@ function runtime(options = {}) {
       throw Error('Dependencia no simulada');
     }, fetch:async(url,args)=>{if(!url.endsWith('/messages')){if(options.fetchMedia)return options.fetchMedia(url,args);throw Error('Red de medios prohibida');}if(control.failSend || options.failSendTo===JSON.parse(args.body).to)return{ok:false,status:options.failSendStatus||500,text:async()=>'{"error":{"code":1}}'};sent.push(JSON.parse(args.body));return{ok:true,text:async()=>'{}'};}
   });
-  vm.runInContext(fs.readFileSync(path.join(__dirname,'../../server.js'),'utf8')+'\nthis.api={procesarMensajeV2,entradaV2,obtenerConversacion,guardarConversacion,revisarSeguimientos,enviarMensajeWhatsApp,confirmarPedidoSiCorresponde,generarResumenPedido,generarIdPedido,contextosPedido,inventarioFinal,obtenerStock,actualizarGuiaPedido};',context);
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'../../legacy/server-v25.js'),'utf8')+'\nthis.api={procesarMensajeV2,entradaV2,obtenerConversacion,guardarConversacion,revisarSeguimientos,enviarMensajeWhatsApp,confirmarPedidoSiCorresponde,generarResumenPedido,generarIdPedido,contextosPedido,inventarioFinal,obtenerStock,actualizarGuiaPedido};',context);
   let seq=0;
   async function message(text,opts={}) {
     await inventoryReady;

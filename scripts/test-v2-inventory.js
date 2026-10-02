@@ -2,17 +2,18 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { memorySheets } = require('../lib/v2-storage');
-const { createInventory, parseCatalog, scarcity, catalogText, dateSerial } = require('../lib/v2-inventory');
-const { HEADERS } = require('./helpers/inventory-fixture');
+const { createInventory, parseCatalog: parseOfficialCatalog, scarcity, catalogText, dateSerial } = require('../lib/v2-inventory');
+const { HEADERS, legacyStockRow } = require('./helpers/inventory-fixture');
+const parseCatalog = rows => parseOfficialCatalog(rows.map(legacyStockRow));
 const NOW = new Date('2026-09-17T02:00:00Z'); // Still September 16 in Guayaquil.
 const products = () => [['IPADAIR1-16-BLA','iPad Air 1','16 GB','blanco',5,100,'Ficha blanca'],['IPADAIR1-32-PLA','iPad Air 1','32 GB','plateado',3,90,'Ficha plateada']];
 const order = (multiple = false) => ({ id:'LU0001', lineas: [{id_producto:'IPADAIR1-16-BLA',producto:'iPad Air 1',capacidad:'16 GB',color:'blanco',cantidad:2,precio_unitario:100},...(multiple?[{id_producto:'IPADAIR1-32-PLA',producto:'iPad Air 1',capacidad:'32 GB',color:'plateado',cantidad:1,precio_unitario:90}]:[])] });
 async function fixture(stock=products()) {
   const sheets=memorySheets(), writes=[];
-  const put=(range,values)=>sheets.spreadsheets.values.update({range,requestBody:{values}});
+  const put=(range,values)=>sheets.spreadsheets.values.update({range,requestBody:{values:range.includes("PAGINA DE STOCK") && /!A/.test(range) ? values.map(legacyStockRow) : values}});
   await put('DATOS!B2:G2',[['manual-date','manual-product','manual-capacity','manual-color',100,'manual-id']]);
   await put('DATOS!L2:R',products());
-  await put("'PAGINA DE STOCK'!A2:G",[HEADERS,...stock]);
+  await put("'PAGINA DE STOCK'!A2:H",[HEADERS,...stock]);
   const rows=Array.from({length:20},()=>Array(23).fill(''));
   rows.forEach((row,i)=>{for(const col of [15,16,17,19,20,22])row[col]=`=FORMULA_${col}(${i+5})`;});
   await put("'REGISTRO DE VENTAS'!A5:W24",rows);
@@ -33,7 +34,7 @@ test('GUIA única registra una fila enviada con fechas locales y ceros de identi
 test('GUIA multiproducto registra N filas consecutivas con IDs/capacidades/colores distintos',async()=>{const e=await fixture();const r=await e.register(order(true));assert.deepEqual(r.rows,[5,6]);const rows=await e.sales();assert.equal(rows[0][14],'IPADAIR1-16-BLA');assert.equal(rows[1][14],'IPADAIR1-32-PLA');assert.equal(rows[0][18],2);assert.equal(rows[1][18],1);assert.equal(rows[0][2],rows[1][2]);assert.equal(e.writes.length,1);});
 test('stock insuficiente en segunda línea crea cero filas',async()=>{const rows=products();rows[1][4]=0;const e=await fixture(rows);await assert.rejects(e.register(order(true)),{code:'STOCK_INSUFICIENTE'});assert.equal(e.writes.length,0);assert.ok((await e.sales()).every(r=>!r[2]));});
 test('cantidades repetidas de un mismo ID se validan sumadas',async()=>{const e=await fixture();const o=order();o.lineas=[{...o.lineas[0],cantidad:3},{...o.lineas[0],cantidad:3}];await assert.rejects(e.register(o),{code:'STOCK_INSUFICIENTE'});assert.equal(e.writes.length,0);});
-test('idempotencia persiste aunque Sheets ya no ofrezca stock y se reinicie backend',async()=>{const e=await fixture();await e.register();await e.put("'PAGINA DE STOCK'!A3:G",products().map(r=>r.map((v,i)=>i===4?0:v)));const restarted=createInventory({sheets:e.sheets,spreadsheetId:'fixture'});const r=await restarted.register({order:order(),guide:'001234'});assert.equal(r.repeated,true);assert.equal(e.writes.length,1);});
+test('idempotencia persiste aunque Sheets ya no ofrezca stock y se reinicie backend',async()=>{const e=await fixture();await e.register();await e.put("'PAGINA DE STOCK'!A3:H",products().map(r=>r.map((v,i)=>i===4?0:v)));const restarted=createInventory({sheets:e.sheets,spreadsheetId:'fixture'});const r=await restarted.register({order:order(),guide:'001234'});assert.equal(r.repeated,true);assert.equal(e.writes.length,1);});
 test('misma orden con guía diferente no escribe; ni permite reutilizar guía en otra orden',async()=>{const e=await fixture();await e.register();await assert.rejects(e.inventory.register({order:order(),guide:'otra'}),{code:'GUIA_CONFLICTIVA'});await assert.rejects(e.inventory.register({order:{...order(),id:'LU0002'},guide:'001234'}),{code:'GUIA_CONFLICTIVA'});assert.equal(e.writes.length,1);});
 test('nunca modifica RE-STOCK, DATOS!P ni fórmulas P/Q/R/T/U/W',async()=>{const e=await fixture();const before=(await e.sheets.spreadsheets.values.get({range:'DATOS!A1:R'})).data.values;const formulas=(await e.sales()).map(r=>[15,16,17,19,20,22].map(i=>r[i]));await e.register(order(true));assert.deepEqual((await e.sheets.spreadsheets.values.get({range:'DATOS!A1:R'})).data.values,before);assert.deepEqual((await e.sales()).map(r=>[15,16,17,19,20,22].map(i=>r[i])),formulas);for(const request of e.writes[0].requestBody.requests)assert.ok(![15,16,17,19,20,22].includes(request.updateCells.start.columnIndex));});
 for(const state of ['en agencia','retirado','cancelado'])test(`${state} actualiza únicamente estado y retiro cuando corresponde`,async()=>{const e=await fixture();await e.register(order(true));const result=await e.inventory.updateState({orderId:'LU0001'},state,NOW);assert.equal(result.rows.length,2);const cols=e.writes.at(-1).requestBody.requests.map(r=>r.updateCells.start.columnIndex);assert.ok(cols.every(c=>c===5||(state==='retirado'&&c===7)));assert.ok((await e.sales()).slice(0,2).every(r=>r[5]===state));if(state==='retirado')assert.equal((await e.sales())[0][7],dateSerial('2026-09-16'));});
@@ -45,11 +46,11 @@ test('fallo incierto después de aplicar se recupera leyendo ventas, sin duplica
 test('GUIDAs concurrentes distintos nunca ocupan las mismas filas',async()=>{const e=await fixture();const results=await Promise.all([e.register(),e.inventory.register({order:{...order(),id:'LU0002'},guide:'G2'})]);assert.deepEqual(results.map(r=>r.rows[0]),[5,6]);});
 test('sin ID o precio distinto al confirmado bloquea antes de escribir',async()=>{const e=await fixture(),o=order();delete o.lineas[0].id_producto;await assert.rejects(e.register(o),{code:'ID_PRODUCTO_REQUERIDO'});const changed=order();changed.lineas[0].precio_unitario=99;await assert.rejects(e.register(changed),{code:'PRECIO_CAMBIADO'});assert.equal(e.writes.length,0);});
 
-test('catálogo válido con una fila usa A3:G y encabezados de fila 2; nunca consulta DATOS',async()=>{
+test('catálogo válido con una fila usa A3:H y encabezados de fila 2; nunca consulta DATOS',async()=>{
   const e=await fixture(products().slice(0,1)),calls=[],read=e.sheets.spreadsheets.values.get;
   e.sheets.spreadsheets.values.get=async args=>{calls.push(args);assert.ok(!args.range.startsWith('DATOS'));return read(args);};
   const c=await e.inventory.catalog();assert.equal(c.available.size,1);
-  assert.deepEqual(calls.map(c=>c.range).sort(),["'PAGINA DE STOCK'!A2:G2","'PAGINA DE STOCK'!A3:G"]);
+  assert.deepEqual(calls.map(c=>c.range).sort(),["'PAGINA DE STOCK'!A2:H2","'PAGINA DE STOCK'!A3:H"]);
   assert.ok(calls.every(c=>c.valueRenderOption==='UNFORMATTED_VALUE'));
 });
 test('varias variantes del mismo producto conservan capacidad y color de cada ID',async()=>{
@@ -75,10 +76,10 @@ test('precio numérico con decimales mantiene su valor monetario',async()=>{
 test('stock calculado por fórmula y precio con formato monetario se leen como valores evaluados',async()=>{
   const e=await fixture(),read=e.sheets.spreadsheets.values.get;
   e.sheets.spreadsheets.values.get=async args=>{
-    if(args.range==="'PAGINA DE STOCK'!A3:G") {
+    if(args.range==="'PAGINA DE STOCK'!A3:H") {
       // Google returns a formula result/currency number under UNFORMATTED_VALUE,
       // not '=SUM(...)' or a localized currency string.
-      assert.equal(args.valueRenderOption,'UNFORMATTED_VALUE');return{data:{values:[['FORMULA','Equipo','32 GB','blanco',3,100.5,'']]}};
+      assert.equal(args.valueRenderOption,'UNFORMATTED_VALUE');return{data:{values:[['FORMULA','Equipo','32 GB','','blanco',3,100.5,'']]}};
     }
     return read(args);
   };
@@ -95,7 +96,7 @@ test('catálogo totalmente vacío produce CATALOGO_INVALIDO',async()=>{
   const e=await fixture([]);await assert.rejects(e.inventory.catalog(),{code:'CATALOGO_INVALIDO'});
 });
 test('cada columna esencial ausente en encabezados produce CATALOGO_INVALIDO',async()=>{
-  for(let column=0;column<6;column++){const e=await fixture(),headers=[...HEADERS];headers[column]='';await e.put("'PAGINA DE STOCK'!A2:G2",[headers]);await assert.rejects(e.inventory.catalog(),{code:'CATALOGO_INVALIDO'});}
+  for(let column=0;column<8;column++){const e=await fixture(),headers=[...HEADERS];headers[column]='';await e.put("'PAGINA DE STOCK'!A2:H2",[headers]);await assert.rejects(e.inventory.catalog(),{code:'CATALOGO_INVALIDO'});}
 });
 test('fila inválida aislada no bloquea variantes válidas',async()=>{
   const rows=products();const e=await fixture([['invalid','Equipo','32 GB','blanco','#VALUE!',100,''],...rows]);const c=await e.inventory.catalog();assert.equal(c.available.size,2);assert.ok(!c.available.has('invalid'));
@@ -106,10 +107,10 @@ test('campos esenciales de una fila no se completan con datos de otra',async()=>
 test('DATOS inconsistente no determina disponibilidad ni precio de la página final',async()=>{
   const e=await fixture();await e.put('DATOS!L2:R',[['ID-ANTIGUO','producto antiguo','','',0,999,'']]);const c=await e.inventory.catalog();assert.equal(c.available.size,2);assert.equal(c.available.get(products()[0][0]).precio,100);
 });
-test('auxiliares H:I y Ultima actualización no forman parte del catálogo',async()=>{
+test('auxiliares I:J y Ultima actualización no forman parte del catálogo',async()=>{
   const e=await fixture(),before=await e.inventory.catalog();
-  await e.put("'PAGINA DE STOCK'!H2:I4",[['auxiliar','Ultima actualización'],['#REF!','2026-09-17'],['=FILTER(...)','dato auxiliar']]);
-  await e.put("'PAGINA DE STOCK'!I100",[['Ultima actualización']]);
+  await e.put("'PAGINA DE STOCK'!I2:J4",[['auxiliar','Ultima actualización'],['#REF!','2026-09-17'],['=FILTER(...)','dato auxiliar']]);
+  await e.put("'PAGINA DE STOCK'!J100",[['Ultima actualización']]);
   assert.deepEqual(await e.inventory.catalog(),before);
   const rows=products().map(row=>[...row,'#REF!','Ultima actualización']);
   rows.push([...Array(7).fill(''),'auxiliar','fecha']);
@@ -119,10 +120,10 @@ test('tabla generada por FILTER usa exclusivamente resultados evaluados de Sheet
   const e=await fixture(),read=e.sheets.spreadsheets.values.get;
   await e.put("'PAGINA DE STOCK'!A3",[['=FILTER(DATOS!L3:R,DATOS!P3:P>0)']]);
   e.sheets.spreadsheets.values.get=async args=>{
-    if(args.range==="'PAGINA DE STOCK'!A3:G"){
+    if(args.range==="'PAGINA DE STOCK'!A3:H"){
       assert.equal(args.valueRenderOption,'UNFORMATTED_VALUE');
       // API mock supplies the spilled, evaluated rows, including empty info/tail.
-      return {data:{values:[...products().map(row=>row.slice(0,6)),[],Array(7).fill('')]}};
+      return {data:{values:[...products().map(row=>legacyStockRow(row.slice(0,6))),[],Array(7).fill('')]}};
     }
     assert.ok(!args.range.startsWith('DATOS'));return read(args);
   };

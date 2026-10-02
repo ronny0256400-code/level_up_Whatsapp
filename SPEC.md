@@ -1,331 +1,1225 @@
-# Level Up Store WhatsApp — SPEC V2.5
+QUIERO QUE IMPLEMENTES LA NUEVA VERSIÓN DEFINITIVA DEL BOT DE WHATSAPP DE LEVEL UP STORE.
 
-Esta especificación sustituye las resoluciones V1/V2 contradictorias. El código
-controla estados y escrituras; la IA interpreta lenguaje; Sheets calcula stock.
-YCloud es el proveedor principal. Meta permanece disponible. No se despliega
-esta migración sin revisar la fórmula de inventario y las pruebas reales.
+IMPORTANTE:
+- Trabaja SOBRE EL REPOSITORIO ACTUAL.
+- NO crees otro proyecto.
+- NO hagas push.
+- NO hagas deploy.
+- NO modifiques producción.
+- NO migres ni toques el número viejo de Meta.
+- Conserva la integración actual con YCloud, OpenAI, Google Sheets y Render cuando siga siendo útil.
+- Antes de editar código, inspecciona completamente el repositorio.
+- Reutiliza módulos funcionales cuando tenga sentido.
+- Elimina o deja fuera de ejecución la lógica antigua que ya no pertenece a esta versión.
+- No hagas cambios destructivos innecesarios.
+- Al terminar, ejecuta pruebas exhaustivas y entrégame un informe.
+- Si encuentras una contradicción real que no puedas resolver con esta especificación, NO inventes: documéntala en el informe.
 
-## Seguridad, entrada y persistencia
+==================================================
+1. OBJETIVO DE ESTA VERSIÓN
+==================================================
 
-- Webhooks Meta/YCloud autenticados con sus firmas sobre bytes originales.
-- Deduplicación persistente en ENTRADAS_V2, buffer fijo de cinco segundos,
-  rate limit de 20 entradas/minuto y aislamiento por número.
-- Los fallos permanentes se ponen en cuarentena; los transitorios tienen
-  backoff y un máximo de tres intentos. No hay loop infinito de ingress_retry.
-- MEMORIA!A2:C mantiene el snapshot JSON, oportunidades e intents/outboxes.
-- TEST_MODE sustituye Sheets por memoria y bloquea API/modelos/transporte real.
-- Meta conserva además deduplicación en RAM: es deuda técnica. Los locks de
-  cliente, inventario y contadores presuponen una sola instancia de backend.
-- Logs: eventos, etapa, estado, IDs internos, códigos, métricas y fingerprints.
-  Nunca cuerpos completos, cédulas, teléfonos completos, transcripciones,
-  credenciales, audio, contenido TTS ni URLs firmadas.
+Esta nueva versión es deliberadamente más simple.
 
-## Identidades
+El bot SOLO se encarga del proceso comercial desde el primer mensaje del cliente hasta la CONFIRMACIÓN FINAL DE LA VENTA.
 
-ID_PEDIDO conserva LU0001, LU0002… y su contador persistente __V2_COUNTER__.
-ID_CHAT usa CH000001, CH000002… con __V25_CHAT_COUNTER__ y comprobación de
-colisiones contra pedidos vigentes e históricos. Ambos contadores se reservan
-antes de confirmar; los huecos después de una caída son válidos.
+Después de la confirmación:
+- el chat queda PAUSADO;
+- el bot no responde;
+- no hace logística;
+- no genera guía;
+- no registra retiro;
+- no hace seguimiento;
+- no hace postventa;
+- no sigue consumiendo recursos en ese chat.
 
-ID_CHAT nace exclusivamente al confirmar el resumen de un pedido normal.
-No se crea al saludar, seleccionar producto, elegir agencia ni pedir ayuda.
-Se persiste en pedido.id_chat, vinculado a pedido.id y posteriormente a guía.
-Un ciclo posterior genera otra identidad y conserva los pedidos normales previos.
+La logística posterior la realizan agentes humanos.
 
-## Estados
+Principio general:
 
-Estados nuevos: nuevo, interesado, recopilando_datos, esperando_confirmacion,
-confirmado, enviado, disponible_retiro, retirado, cancelado, cerrado, abandono,
-no_interesado, postventa_humano, human_takeover y spam.
+IA ENTIENDE.
+CÓDIGO DECIDE.
+RESPUESTA APROBADA VENDE.
 
-Lectura histórica: pagado → retirado; sin_respuesta/no_retirado → cancelado.
-Se conserva legacy_estado, fechaPago e historia; legacy_terminal impide reabrir
-esos pedidos o reactivar seguimientos. No se escriben nuevos estados legacy.
-Un cancelado nuevo puede pasar a retirado si el retiro se confirma realmente;
-la transición agrega evento, fecha y cancela timers. No cambia a devuelto.
+La IA se utiliza principalmente para:
+- interpretar intención;
+- entender producto/modelo/variante;
+- interpretar lenguaje natural;
+- interpretar confirmaciones;
+- entender correcciones;
+- detectar reclamos;
+- responder preguntas técnicas específicas cuando están dentro de las reglas;
+- seleccionar qué respuesta preprogramada corresponde.
 
-## Flujo comercial
+La IA NO debe improvisar:
+- precios;
+- stock;
+- descuentos;
+- políticas;
+- promociones;
+- características registradas;
+- condiciones de reserva;
+- garantía;
+- información logística oficial.
 
-1. Saludo abierto sin asumir producto.
-2. Selección entre variantes disponibles del catálogo. Matching local y, cuando
-   hace falta, interpretación LOW limitada a candidatos existentes. No se elige
-   arbitrariamente color/capacidad entre variantes. Cantidad inicial: uno.
-3. Características reales, fotos por orden numérico, video comercial, precio y
-   promoción, AudioComercial1. La multimedia comercial no representa el equipo
-   individual que será despachado.
-4. Ciudad/provincia: inferir provincia si la ciudad es inequívoca, admitiendo
-   un typo seguro. Pedir aclaración ante homónimos. Elección expresa de agencia.
-5. Solo después se solicita nombre completo y cédula por texto. El teléfono
-   proviene de WhatsApp. No se solicita otra vez. Cédula sin checksum ni
-   validación legal; el administrador revisa antes de GUIA.
-6. Resumen por texto: contraentrega, nombre, cédula, teléfono, provincia, ciudad,
-   agencia/dirección, líneas, capacidad, color, cantidad, unitario, subtotal,
-   total y envío gratis. Se pregunta si está correcto.
-7. Confirmación híbrida: matcher local primero; LOW solo para lenguaje ambiguo.
-   Admite sí, sí amigo, correcto, está bien, dale, mándelo, proceda, confirmo,
-   dale de una, hágale, envíelo, está coredto, perfecto continuemos y equivalentes claros. Negaciones, correcciones,
-   preguntas, dudas y condiciones nunca confirman automáticamente.
-8. Incomplete/sin texto de LOW es un fallo controlado: conserva el resumen,
-   emite una instrucción una vez y permite confirmación local posterior.
+==================================================
+2. NOMBRE DEL NEGOCIO
+==================================================
 
-Correcciones invalidan el dato relacionado. Cambiar ciudad/provincia/agencia
-obliga a elegir de nuevo una agencia válida; no conserva la de otra localidad.
-La IA no crea precios, productos, agencias, guías, estados ni mutaciones.
+Por ahora el bot seguirá usando:
 
-Las preguntas cuyo dato no consta de forma verificable, contradicciones y
-casos que necesitan decisión humana generan pendingQuestion, conservando
-etapa y contexto. El aviso urgente va al asesor configurado por el proveedor
-de origen. Se envía una sola alerta por pregunta pendiente. RESPONDER entrega
-el contenido humano literal, por texto o TTS según longitud/tipo, y reanuda esa etapa, sin convertirlo en takeover real.
+Level Up Store
 
-## Confirmación normal y atención humana
+Pero el nombre debe quedar desacoplado en configuración, por ejemplo:
 
-Sin límite monetario: revalidar datos/SKU/precio, reservar LU y CH, persistir
-pedido.estado=confirmado y human_takeover=true; cancelar followups comerciales.
-No escribir REGISTRO DE VENTAS ni modificar stock al confirmar.
+BUSINESS_NAME="Level Up Store"
 
-El cierre envía «✅ Pedido confirmado correctamente.» y luego audio logístico.
-Ambas etapas tienen persistencia independiente. Fecha calculada en Guayaquil:
-lunes-viernes hasta 17:00 inclusive sale hoy; después, siguiente día operativo.
-Sábado hasta 11:00 inclusive sale hoy; después y domingo, lunes. Se evalúa por
-minuto civil (17:01/11:01 ya fuera), no se suman 24 h ciegamente.
-El contenido logístico se fija al confirmar y se conserva para reintentos.
-Fallo TTS anterior al envío permite el mismo contenido por texto; aceptación
-incierta no se duplica. La excepción de salida durante takeover solo sirve para
-estos avisos persistidos del mismo pedido, nunca para TOMAR/postventa.
-El aviso NUEVO PEDIDO CONFIRMADO incluye CH, LU, nombre, cédula, teléfono,
-provincia, ciudad, agencia, líneas/SKU, capacidad/color, cantidades, precios,
-subtotales, total, contraentrega y guía pendiente.
+o equivalente.
 
-Con takeover activo el bot queda silencioso para mensajes normales, audios y
-postventa. El asesor envía manualmente los videos del equipo real/empaque y
-la guía. GUIA no reactiva el bot. LIBERAR un confirmado/enviado habilita solo
-logística. No abre otra compra automática mientras exista un pedido activo
-no retirado, incluido cancelado con guía. Después de retirado puede abrirse
-otro ciclo cuando el humano haya liberado el chat.
+No hardcodear el nombre por todo el código.
 
-Postventa tiene prioridad sobre nueva compra; con bot activo deriva y pausa,
-con takeover existente guarda silencio sin otra alerta automática.
+==================================================
+3. RECURSOS
+==================================================
 
-## Monto y ofertas manuales
+Existe una carpeta:
 
-No existe límite monetario ni purga/derivación por monto. Todos los pedidos
-conservan IDs y datos y siguen el mismo flujo; inventario limita cantidades.
-No hay excepción de LIBERAR por teléfono.
+resources/
 
-Una oferta explícita del administrador se vincula solo al SKU y cantidad exacta
-del borrador actual. No se aprende como promoción global ni se extrapola a otras
-cantidades/clientes. Se recalcula el resumen y requiere confirmación nueva.
-El parser solo aplica automáticamente ofertas inequívocas de total para un SKU,
-con cantidad explícita y centavos divisibles; ofertas complejas requieren revisión.
-Se conserva el precio de catálogo de referencia y GUIA lo revalida. Si cambió,
-la oferta no autoriza usar un precio desactualizado.
-T/U/W siguen siendo fórmulas: el descuento del pedido no cambia esas columnas.
-Conciliar manualmente importes comerciales y contables antes de despachar ofertas.
+con:
 
-## Comandos administrativos
+resources/Audios/
+resources/Ecuador/
+resources/productos/
 
-Solo ASESOR_WHATSAPP. Paréntesis obligatorios; comando indiferente a mayúsculas.
-Referencias ambiguas/cero candidatos no producen mutaciones ni mensajes al cliente.
+Debes inspeccionarla completamente.
 
-| Comando | Efecto |
-| --- | --- |
-| GUIA (CH000001) (GUIA) | Resuelve exactamente un pedido; registra envío/venta |
-| LLEGO (GUIA) | enviado → disponible_retiro; persiste llegada y seguimiento |
-| RETIRADO (GUIA) | Transición central de retiro, idéntica a la entrada del cliente |
-| CANCELADO (CH000001) | Solo antes de guía |
-| CANCELADO (GUIA) | Solo después de guía |
-| LIBERAR (CH000001) | Quita takeover; conserva fase del pedido |
-| RESPONDER (CH000001): respuesta | Resuelve pregunta puntual; no salta takeover real |
-| RESPONDER (TELÉFONO): respuesta | Excepción exclusiva para preconfirmación |
-| TOMAR (CH000001) / TOMAR (TELÉFONO) | Toma humana explícita |
-| DERIVAR (LU0001) / DERIVAR (CH000001) | Cierra confirmado no registrado ni con GUIA incierta |
+Ignorar archivos basura de macOS como:
+.DS_Store
+__MACOSX
 
-PAGO no es comando ni alias. No existe comando DEVUELTO.
-RESPONDER conserva literal el contenido: largo explicativo usa TTS; cifras,
-precios, códigos, datos sensibles/precisos y respuestas cortas usan texto.
-Mensajes del administrador sin sintaxis válida permanecen silenciosos.
-RESPONDER usa outbox para rechazos reintentables;
-un resultado incierto nunca se reproduce ciegamente.
+==================================================
+4. PRODUCTOS Y MULTIMEDIA
+==================================================
 
-## GUIA y contrato de Sheets
+Dentro de:
 
-PAGINA DE STOCK: encabezados fila 2, datos exclusivamente A3:G evaluados:
-ID-PRODUCTO, PRODUCTO, CAPACIDAD, COLOR, STOCK, PRECIO, INFORMACION DEL PRODUCTO.
-H:I son auxiliares. Stock >0 para ofrecer; información vacía permitida. Filas
-vacías/aisladas inválidas no destruyen las válidas; IDs duplicados se excluyen.
-No usar DATOS como catálogo. DATOS B:G es RE-STOCK; L:R es maestro.
+resources/productos/
 
-REGISTRO DE VENTAS: encabezados fila 4, filas desde 5, rango B:W.
+cada SKU tiene su propia carpeta.
 
-| Columna | Uso |
-| --- | --- |
-| B | FECHA |
-| C | ID PEDIDO |
-| D | METODO |
-| E | GUIA |
-| F | ESTADO |
-| G | FECHA ENVIO |
-| H | DIA RETIRO |
-| I/J/K | NOMBRE / TELEFONO / CEDULA |
-| L/M/N | PROV / CIUDAD / SERVIENTREGA |
-| O | ID-PRODUCTO |
-| P/Q/R | PRODUCTO / CAPACIDAD / COLOR: fórmulas intactas |
-| S | CANT |
-| T/U | PRECIO UNITARIO / VALOR: fórmulas intactas |
-| V | ENVIO |
-| W | NETO: fórmula intacta |
+Ejemplo conceptual:
 
-GUIA valida todas las líneas, stock agregado por SKU y precios antes de una
-única batchUpdate atómica de B:O, S y V. No hay append parcial. La guía debe ser
-única; misma guía/pedido es idempotente, distinta guía congela y alerta.
-Un intent persistente y la reconciliación de filas existentes recuperan una
-respuesta perdida de Sheets. Lock global de inventario evita competir por la
-última unidad dentro de la instancia; lock de cliente coordina GUIA/DERIVAR.
+SKU/
+  imagen/
+  video/
 
-Estados nuevos de ventas: enviado, en agencia, retirado y cancelado.
-LLEGO actualiza F; retiro actualiza F/H; cancelación actualiza F. Cancelar no
-reincorpora stock. Devuelto es exclusivamente físico/manual.
-Nunca escribir DATOS!P, RE-STOCK ni fórmulas P/Q/R/T/U/W de ventas.
-Antes de desplegar aplicar la [migración manual](docs/MIGRACION-V2.5.md).
+Los nombres de los archivos incluyen el SKU.
 
-## Retiro, timers y cierres
+La relación SKU -> multimedia se debe descubrir de la estructura, no hardcodear manualmente si puede evitarse.
 
-LLEGO repetido conserva la primera fecha y no reinicia el plazo. En takeover
-persiste todo y deja aviso pendiente. LIBERAR lo entrega una vez.
+Orden OBLIGATORIO cuando se presenta un producto:
 
-America/Guayaquil: lunes-viernes 08:00–17:00, sábado 08:00–12:00, domingo sin
-envíos. Intervalo ordinario: cuatro horas; fuera de ventana pasa a la siguiente.
-Tres días laborales: el día de llegada cuenta si está dentro de ventana; si no,
-se cuenta desde la siguiente apertura. Sábado cuenta, domingo no. Al cierre del
-tercer día: cancelado, F actualizada, timers cancelados y aviso al asesor.
-El cuarto día corresponde a gestión humana. Takeover no extiende el plazo.
+1. FOTO
+2. VIDEO
+3. CARACTERÍSTICAS
+4. AUDIO COMERCIAL 1
 
-Hora concreta: comprobar diez minutos después, ajustando ventana. Franja como
-mañana/en la tarde es aproximada y no asigna una hora declarada al cliente.
-Retiro local inequívoco admite ya retiré/recogí/tengo el equipo/fui a buscarlo/
-ya pagué. Complejos pasan por LOW con etiquetas cerradas. Preguntas, promesas,
-creo que sí, tener la guía o tener claro algo e imágenes no confirman retiro.
+NO cambiar este orden.
 
-Ambas entradas llaman transitionOrderToRetired. Persistir intent antes de Sheets,
-recuperar tras reinicio, conservar IDs/guía/eventos, cancelar acciones, guardar
-fechaRetiro y un aviso administrativo; agradecimiento separado cuando la guarda
-permite salida. No reescribir fechaPago para retiros nuevos.
+Foto y video se envían una vez por presentación de ese producto.
 
-Comercial: primer seguimiento a las 48 horas desde el último mensaje del cliente,
-segundo y último a las 96; ejecutar en ventana operativa. Textos fijos, sin IA.
-El segundo cierra como abandono. Confirmación/takeover cancelan este seguimiento.
+Las características corresponden al SKU exacto.
 
-## Agencias y multimedia
+Nunca mezclar multimedia/características entre variantes equivocadas.
 
-resources/agencias/Ecuador/<Provincia>/<Ciudad>/SERVIENTREGA.html: único origen.
-Los HTML importados ya están filtrados por el propietario para contraentrega.
-No buscar afuera, no ejecutar JS ni cargar recursos externos. Parsear las 14
-columnas, conservar filas válidas, normalizar tildes/caso/puntuación y usar fuzzy
-acotado de una edición. Ambigüedad exige elección; jamás adivinar.
-Tarjetas PNG priorizan nombre, dirección, sector y horarios; excluyen supervisor,
-email y otros datos internos. Render SVG con @resvg/resvg-js y Noto Sans local,
-sin Chromium. Caché limitada. Fallback de tarjeta a texto legible. Una imagen vertical contiene todas las agencias de la ciudad si caben de forma
-legible; ciudades grandes se dividen en páginas completas numeradas. No se
-duplica la lista por texto; texto solo como fallback de render/upload rechazado.
-Caché acotada a cuatro ciudades, invalidada por contenido. Se acepta nombre/dirección.
+MacBook:
+- muchos SKU pueden reutilizar el mismo video comercial;
+- los modelos de distinto tamaño/pulgadas pueden tener video diferente;
+- el video comercial no debe usarse como prueba de RAM/almacenamiento si es genérico;
+- las características exactas siempre salen de stock;
+- la verificación exacta de la unidad se hace posteriormente por logística humana en los videos de empaque/funcionamiento, fuera del bot.
 
-resources/productos/<SKU>/imagen/*.jpg|jpeg|png y video/*.mp4. SKU debe estar
-actualmente disponible. Fotos ordenadas numéricamente; falla individual no
-bloquea las restantes. Ledger por oportunidad evita reenviar archivos ya
-entregados o cuyo resultado sea incierto. Nunca usar flags/env de video iPad.
-YCloud sube media por multipart y envía por ID; caché de upload de 25 días,
-inferior a los 30 días del proveedor. Imágenes máximo 5 MiB; audio/video 16 MiB.
-Cada salida respeta proveedor, takeover, no_contactar y estado cerrado.
+Windows:
+- normalmente hay multimedia distinta por marca/modelo.
 
-## Audio y TTS
+iPad:
+- usar multimedia según la estructura real disponible.
 
-Audio entrante Meta/YCloud: descarga autenticada y acotada, duración verificable
-máxima de 180 segundos, transcripción MODEL_TRANSCRIPTION y mismo router que
-texto. Más de tres minutos no se transcribe. Fallo: pedir texto/audio más corto.
-Temporales privados borrados al terminar; dedup y cache de transcripción evitan
-llamadas repetidas tras un fallo posterior. Datos personales se solicitan por texto.
+==================================================
+5. FUENTE DE VERDAD: STOCK
+==================================================
 
-TTS: gpt-4o-mini-tts, cedar, speed 1.15, WAV de generación, Opus de entrega,
-umbral 250 caracteres. Instrucciones paisas de Medellín/Antioquia, cálidas,
-claras, ágiles y naturales. AudioComercial1 usa TTS explícitamente. Las demás
-respuestas comerciales largas pueden usar TTS; cortas quedan por texto.
-Datos, resumen, agencia elegida, confirmación breve, precio crítico, IDs,
-admin y errores son texto. El bloque logístico postconfirmación usa TTS. El audio empieza directamente con el contenido comercial, sin presentación técnica.
+La fuente oficial de:
 
-WAV → OGG/Opus mediante ffmpeg cuando existe; si falta/falla, pedir Opus directo
-a OpenAI. Si generación/conversión falla, enviar el mismo contenido una vez por
-texto. Error inequívoco de transporte permite texto; timeout con posible entrega
-queda incierto, evitando una duplicación. No enviar WAV directamente a YCloud.
-No se necesita custom voice. TEST_MODE no genera ni envía audio real.
+- producto;
+- SKU;
+- stock;
+- precio;
+- RAM;
+- almacenamiento;
+- color;
+- características;
+- información del producto;
 
-## Outboxes y límites de recuperación
+es la hoja actual de Google Sheets usada por el proyecto, especialmente PAGINA DE STOCK.
 
-Avisos de confirmación conservan el proveedor original y ASESOR_WHATSAPP,
-reserva antes de enviar, retry de rechazo explícito y estado incierto ante timeout
-u otra aceptación desconocida. No hay garantía de exactamente una entrega entre
-un proveedor sin idempotency key y una caída local: se conserva el pendiente para
-reconciliación humana y se evita replay ciego. RESPONDER y cierres nuevos aplican
-la misma distinción. Los avisos de llegada conservan sus reservas e intentos limitados y también
-marcan incierta una reserva sobreviviente o un resultado desconocido. Los
-recordatorios reservan su siguiente fecha antes del envío para no repetirlo.
+NO usar precios recordados del código como fuente de verdad.
 
-## Variables nuevas y validación
+NO asumir que un producto cuesta $100 solo porque una publicidad lo dice.
 
-Defaults: OPENAI_TTS_ENABLED=true, OPENAI_TTS_MODEL=gpt-4o-mini-tts,
-OPENAI_TTS_VOICE=cedar, OPENAI_TTS_SPEED=1.15, OPENAI_TTS_FORMAT=wav,
-OPENAI_TTS_DELIVERY_FORMAT=opus, OPENAI_TTS_MIN_CHARS=250,
-AGENCIES_ROOT=resources/agencias/Ecuador, PRODUCT_MEDIA_ROOT=resources/productos.
-No modificar secretos existentes. MODEL_LOW/NORMAL/HIGH/TRANSCRIPTION siguen por env.
+La publicidad de Windows puede anunciar productos "desde $100", pero algunos modelos cuestan más.
 
-Validación obligatoria sin APIs reales: npm run check, npm test,
-npm run test:v2, npm run test:ycloud y git diff --check.
+Siempre consultar el precio real del SKU en stock.
 
-## Ajustes conversacionales finales
+Si una fuente entra en contradicción con otra:
+- no inventar;
+- pausar/escalar el chat;
+- documentar la contradicción.
 
-Conceptos comerciales tienen marcador persistente de comunicación reciente;
-el audio inicial complementa el precio/promoción y no repite envío gratis.
-Bodegas: Guayaquil, sin atención dentro por seguridad; video de empaque y
-garantía según contenido aprobado. No se inventa dirección ni duración de garantía.
-Mayor capacidad agotada: se explica la alternativa de archivos en Google Drive/
-iCloud sin afirmar aumento de memoria física ni almacenamiento interno gratuito.
-Características solo de G, precio F, stock E y SKU A. Datos ausentes se escalan.
-Agencias: ordinales y nombre/sector desde candidatos mostrados; «esa/la anterior»
-solo cuando una única referencia es segura. Terminar opciones con «Indíqueme por
-favor a cuál de estas agencias desea que le enviemos el equipo 😊».
-Cambios de producto/variante/cantidad invalidan una oferta que ya no corresponda,
-recalculan contra catálogo y generan resumen coherente antes de confirmar.
-Compra futura/sin dinero: conversación normal, sin nuevo estado/seguimiento ni
-reserva por $10. Esa mejora queda fuera de alcance.
+==================================================
+6. FLUJO DE VENTA OBLIGATORIO
+==================================================
 
-## Hotfix comercial de producción
+Flujo general:
 
-Saludo simple recibe saludo abierto, sin catálogo ni llamada de modelo. Las
-opciones se restringen a la necesidad/producto mencionado. Reglas controlan
-operación; OpenAI sigue interpretando selección ambigua y preguntas cuya
-respuesta se puede verificar en la ficha, sin autorizar mutaciones.
+INICIO
+→ IDENTIFICAR PRODUCTO/MODELO
+→ IDENTIFICAR VARIANTE SI HACE FALTA
+→ FOTO
+→ VIDEO
+→ CARACTERÍSTICAS
+→ AUDIO COMERCIAL 1
+→ CIUDAD
+→ AGENCIAS o DELIVERY GUAYAQUIL
+→ AUDIO COMERCIAL 2 cuando corresponda
+→ SELECCIÓN DE AGENCIA / MALL
+→ DATOS
+→ RESUMEN
+→ CONFIRMACIÓN SEMÁNTICA
+→ PAUSA TOTAL
 
-Cada selección y cambio presenta la fila exacta por SKU, incluyendo G y media.
-Una contradicción explícita de almacenamiento en G se escala sin publicar la
-capacidad de otra variante ni inventar una ficha corregida.
-Solicitudes de fotos/video se atienden antes del siguiente campo y conservan
-etapa/SKU. Una nueva solicitud explícita puede reenviar; el mismo mensaje no.
+No saltarse etapas porque el cliente diga:
+"quiero comprar"
+"me lo llevo"
+"envíamelo"
+"quiero reservar"
 
-Nombre/cédula escritos se guardan antes de atender preguntas del mismo bloque.
-No hay checksum. Datos y etapa sobreviven reinicio y espera humana. Un resumen
-idéntico no se vuelve a enviar; la espera se activa solo tras envío exitoso.
-Entrega ordinaria: aproximadamente 24–48 h después del despacho. Hora exacta,
-garantía absoluta o condición extraordinaria requiere revisión humana.
+Preguntas auxiliares pueden ocurrir en cualquier etapa.
 
-RESPONDER mantiene paréntesis y acepta teléfono local ecuatoriano 09…, 593… y
-+593…. La comparación usa dígitos canónicos 593…; resuelve una única fila real
-existente de MEMORIA y conserva su clave, sin crear un chat vacío. Alias ambiguos
-no se eligen arbitrariamente. CH mantiene semántica previa. Admin siempre se
-procesa antes del router comercial; texto no válido permanece silencioso.
+Una pregunta auxiliar:
+- se responde;
+- NO reinicia el flujo;
+- NO cambia artificialmente la etapa;
+- luego se continúa desde donde estaba la venta.
 
-Agencias ignoran tildes, signos, guiones bajos, artículos y preposiciones para
-matching por tokens; solo un resultado permite selección. Provincia posterior
-a ciudad ya resuelta no repite presentación. Datos nunca se imprimen en logs.
-Diagnóstico: etapa, regla, modelo llamado, SKU, acción media, ciudad validada,
-resultado de matching, datos guardados (booleano), pregunta pendiente y etapas
-del comando administrativo. Sin cédulas/teléfonos/respuestas/URLs completas.
+==================================================
+7. ENTRADAS INICIALES
+==================================================
+
+TEXTOS INICIALES APROBADOS:
+
+IPAD:
+
+¡Hola! 👋 Sí tenemos disponibles nuestras iPads para estudio y trabajo desde $99,99
+
+Actualmente contamos con:
+📱 [MODELOS DISPONIBLES SEGÚN STOCK]
+
+🔥 Esta promoción es únicamente hasta agotar stock.
+Además, por promoción del mes, todos nuestros envíos son GRATIS a nivel nacional. 🚚✨
+
+¿Cuál modelo le gustaría conocer?
+
+El bloque de modelos es dinámico según stock.
+
+WINDOWS:
+
+¡Hola! 👋 Sí tenemos disponibles nuestras laptops desde $[PRECIO SEGÚN STOCK].
+
+Actualmente contamos con:
+💻 [MARCAS DISPONIBLES SEGÚN STOCK]
+
+🔥 El precio promocional es únicamente hasta agotar stock.
+Además, por promoción del mes, todos nuestros envíos son GRATIS a nivel nacional. 🚚✨
+
+¿Tiene alguna marca de preferencia o desea que le recomiende una?
+
+Mostrar solo marcas con stock.
+
+No repetir una marca múltiples veces por variantes.
+
+MACBOOK:
+
+¡Hola! 👋 Sí contamos con MacBook Pro disponibles.
+
+Tenemos diferentes configuraciones de memoria RAM, almacenamiento y procesador.
+
+¿Tiene algún modelo o configuración de preferencia que haya visto, o desea que le envíe nuestro catálogo disponible?
+
+Si pide catálogo, construirlo con SKUs que realmente tengan stock y precio actual.
+
+==================================================
+8. RECOMENDACIONES
+==================================================
+
+Cuando el cliente diga:
+"¿cuál me recomienda?"
+"recomiéndeme una"
+o equivalente,
+
+si NO especifica requisitos concretos:
+
+seleccionar el producto compatible con MAYOR STOCK.
+
+Esto aplica a:
+- Windows;
+- iPads;
+- MacBook;
+- demás productos.
+
+Si dos o más empatan en el mayor stock:
+seleccionar cualquiera de los empatados.
+
+Texto comercial aproximado:
+
+"Le comento que esta es una de nuestras unidades más solicitadas para estudio y trabajo; es uno de los mejores modelos que nos han llegado."
+
+No afirmar datos falsos.
+
+Si el cliente compara dos equipos específicamente:
+comparar características, no stock.
+
+==================================================
+9. STOCK EXACTO
+==================================================
+
+No revelar normalmente la cantidad exacta en stock.
+
+Si pregunta cuántas quedan:
+responder que aún existen unidades disponibles.
+
+Si insiste:
+explicar que el sistema comercial trabaja principalmente con disponibilidad.
+
+EXCEPCIÓN:
+
+Si el SKU exacto tiene stock = 1:
+
+agregar al FINAL DEL TEXTO DE CARACTERÍSTICAS:
+
+🔥 ÚLTIMA UNIDAD DISPONIBLE
+
+No enviar como mensaje separado.
+
+==================================================
+10. AUDIOS
+==================================================
+
+Inspeccionar todos los audios reales dentro de:
+
+resources/Audios/
+
+Los audios son respuestas oficiales.
+
+Audio Comercial 1:
+SIEMPRE después de:
+foto → video → características.
+
+Audio Comercial 2:
+SIEMPRE después de presentar las agencias y pedir selección.
+
+Los demás audios son la PRIMERA RESPUESTA cuando la intención correspondiente aparece.
+
+Categorías existentes incluyen, entre otras:
+
+- Comercial 1
+- Comercial 2 / agencias
+- Ubicación
+- Contraentrega / confianza
+- Reserva
+- Open Box
+- Envíos / Servientrega
+- Garantía
+- Delivery Guayaquil
+- Qué incluye iPad
+- Qué incluye MacBook
+- Qué incluye Windows <= $100
+- Qué incluye Windows > $100
+
+Usar los nombres reales existentes.
+
+Si el cliente repite la misma pregunta después del audio:
+NO volver a enviar automáticamente el mismo audio.
+Responder por texto basándose en el contenido del audio.
+
+Si dice:
+"no me mande audios"
+"no puedo escuchar"
+"escríbame"
+o equivalente:
+
+guardar durante esa conversación:
+
+prefiere_texto = true
+
+y usar transcripción/texto fiel de los audios.
+
+Nunca contradecir el contenido de un audio oficial.
+
+==================================================
+11. QUÉ INCLUYE WINDOWS
+==================================================
+
+Todos tienen 6 meses de garantía.
+
+Windows incluye:
+- cargador original;
+- audífonos;
+- Office instalado y activado;
+- obsequio sorpresa;
+- microSD.
+
+Regla actual:
+
+precio SKU <= $100:
+microSD 128 GB.
+
+precio SKU > $100:
+microSD 256 GB.
+
+La microSD es almacenamiento externo.
+NO describirla como almacenamiento interno.
+
+El obsequio sorpresa NO se revela anticipadamente.
+
+==================================================
+12. QUÉ INCLUYE MACBOOK
+==================================================
+
+- cargador original;
+- audífonos de obsequio;
+- Office instalado y activado;
+- 6 meses de garantía.
+
+==================================================
+13. QUÉ INCLUYE IPAD
+==================================================
+
+- cargador;
+- audífonos;
+- 6 meses de garantía.
+
+==================================================
+14. WINDOWS: REGLAS GENERALES
+==================================================
+
+Las configuraciones de 12", 14" y táctiles comparten como base comercial:
+
+- 4 GB RAM;
+- 16 GB almacenamiento interno;
+- Intel Celeron;
+- Windows 10 Pro.
+
+Si preguntan específicamente por año:
+responder según la política establecida: 2024.
+
+Autonomía Windows:
+aprox. 4 a 6 horas.
+
+Puertos y funciones conocidas para computadoras:
+- cámara;
+- Bluetooth;
+- Wi-Fi;
+- HDMI;
+- USB;
+- entrada de audífonos.
+
+NO inventar múltiples puertos.
+
+Ejemplo:
+si pregunta "¿tiene 5 HDMI?"
+y solo corresponde uno,
+responder positivamente sin mentir:
+"Este modelo cuenta con un puerto HDMI..."
+
+Las respuestas técnicas deben favorecer la venta, pero NUNCA alterar las características reales ni prometer algo inexistente.
+
+==================================================
+15. MACBOOK
+==================================================
+
+Las variantes cambian principalmente por:
+- Core;
+- RAM;
+- almacenamiento;
+- pulgadas.
+
+No decir espontáneamente el año.
+
+Si preguntan por el año:
+usar la política comercial disponible.
+
+Sistema:
+usar la información oficial existente/configurada.
+
+Autonomía:
+aprox. 6 a 8 horas.
+
+Color:
+plateado.
+
+Teclado iluminado:
+sí, según política comercial definida.
+
+==================================================
+16. IPAD
+==================================================
+
+Autonomía:
+aprox. 4 a 6 horas.
+
+Color actual:
+plateado.
+
+No afirmar HDMI físico universal.
+
+==================================================
+17. PREGUNTAS TÉCNICAS ESPECÍFICAS
+==================================================
+
+La IA SÍ puede responder por sí sola preguntas de bajo riesgo como:
+
+- HDMI;
+- puertos;
+- botones;
+- Bluetooth;
+- Wi-Fi;
+- RAM;
+- almacenamiento;
+- procesador;
+- tamaño;
+- software;
+- Office;
+- clases;
+- estudio;
+- trabajo;
+- Zoom;
+- programación;
+- compatibilidad básica;
+- diferencias entre modelos.
+
+Regla:
+la respuesta debe favorecer comercialmente la venta,
+PERO nunca mentir,
+nunca cambiar especificaciones,
+nunca prometer rendimiento no demostrado.
+
+Para software exigente:
+no garantizar resultados absolutos si depende de requisitos.
+
+Puede orientar hacia equipos de mayor capacidad.
+
+==================================================
+18. MULTIMEDIA ESPECÍFICA
+==================================================
+
+El código debe poder conocer qué multimedia corresponde a cada SKU.
+
+Más adelante habrá una base/ficha de qué se muestra en cada video.
+
+Mientras tanto:
+
+Si el cliente pide una foto/video MUY específico que no existe en recursos:
+ESCALAR.
+
+Antes de escalar, revisar si el video ya enviado contiene lo solicitado.
+
+Si sí:
+indicar que puede observarlo en el video enviado.
+
+==================================================
+19. SERVIENTREGA / ECUADOR
+==================================================
+
+Existe:
+
+resources/Ecuador/
+
+Contiene:
+24 provincias
+→ ciudades
+→ HTML con agencias disponibles.
+
+También existen archivos de alias/manifiesto.
+
+Usarlos.
+
+La búsqueda de agencias se basa principalmente en CIUDAD.
+
+Provincia se usa cuando haga falta desambiguar.
+
+Si ya conocemos la ciudad:
+NO volver a preguntarla.
+
+Regla de presentación:
+
+si cantidad de agencias <= 15:
+generar/usar IMAGEN clara a partir del HTML real.
+
+si cantidad de agencias > 15:
+generar/usar PDF.
+
+NO inventar agencias.
+
+NO usar recortes arbitrarios.
+
+Después:
+Audio Comercial 2.
+
+==================================================
+20. GUAYAQUIL
+==================================================
+
+Guayaquil permite dos opciones:
+
+A) DELIVERY
+B) CONTRAENTREGA EN SERVIENTREGA
+
+Delivery:
+- puntos/malls habilitados;
+- horario lunes a viernes 10:00–18:00;
+- puede revisar y probar el equipo antes de pagar;
+- pago en efectivo o transferencia.
+
+Si está fuera del horario o ya no da tiempo:
+ofrecer programar delivery para el siguiente día disponible.
+
+Si no puede por horario:
+ofrecer contraentrega Servientrega.
+
+Fuera de Guayaquil:
+NO ofrecer delivery a domicilio.
+Contraentrega en agencia.
+
+==================================================
+21. DELIVERY GUAYAQUIL - AUDIO
+==================================================
+
+Usar el audio real existente en resources/Audios/.
+
+Su contenido explica:
+- delivery en puntos habilitados;
+- horario;
+- revisión/prueba antes de pagar;
+- efectivo/transferencia;
+- alternativa de Servientrega;
+- malls habilitados.
+
+==================================================
+22. ENVÍOS
+==================================================
+
+Envíos a nivel nacional por Servientrega.
+
+Promo oficial actual:
+ENVÍO GRATIS.
+
+Tiempo después del despacho:
+24–48 horas aproximadamente.
+
+No prometer hora exacta.
+
+Si pregunta:
+"¿me garantiza mañana a las 10?"
+
+explicar:
+24–48h y depende del operador logístico.
+
+==================================================
+23. REVISIÓN ANTES DE PAGAR EN SERVIENTREGA
+==================================================
+
+Política:
+
+Level Up Store sí autoriza que el paquete pueda ser abierto/revisado.
+
+Pero cada agencia Servientrega puede manejar políticas operativas distintas.
+
+NO garantizar que todas las agencias lo permitirán.
+
+==================================================
+24. SEGURIDAD: VIDEOS DE FUNCIONAMIENTO Y EMPAQUE
+==================================================
+
+Después de que el humano/logística tome el pedido,
+antes del envío,
+se generan dos videos:
+
+1. funcionamiento/prueba;
+2. empaque/accesorios/guía.
+
+Estos son FUERA DEL BOT AUTOMÁTICO.
+
+Si el cliente pregunta durante venta por seguridad,
+se puede explicar que antes del envío recibirá videos donde se muestra:
+- funcionamiento;
+- estado;
+- accesorios;
+- empaque;
+- guía.
+
+El número de guía es único y sirve para comprobar que corresponde al paquete mostrado.
+
+==================================================
+25. DATOS
+==================================================
+
+Antes de la confirmación recopilar:
+
+- nombre completo;
+- cédula;
+- teléfono = número de WhatsApp;
+- ciudad;
+- provincia cuando corresponda;
+- agencia o mall;
+- producto;
+- variante;
+- cantidad.
+
+Si el cliente manda varios datos en un solo mensaje:
+capturarlos inmediatamente.
+
+NO volver a pedir información que ya proporcionó.
+
+==================================================
+26. FACTURA / IVA
+==================================================
+
+NO escalar.
+
+Respuesta oficial:
+
+Si desea factura:
+se agrega 15% por IVA.
+
+Si no desea factura:
+se mantiene el precio mostrado.
+
+Implementar según esta política comercial proporcionada.
+
+==================================================
+27. DESCUENTOS / MAYORISTA
+==================================================
+
+El bot NO calcula descuentos.
+
+Los precios oficiales salen de stock.
+
+Si pregunta por descuento para una sola unidad:
+explicar que los precios son oficiales.
+
+Si compra más de una unidad:
+puede existir descuento.
+
+ANTES DE ESCALAR, recopilar:
+- producto(s);
+- modelo(s);
+- cantidad;
+- variantes;
+- si son iguales o productos variados.
+
+Precio mayorista:
+igual.
+
+NO existe tabla fija.
+
+Cuando ya se tiene información suficiente:
+PAUSAR EL CHAT Y ESCALAR AL HUMANO.
+
+NO mandar al cliente:
+"un asesor lo contactará"
+"voy a consultar"
+etc.
+
+Simplemente pausar después de recopilar lo necesario.
+
+==================================================
+28. OTRAS NEGOCIACIONES
+==================================================
+
+Si pide:
+- precio especial;
+- garantía extra a cambio de compra;
+- condiciones especiales;
+- paquete negociado;
+- descuento condicionado;
+
+recopilar información necesaria
+→ pausar
+→ humano.
+
+==================================================
+29. ESCALAMIENTO
+==================================================
+
+NO existe comando RESPONDER en esta versión.
+
+Cuando se escala:
+- chat queda completamente pausado;
+- el bot deja de responder;
+- aunque el cliente siga mandando mensajes, no responde;
+- humano toma control.
+
+Casos principales de escalamiento:
+
+- descuento/mayorista/negociación;
+- multimedia específica inexistente;
+- contradicción entre fuentes;
+- reclamo/postventa.
+
+==================================================
+30. RECLAMOS
+==================================================
+
+Después de una liberación, el número puede volver a escribir.
+
+Si la IA detecta que viene por:
+- reclamo;
+- garantía real;
+- falla del producto;
+- devolución;
+- problema postventa;
+- incidencia de compra anterior;
+
+PAUSAR INMEDIATAMENTE.
+
+NO RESPONDER.
+
+Humano atiende.
+
+==================================================
+31. GARANTÍA
+==================================================
+
+Primera pregunta general:
+enviar Audio Garantía.
+
+Si pide más detalle:
+texto resumido.
+
+Política:
+
+- 6 meses;
+- cubre fallas propias del equipo dentro del periodo;
+- cubre que deje de funcionar;
+- cubre fallas de funciones/sistema cuando corresponda;
+- si aplica, cambio por otro equipo igual/equivalente;
+- NO decir "nuevo";
+- daños provocados por cliente: no;
+- golpes posteriores al cliente: no;
+- caídas/humedad/mal uso: no;
+- pérdida/robo: no;
+- expectativas estéticas/personales: no;
+- daños de transporte que afecten funcionalidad: se atienden;
+- rayones/golpes leves de transporte que no afectan funcionamiento no generan cambio automático.
+
+Un reclamo real POSTVENTA pausa el bot y pasa a humano.
+
+==================================================
+32. RESERVA
+==================================================
+
+Reserva = $20.
+
+NO saltarse flujo por pedir reserva.
+
+Primero:
+producto
+→ variante
+→ multimedia
+→ ubicación
+→ agencia/delivery
+→ datos
+→ resumen
+→ confirmación.
+
+Condiciones:
+- vigencia 14 días;
+- $20 no reembolsables;
+- se descuentan del precio final;
+- cubren almacenamiento/mantenimiento;
+- cliente coordina envío dentro de 14 días;
+- si se envió y no retiró, segundo envío puede generar costo;
+- pago de reserva por transferencia.
+
+Audio Reserva explica condiciones.
+
+Después de confirmación:
+PAUSAR.
+
+El humano envía datos bancarios y verifica la reserva.
+
+El bot NO envía cuentas bancarias.
+
+==================================================
+33. CONFIRMACIÓN
+==================================================
+
+La confirmación la interpreta OpenAI/IA semánticamente.
+
+NO usar solo lista rígida de palabras.
+
+Aceptar lenguaje natural, audio transcrito, emoji claro, etc.
+
+Pero:
+negación/corrección tiene prioridad.
+
+Ejemplo:
+
+"Sí, pero mi cédula termina en 8"
+
+NO es confirmación final.
+
+Actualizar dato
+→ volver a mostrar resumen
+→ volver a solicitar confirmación.
+
+Si es ambiguo:
+preguntar nuevamente de forma breve.
+
+Ejemplo:
+
+"Disculpe, estimado/a. Solo para confirmar, ¿los datos de su pedido están correctos y desea que procedamos con el envío?"
+
+==================================================
+34. RESUMEN DE PEDIDO
+==================================================
+
+Crear un resumen claro que incluya:
+
+- nombre;
+- cédula;
+- teléfono;
+- ciudad;
+- provincia si aplica;
+- agencia/mall;
+- producto;
+- variante;
+- cantidad;
+- precio/unitario;
+- total.
+
+El precio siempre de stock,
+salvo un descuento explícitamente aprobado por humano.
+
+==================================================
+35. HORARIOS DE DESPACHO
+==================================================
+
+Lunes a viernes:
+
+corte = 17:00.
+
+Si confirma antes de 17:00:
+se puede decir que se procesa para despacho ese día.
+
+Después de 17:00:
+se procesa para siguiente día operativo.
+
+Sábado:
+corte = 11:00.
+
+Después de 11:00:
+siguiente despacho = lunes.
+
+Domingo:
+siguiente despacho = lunes.
+
+No afirmar que ya se envió antes de que logística lo haga.
+
+Usar lenguaje:
+"proceder con el envío"
+"procesar para despacho"
+
+Llegada estimada:
+24–48h después del despacho.
+
+==================================================
+36. RESPUESTA HUMANA / NATURALIDAD
+==================================================
+
+No responder instantáneamente siempre.
+
+Antes de respuestas automáticas:
+- marcar leído;
+- activar typing/escribiendo;
+- esperar tiempo natural.
+
+Máximo aproximado:
+20 segundos.
+
+Respuestas muy simples:
+menos.
+
+Consultas más complejas:
+más.
+
+Bloques multimedia:
+una espera antes de iniciar el bloque,
+luego pausas cortas entre elementos.
+
+NO esperar 20 segundos entre foto/video/texto/audio.
+
+==================================================
+37. ESTADOS DE PAUSA
+==================================================
+
+Necesitamos al menos:
+
+ACTIVE
+PAUSED_CONFIRMED
+PAUSED_ESCALATION
+PAUSED_CLAIM
+
+Mientras paused:
+NO responder automáticamente.
+
+==================================================
+38. COMANDOS ADMIN
+==================================================
+
+Solo mantener DOS comandos:
+
+/liberar +593XXXXXXXXX
+
+/borrar +593XXXXXXXXX
+
+Acepta de forma práctica variaciones razonables de mayúsculas/minúsculas y espacios.
+
+El número oficial debe normalizarse a formato:
++593...
+
+/liberar:
+- QUITA LA PAUSA;
+- NO borra memoria;
+- permite que la IA revise el contexto existente y continúe si corresponde.
+
+/borrar:
+- borra TODA la memoria/estado/contexto de ese chat;
+- limpia producto, etapa, datos, preferencias, audios enviados, etc.;
+- además deja el chat LIBERADO/ACTIVO;
+- próximo mensaje = conversación desde cero.
+
+NO mantener:
+RESPONDER
+GUIA
+LLEGO
+RETIRADO
+CANCELADO
+PAGO
+IR
+etc.
+
+==================================================
+39. BORRADO AUTOMÁTICO 30 DÍAS
+==================================================
+
+Mantener limpieza automática.
+
+Si una conversación permanece con información vieja durante 30 días:
+- borrar memoria;
+- borrar contexto comercial;
+- borrar estado;
+- si estaba pausada, liberarla.
+
+Resultado:
+número limpio y activo para nueva compra.
+
+==================================================
+40. MEMORIA MÍNIMA
+==================================================
+
+Durante una conversación activa conservar como mínimo:
+
+- phone canonical;
+- stage;
+- product;
+- sku;
+- variant;
+- qty;
+- city;
+- province;
+- agency/mall;
+- name;
+- cedula;
+- phone;
+- prefersText;
+- sentAudios;
+- handledIntents;
+- reserveIntent;
+- pauseState;
+- timestamps;
+- lastInteraction.
+
+No pedir nuevamente datos ya conocidos.
+
+==================================================
+41. COSAS QUE YA NO HACE EL BOT
+==================================================
+
+Eliminar/desactivar lógica vieja relacionada con:
+
+- GUIA;
+- LLEGO;
+- RETIRADO;
+- CANCELADO;
+- seguimiento automático de retiro;
+- seguimiento postventa;
+- registro de ventas por comandos;
+- control logístico posterior;
+- cuadros de ventas;
+- descuentos automáticos;
+- PAGO;
+- IR;
+- RESPONDER;
+- stock decrementado mediante comandos logísticos viejos.
+
+No eliminar infraestructura compartida necesaria para YCloud, Sheets, memoria o pruebas si sigue siendo útil.
+
+==================================================
+42. COMPATIBILIDAD Y SEGURIDAD DE CAMBIOS
+==================================================
+
+Antes de modificar:
+- identifica arquitectura actual;
+- identifica rutas del webhook YCloud;
+- identifica memoria;
+- identifica Google Sheets;
+- identifica pruebas existentes;
+- identifica módulos obsoletos;
+- identifica resources.
+
+Haz cambios incrementales.
+
+No destruyas integración funcional con YCloud.
+
+No cambies secretos.
+
+No imprimas tokens.
+
+No incluyas credenciales.
+
+==================================================
+43. TESTS OBLIGATORIOS
+==================================================
+
+Crear pruebas para, como mínimo:
+
+- greeting;
+- iPad flow;
+- Windows flow;
+- MacBook flow;
+- recommendation highest stock;
+- tie recommendation;
+- exact SKU selection;
+- stock 1 → última unidad;
+- multimedia order = foto/video/características/audio;
+- audio first response;
+- repeated question → text;
+- prefers text;
+- city remembered;
+- agencies <=15 image;
+- agencies >15 PDF;
+- Guayaquil delivery;
+- Guayaquil contraentrega;
+- outside Guayaquil no domicilio;
+- data extraction in mixed messages;
+- confirmation semantic positive;
+- confirmation ambiguous;
+- correction beats confirmation;
+- before/after 17:00;
+- Saturday cutoff 11:00;
+- Sunday → Monday;
+- reservation;
+- discount escalation;
+- wholesale escalation;
+- multimedia-specific escalation;
+- contradiction escalation;
+- claim → pause/no response;
+- paused chat ignores inbound;
+- /liberar resumes;
+- /borrar clears + activates;
+- auto purge 30 days;
+- no old admin commands;
+- no sales/logistics writes after confirmation;
+- stock/prices from Sheet;
+- no cross-SKU characteristics;
+- phone normalization Ecuador.
+
+==================================================
+44. REVISAR RESOURCES
+==================================================
+
+Inspecciona físicamente la carpeta resources.
+
+Genera si resulta útil un manifiesto interno de:
+
+SKU
+→ images
+→ videos
+
+y:
+
+intent
+→ audio file
+
+y:
+
+city
+→ agency HTML.
+
+No cambiar los nombres de SKU.
+
+No alterar archivos multimedia originales.
+
+==================================================
+45. RESULTADO FINAL DE TU TRABAJO
+==================================================
+
+NO PUSH.
+NO DEPLOY.
+
+Al terminar quiero un informe con:
+
+A. Resumen de arquitectura encontrada.
+B. Archivos modificados.
+C. Archivos nuevos.
+D. Funciones eliminadas/desactivadas.
+E. Cómo funciona el nuevo state machine.
+F. Cómo se leen productos/precios/stock.
+G. Cómo se resuelve multimedia.
+H. Cómo se resuelven agencias.
+I. Cómo se utilizan audios.
+J. Cómo funcionan /liberar y /borrar.
+K. Cómo funciona el purge de 30 días.
+L. Tests nuevos.
+M. Resultado de npm test.
+N. Resultado de cualquier suite V2/V2.5 existente.
+O. Resultado de lint/check si existe.
+P. Riesgos o contradicciones encontradas.
+Q. Lista exacta de pasos para realizar una prueba real por WhatsApp.
+
+Si una suite antigua falla porque prueba comportamiento intencionalmente eliminado, NO ocultes el fallo:
+- identifica la prueba;
+- explica por qué ya no aplica;
+- actualízala/elíminala solamente si realmente corresponde a la especificación nueva.
+
+OBJETIVO FINAL:
+
+Un bot mucho más ligero que venda correctamente desde primer contacto hasta confirmación, use respuestas/audios aprobados, consulte stock real, use multimedia real, maneje agencias, responda dudas técnicas controladas y entregue el chat al humano después de confirmar o escalar.
+
+EMPIEZA AHORA AUDITANDO EL REPOSITORIO Y LOS RESOURCES.
+DESPUÉS IMPLEMENTA.
+AL FINAL PRUEBA TODO.
+NO HAGAS PUSH NI DEPLOY.

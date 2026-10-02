@@ -1,0 +1,2703 @@
+{
+  "products": {
+    "ACERN16Q13-NEG": [
+      {
+        "path": "resources/productos/ACERN16Q13-NEG/imagen/ACERN16Q13-NEG-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 216913,
+        "sha256": "0475cb83a416f749f7b1328f476964eb23a9e29e44ff8494d8ef3e3725a205d8"
+      },
+      {
+        "path": "resources/productos/ACERN16Q13-NEG/imagen/ACERN16Q13-NEG-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 174116,
+        "sha256": "ddceaa7c1088a02b694a3b37520b10026970421a391a78b126a28c2fe2b08f76"
+      },
+      {
+        "path": "resources/productos/ACERN16Q13-NEG/video/ACERN16Q13-NEG-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 1848152,
+        "sha256": "df4a868df7b0ed3b252b64a1c4f69abc837dd1a2d3f5c308fb8995e810f7fc9b"
+      }
+    ],
+    "ASUSC202S-NEG": [
+      {
+        "path": "resources/productos/ASUSC202S-NEG/imagen/ASUSC202S-NEG-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 239392,
+        "sha256": "e7343db4aa97ac7a9e2b1a395fb74f9eb5ca4c56e898e578409080ac2f42d4f5"
+      },
+      {
+        "path": "resources/productos/ASUSC202S-NEG/imagen/ASUSC202S-NEG-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 223529,
+        "sha256": "c5ed9b6a82dfa6562b2cb988e1ed3121ede355e096c0beab98d1f282c5a20529"
+      },
+      {
+        "path": "resources/productos/ASUSC202S-NEG/video/ASUSC202S-NEG-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 1928131,
+        "sha256": "9467613b33d2df862867eb1a6b87cd90eb06a86872620576eab1ca8c747e2ba3"
+      }
+    ],
+    "ASUSC300S-NEG": [
+      {
+        "path": "resources/productos/ASUSC300S-NEG/imagen/ASUSC300S-NEG-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 108555,
+        "sha256": "f896a83b18211ef287a79c06e5b58239a3ec41ec9ffff2371de2ace6a94e6771"
+      },
+      {
+        "path": "resources/productos/ASUSC300S-NEG/video/ASUSC300S-NEG-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2346957,
+        "sha256": "32810a7fd844985487f77a316a989bd0bbfcbea7f2ec00971bc9f7acadb8470b"
+      }
+    ],
+    "DELL3180-NEG": [
+      {
+        "path": "resources/productos/DELL3180-NEG/imagen/DELL3180-NEG-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 191289,
+        "sha256": "c522a81b15e06968bddf077a9d49e1a8b4a9b08aa1ba140db44f165e7695ba00"
+      },
+      {
+        "path": "resources/productos/DELL3180-NEG/video/DELL3180-NEG-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 4091000,
+        "sha256": "47b97d1e30d0471d6b9778d317f083a4ca3bd5590bc7d07bc606bc16b676e9e3"
+      }
+    ],
+    "DELLP22T-NEG": [
+      {
+        "path": "resources/productos/DELLP22T-NEG/imagen/DELLP22T-NEG-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 435419,
+        "sha256": "4cc0771546085fab819a081f598c09ae3713ecb96ae130b14ef680c702b73c37"
+      },
+      {
+        "path": "resources/productos/DELLP22T-NEG/imagen/DELLP22T-NEG-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 205160,
+        "sha256": "128c7d69033b9b553a4bfb060f2123135666e4042a82b5d65d79205b2de49c5f"
+      },
+      {
+        "path": "resources/productos/DELLP22T-NEG/video/DELLP22T-NEG-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 3967886,
+        "sha256": "046bf042f86de4b54fe033d752259dd202dfebd8ae6734be0901a891ee6237e9"
+      }
+    ],
+    "HP11G5-NEG": [
+      {
+        "path": "resources/productos/HP11G5-NEG/imagen/HP11G5-NEG-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 164217,
+        "sha256": "f8e44888618169a1292049b5208a1a3eda8ebb509d1b6b9dbab0eed550735b17"
+      },
+      {
+        "path": "resources/productos/HP11G5-NEG/video/HP11G5-NEG-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2283690,
+        "sha256": "311776f1e54d06ebe3e646995b9668dfc5d8236f26f0d739f6a0ffac93e8d49b"
+      }
+    ],
+    "IMAC2011-250": [],
+    "IMAC2012-250": [],
+    "IPADAIR1-16-BLA": [
+      {
+        "path": "resources/productos/IPADAIR1-16-BLA/imagen/IPADAIR1-16-BLA-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 402301,
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946"
+      },
+      {
+        "path": "resources/productos/IPADAIR1-16-BLA/imagen/IPADAIR1-16-BLA-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 422221,
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275"
+      },
+      {
+        "path": "resources/productos/IPADAIR1-16-BLA/video/IPADAIR1-16-BLA-video.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 10844607,
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d"
+      }
+    ],
+    "IPADAIR1-16-PLA": [
+      {
+        "path": "resources/productos/IPADAIR1-16-PLA/imagen/IPADAIR1-16-PLA-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 402301,
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946"
+      },
+      {
+        "path": "resources/productos/IPADAIR1-16-PLA/imagen/IPADAIR1-16-PLA-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 422221,
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275"
+      },
+      {
+        "path": "resources/productos/IPADAIR1-16-PLA/video/IPADAIR1-16-PLA-video.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 10844607,
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d"
+      }
+    ],
+    "IPADAIR1-32-BLA": [
+      {
+        "path": "resources/productos/IPADAIR1-32-BLA/imagen/IPADAIR1-32-BLA-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 402301,
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946"
+      },
+      {
+        "path": "resources/productos/IPADAIR1-32-BLA/imagen/IPADAIR1-32-BLA-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 422221,
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275"
+      },
+      {
+        "path": "resources/productos/IPADAIR1-32-BLA/video/IPADAIR1-32-BLA-video.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 10844607,
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d"
+      }
+    ],
+    "IPADAIR1-32-PLA": [
+      {
+        "path": "resources/productos/IPADAIR1-32-PLA/imagen/IPADAIR1-32-PLA-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 402301,
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946"
+      },
+      {
+        "path": "resources/productos/IPADAIR1-32-PLA/imagen/IPADAIR1-32-PLA-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 422221,
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275"
+      },
+      {
+        "path": "resources/productos/IPADAIR1-32-PLA/video/IPADAIR1-32-PLA-video.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 10844607,
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d"
+      }
+    ],
+    "IPADAIR2-16-PLA": [
+      {
+        "path": "resources/productos/IPADAIR2-16-PLA/imagen/IPADAIR2-16-PLA-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 402301,
+        "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946"
+      },
+      {
+        "path": "resources/productos/IPADAIR2-16-PLA/imagen/IPADAIR2-16-PLA-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 422221,
+        "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275"
+      },
+      {
+        "path": "resources/productos/IPADAIR2-16-PLA/video/IPADAIR2-16-PLA-video.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 10844607,
+        "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d"
+      }
+    ],
+    "LENOVON22-20-NEG": [
+      {
+        "path": "resources/productos/LENOVON22-20-NEG/imagen/LENOVON22-20-NEG-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 120453,
+        "sha256": "bc37258df71d7177f5e5163cc4cf9bceb64ef5eb09c4650c33507ea8478c8acb"
+      },
+      {
+        "path": "resources/productos/LENOVON22-20-NEG/imagen/LENOVON22-20-NEG-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 285482,
+        "sha256": "0bdb79df75d4f8c47ed87813bc1389c21ce9688d6b2d33b2ba4064532df9e3a8"
+      },
+      {
+        "path": "resources/productos/LENOVON22-20-NEG/video/LENOVON22-20-NEG-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 3239450,
+        "sha256": "71bdd6e8fe75742608bbe42b446f69b33f4763fbed37c814aa1a3cc95533eaf2"
+      }
+    ],
+    "MAC-I5-1000-16Ram": [
+      {
+        "path": "resources/productos/MAC-I5-1000-16Ram/imagen/MAC-I5-1000-16Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-1000-16Ram/imagen/MAC-I5-1000-16Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-1000-16Ram/video/MAC-I5-1000-16Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-1000-8Ram": [
+      {
+        "path": "resources/productos/MAC-I5-1000-8Ram/imagen/MAC-I5-1000-8Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-1000-8Ram/imagen/MAC-I5-1000-8Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-1000-8Ram/video/MAC-I5-1000-8Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-160-4Ram": [
+      {
+        "path": "resources/productos/MAC-I5-160-4Ram/imagen/MAC-I5-160-4Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-160-4Ram/imagen/MAC-I5-160-4Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-160-4Ram/video/MAC-I5-160-4Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-160-8Ram": [
+      {
+        "path": "resources/productos/MAC-I5-160-8Ram/imagen/MAC-I5-160-8Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-160-8Ram/imagen/MAC-I5-160-8Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-160-8Ram/video/MAC-I5-160-8Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-250-16Ram": [
+      {
+        "path": "resources/productos/MAC-I5-250-16Ram/imagen/MAC-I5-250-16Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-250-16Ram/imagen/MAC-I5-250-16Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-250-16Ram/video/MAC-I5-250-16Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-250-8Ram": [
+      {
+        "path": "resources/productos/MAC-I5-250-8Ram/imagen/MAC-I5-250-8Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-250-8Ram/imagen/MAC-I5-250-8Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-250-8Ram/video/MAC-I5-250-8Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-320-16Ram": [
+      {
+        "path": "resources/productos/MAC-I5-320-16Ram/imagen/MAC-I5-320-16Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-320-16Ram/imagen/MAC-I5-320-16Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-320-16Ram/video/MAC-I5-320-16Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-320-4Ram": [
+      {
+        "path": "resources/productos/MAC-I5-320-4Ram/imagen/MAC-I5-320-4Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-320-4Ram/imagen/MAC-I5-320-4Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-320-4Ram/video/MAC-I5-320-4Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-320-8Ram": [
+      {
+        "path": "resources/productos/MAC-I5-320-8Ram/imagen/MAC-I5-320-8Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-320-8Ram/imagen/MAC-I5-320-8Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-320-8Ram/video/MAC-I5-320-8Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-500-4Ram": [
+      {
+        "path": "resources/productos/MAC-I5-500-4Ram/imagen/MAC-I5-500-4Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-500-4Ram/imagen/MAC-I5-500-4Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-500-4Ram/video/MAC-I5-500-4Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-500-8Ram": [
+      {
+        "path": "resources/productos/MAC-I5-500-8Ram/imagen/MAC-I5-500-8Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-500-8Ram/imagen/MAC-I5-500-8Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-500-8Ram/video/MAC-I5-500-8Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I5-750-8Ram": [
+      {
+        "path": "resources/productos/MAC-I5-750-8Ram/imagen/MAC-I5-750-8Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I5-750-8Ram/imagen/MAC-I5-750-8Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I5-750-8Ram/video/MAC-I5-750-8Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I7-1000-16Ram": [
+      {
+        "path": "resources/productos/MAC-I7-1000-16Ram/imagen/MAC-I7-1000-16Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I7-1000-16Ram/imagen/MAC-I7-1000-16Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I7-1000-16Ram/video/MAC-I7-1000-16Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I7-160-16Ram-15\"": [
+      {
+        "path": "resources/productos/MAC-I7-160-16Ram-15\"/imagen/MAC-I7-160-16Ram-15\"-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 2788335,
+        "sha256": "9c65f82df215eeef48ca781a32a833f68703ea6e4b14d9bc138c27603caf5d3e"
+      },
+      {
+        "path": "resources/productos/MAC-I7-160-16Ram-15\"/imagen/MAC-I7-160-16Ram-15\"-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 3963871,
+        "sha256": "fdec53c5daa8612c25a24684b69c0fde4a6a5ab5d4a870bb7e3877f40801063f"
+      },
+      {
+        "path": "resources/productos/MAC-I7-160-16Ram-15\"/video/MAC-I7-160-16Ram-15\"-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 13243710,
+        "sha256": "7dbe4668f82a615538ebf1ff283d302c9b60778e35169c95a545fcaa4f5c0b86"
+      }
+    ],
+    "MAC-I7-250-16Ram": [
+      {
+        "path": "resources/productos/MAC-I7-250-16Ram/imagen/MAC-I7-250-16Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I7-250-16Ram/imagen/MAC-I7-250-16Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I7-250-16Ram/video/MAC-I7-250-16Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ],
+    "MAC-I7-250-8Ram-15\"": [
+      {
+        "path": "resources/productos/MAC-I7-250-8Ram-15\"/imagen/MAC-I7-250-8Ram-15\"-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 2788335,
+        "sha256": "9c65f82df215eeef48ca781a32a833f68703ea6e4b14d9bc138c27603caf5d3e"
+      },
+      {
+        "path": "resources/productos/MAC-I7-250-8Ram-15\"/imagen/MAC-I7-250-8Ram-15\"-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 3963871,
+        "sha256": "fdec53c5daa8612c25a24684b69c0fde4a6a5ab5d4a870bb7e3877f40801063f"
+      },
+      {
+        "path": "resources/productos/MAC-I7-250-8Ram-15\"/video/MAC-I7-250-8Ram-15\"-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 13243710,
+        "sha256": "7dbe4668f82a615538ebf1ff283d302c9b60778e35169c95a545fcaa4f5c0b86"
+      }
+    ],
+    "MAC-I7-500-4Ram-15\"": [
+      {
+        "path": "resources/productos/MAC-I7-500-4Ram-15\"/imagen/MAC-I7-500-4Ram-15\"-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 2788335,
+        "sha256": "9c65f82df215eeef48ca781a32a833f68703ea6e4b14d9bc138c27603caf5d3e"
+      },
+      {
+        "path": "resources/productos/MAC-I7-500-4Ram-15\"/imagen/MAC-I7-500-4Ram-15\"-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 3963871,
+        "sha256": "fdec53c5daa8612c25a24684b69c0fde4a6a5ab5d4a870bb7e3877f40801063f"
+      },
+      {
+        "path": "resources/productos/MAC-I7-500-4Ram-15\"/video/MAC-I7-500-4Ram-15\"-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 13243710,
+        "sha256": "7dbe4668f82a615538ebf1ff283d302c9b60778e35169c95a545fcaa4f5c0b86"
+      }
+    ],
+    "MAC-I7-750-4Ram": [
+      {
+        "path": "resources/productos/MAC-I7-750-4Ram/imagen/MAC-I7-750-4Ram-foto-1.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 235590,
+        "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725"
+      },
+      {
+        "path": "resources/productos/MAC-I7-750-4Ram/imagen/MAC-I7-750-4Ram-foto-2.jpg",
+        "type": "image",
+        "mime": "image/jpeg",
+        "bytes": 167818,
+        "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2"
+      },
+      {
+        "path": "resources/productos/MAC-I7-750-4Ram/video/MAC-I7-750-4Ram-video-1.mp4",
+        "type": "video",
+        "mime": "video/mp4",
+        "bytes": 2362052,
+        "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf"
+      }
+    ]
+  },
+  "audios": {
+    "trust": {
+      "path": "resources/Audios/Audio Contraentrega - confianza.m4a",
+      "mime": "audio/mp4",
+      "text": "Le comento que trabajamos con pagos contraentrega a nivel nacional por medio de Servientrega. Esto quiere decir que usted no tiene que cancelar el valor de su equipo por adelantado, realiza el pago al momento de retirar su producto en la agencia. Una vez enviado también recibirá la información correspondiente a su pedido. Si desea continuar indíqueme de qué ciudad y provincia nos escribe para poderle ayudar con las agencias disponibles por su zona.",
+      "bytes": 248964,
+      "sha256": "df21521522391bead62d43f0411f833147e2c9e8e663f7ed197a815c7001fd22",
+      "transcriptPath": "resources/Audios/Audio Contraentrega - confianza.txt"
+    },
+    "delivery": {
+      "path": "resources/Audios/Audio Delivery Guayaquil oficial.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado estimada? Le comento que para la ciudad de Guayaquil contamos con servicios de delivery en puntos habilitados. Nuestro horario de delivery es de lunes a viernes de 10 de la mañana a 6 de la tarde. La ventaja de este servicio es que al momento de recibir su equipo, usted puede revisarlo, probarlo y recién ahí realizar el pago, ya sea en efectivo o transferencia. En caso de que, por su horario, se le complique recibir el equipo dentro de ese rango de tiempo, no hay problema. También podemos ayudarle mediante un envío contraentrega por servientrega para que pueda retirarlo directamente en una agencia y cancelar el valor al momento de retirarlo. Nuestros deliveries en Guayaquil se realizan exclusivamente en centros comerciales habilitados. Si desea, con gusto le envío el listado de los moles que actualmente tenemos disponibles para que pueda escoger el que más le conviene.",
+      "bytes": 527278,
+      "sha256": "c22154b3684336e2c060e28364677c8d779afba3be19b7cebda2eccf0e196b36",
+      "transcriptPath": "resources/Audios/Audio Delivery Guayaquil oficial.txt"
+    },
+    "shipping": {
+      "path": "resources/Audios/Audio Envíos - Servientrega.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado estimada? Sí, realizamos envíos a nivel nacional por medio de Servientregas. Actualmente el envío es totalmente gratuito y una vez despachado el equipo normalmente tarda entre 24 a 48 horas en llegar a la agencia seleccionada. Si desea que revisemos las agencias disponibles para usted, indíqueme por favor de qué ciudad y provincia nos escribe.",
+      "bytes": 208020,
+      "sha256": "f50d10ac33a0396fa0e2fcf0c4bc88521dcc279cf4d20d9747406e9d96a56f08",
+      "transcriptPath": "resources/Audios/Audio Envíos - Servientrega.txt"
+    },
+    "warranty": {
+      "path": "resources/Audios/Audio Garantía.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado o estimada? Le comento que todos nuestros equipos cuentan con 6 meses de garantía. La garantía le cubre en caso de que el equipo presente una falla de funcionamiento o algún inconveniente en su sistema. Dentro de este periodo si su equipo llegara a presentar algún problema, puede comunicarse nuevamente con nosotros para poder ayudarle con el proceso correspondiente. Coménteme, estimado o estimada, si estaría interesado y si es así, para poder continuar con el proceso del registro de su pedido.",
+      "bytes": 262692,
+      "sha256": "1dda3e35f6759a37caad101a95e509f25cc96b19eb49fa84af05e47aa2267f9c",
+      "transcriptPath": "resources/Audios/Audio Garantía.txt"
+    },
+    "openbox": {
+      "path": "resources/Audios/Audio Open Box — estado del equipo.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado estimada? Le comento que todos nuestros equipos son open box, es decir, que estos equipos han estado en exhibición o en vitrina, pero nunca han tenido un uso diario ni mucho menos un uso continuo. Los equipos se entregan completamente funcionales y listos para utilizar. Si está interesado o interesada, con gusto continuamos con el proceso para registrar su pedido.",
+      "bytes": 219402,
+      "sha256": "355172e70e5ecb068fb05a577ad92f08edede919bf2946ca76fd93dbd6598e56",
+      "transcriptPath": "resources/Audios/Audio Open Box — estado del equipo.txt"
+    },
+    "reserve": {
+      "path": "resources/Audios/Audio Reserva.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado o estimada? Le comento que si contamos con la opción de reservar su equipo con un valor de 20 dólares. La reserva tiene una vigencia máxima de 14 días y durante ese tiempo su equipo se mantiene separado para que no sea vendido. Los 20 dólares se descontarán del valor final de su compra y no son reembolsables, ya que cubren los gastos de almacenamiento y mantenimiento del equipo durante el periodo de tiempo. Usted puede coordinar dentro de esos 14 días cuándo desea que realicemos el envío. En caso de que el producto sea enviado y no haya sido retirado, se puede realizar un segundo envío, pero ese nuevo envío tendría un costo adicional que sería el nuevo costo de envío. Si usted está de acuerdo con las condiciones, podemos continuar con el registro de su pedido y al finalizar le ayudaremos con los datos para que pueda realizar la reserva.",
+      "bytes": 528733,
+      "sha256": "4026cf53bbe334f10e1e3447f20b3957f17e4ab9199d6d139ac291fe609ab810",
+      "transcriptPath": "resources/Audios/Audio Reserva.txt"
+    },
+    "macbook": {
+      "path": "resources/Audios/Audio ¿Qué incluye? — MacBook.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado o estimada? Le comento que con la compra de su MacBook se le incluye el cargador original, audífonos obsequio y el paquete de Office instalado y activado para que pueda trabajar desde el minuto uno. Además, seis meses de garantía. Si está interesado, con gusto podemos continuar con el proceso de registro de su pedido.",
+      "bytes": 200212,
+      "sha256": "a3736d5453baf21cc90826fb080dec79e5c7920561c7ede284b032b33fbb3cce",
+      "transcriptPath": "resources/Audios/Audio ¿Qué incluye? — MacBook.txt"
+    },
+    "windowsLow": {
+      "path": "resources/Audios/Audio ¿Qué incluye? — Windows $100.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado o estimada? Le comento que con la compra de su equipo se incluye su cargador original, audífonos, una memoria microSD de 128 GB, un obsequio sorpresa y el paquete de Office instalado y activado para que pueda trabajar desde el minuto uno. Además, todos nuestros equipos cuentan con seis meses de garantía. Si está interesado, con gusto continuamos con el registro de su pedido.",
+      "bytes": 222294,
+      "sha256": "2035217146cc06e58fe6dac320fbeb69261ed63a5592442c2ce2e231941150db",
+      "transcriptPath": "resources/Audios/Audio ¿Qué incluye? — Windows $100.txt"
+    },
+    "windowsHigh": {
+      "path": "resources/Audios/Audio ¿Qué incluye? — Windows superior a $100.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado o estimada? Le comento que con la compra de su equipo se incluye su cargador original, audífonos, una memoria microSD de 256 GB, un obsequio sorpresa y el paquete de Office instalado y activado, para que pueda trabajar desde el minuto uno. Además, todos nuestros equipos cuentan con garantía de seis meses. Si está interesado, con gusto continuamos con el proceso de su pedido.",
+      "bytes": 370788,
+      "sha256": "f2bb3d6af1d698a1bd917c6a3638e51cb7ef232a29785115505eea535fe100d2",
+      "transcriptPath": "resources/Audios/Audio ¿Qué incluye? — Windows superior a $100.txt"
+    },
+    "ipad": {
+      "path": "resources/Audios/Audio ¿Qué incluye? — iPad.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado o estimada? Le comento que con la compra de su iPad se le incluye su cargador original, audífonos y además con seis meses de garantías. El equipo se entrega completamente funcional y listo para utilizar. Si está interesado, con gusto continuamos con el proceso para registrar su pedido.",
+      "bytes": 175280,
+      "sha256": "63447e9295b6d0aafbe32bae6e3cce79687604f394cd7eb9ff8f4a3248e54d56",
+      "transcriptPath": "resources/Audios/Audio ¿Qué incluye? — iPad.txt"
+    },
+    "includes": {
+      "path": "resources/Audios/Audio ¿Qué incluye?.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado/estimada? Le comento que todos nuestros equipos se entregan con su cargador original, caja y accesorios correspondientes a la promoción del modelo que usted seleccione. Además, el equipo se entrega listo para utilizar. Si me confirma cuál modelo le interesa, le indico exactamente qué incluye su compra y continuamos con el proceso.",
+      "bytes": 208569,
+      "sha256": "620db5f302b5f8de5a766b6ee3d738ca3442d9c06695946fd5f38d827d6e7767",
+      "transcriptPath": "resources/Audios/Audio ¿Qué incluye?.txt"
+    },
+    "commercial1": {
+      "path": "resources/Audios/Comercial 1.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimado estimada? Aquí le envío lo que son las fotos y características de nuestro equipo. Además de eso, le comento, actualmente aceptamos pavos contra entrega. Es decir, que usted cancela el valor de su producto solo al retirarlo en su agencia de servientrega más cercano. Coménteme, estimado estimada, si estaría interesado o interesada en poder adquirir uno de nuestros productos, y si es así, déjeme sabiendo de qué ciudad o provincia nos escribe.",
+      "bytes": 259807,
+      "sha256": "5ccebf5822988a3ae225fc2f2f124909ddeb906044262118872279bae0d4c877",
+      "transcriptPath": "resources/Audios/Comercial 1.txt"
+    },
+    "commercial2": {
+      "path": "resources/Audios/Comercial 2-agencias.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal estimado estimada? Ahí le envío el listado de las agencias disponibles en su ciudad para que pueda escoger la que le quede más cómoda. Además le recuerdo que trabajamos con pagos contra entrega, así que usted cancela el valor de su equipo al momento de retirarlo de la agencia. Por favor revise la información y el listado y coménteme cuál agencia desea seleccionar para continuar con el proceso de su pedido.",
+      "bytes": 241268,
+      "sha256": "bdc5c9bfd5db67dff060ada38945b19a7e731e3cfb36310581341b2741d085ba",
+      "transcriptPath": "resources/Audios/Comercial 2-agencias.txt"
+    },
+    "location": {
+      "path": "resources/Audios/Ubicación.m4a",
+      "mime": "audio/mp4",
+      "text": "¿Qué tal, estimada? Le comento que actualmente nuestras bodegas están ubicadas en la ciudad de Guayaquil, pero no tienen acceso al público. Esto es por motivos de seguridad. Además de eso, nosotros hacemos para la ciudad de Guayaquil exclusivamente deliveries. Si usted reside o piensa venir a la ciudad de Guayaquil para recibir su pedido, podemos coordinar con usted para topar en un mall, ya que los deliveries son exclusivos a malls, para poder entregarle el equipo. Antes de que usted pague el equipo, puede abrirlo, probarlo y verificar que incluya todo lo que se le comentó. Además de eso, indicarle que actualmente tenemos casi todos los malls de Guayaquil accesibles. Los únicos malls en los cuales no contamos para envíos son Mall El Fortín, Mall El Sur y todos los malls que queden dentro del sector de Durán. De ahí todos los malls hacemos envíos. Los horarios de los deliveries son de 11 de la mañana a 6 de la tarde.",
+      "bytes": 541082,
+      "sha256": "b4a4bfe516cee0e28d09e869ddd7487b5830577e408c2964d615427a075fb425",
+      "transcriptPath": "resources/Audios/Ubicación.txt"
+    }
+  },
+  "errors": [],
+  "agencies": {
+    "html": 233,
+    "provincias": 24,
+    "ciudades": 233,
+    "agencias": 679,
+    "errors": []
+  },
+  "cityFiles": [
+    {
+      "province": "Azuay",
+      "city": "Camilo Ponce Enríquez",
+      "html": "resources/Ecuador/Azuay/Camilo Ponce Enríquez/SERVIENTREGA.html"
+    },
+    {
+      "province": "Azuay",
+      "city": "Chordeleg",
+      "html": "resources/Ecuador/Azuay/Chordeleg/SERVIENTREGA.html"
+    },
+    {
+      "province": "Azuay",
+      "city": "Cuenca",
+      "html": "resources/Ecuador/Azuay/Cuenca/SERVIENTREGA.html"
+    },
+    {
+      "province": "Azuay",
+      "city": "Girón",
+      "html": "resources/Ecuador/Azuay/Girón/SERVIENTREGA.html"
+    },
+    {
+      "province": "Azuay",
+      "city": "Gualaceo",
+      "html": "resources/Ecuador/Azuay/Gualaceo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Azuay",
+      "city": "Oña",
+      "html": "resources/Ecuador/Azuay/Oña/SERVIENTREGA.html"
+    },
+    {
+      "province": "Azuay",
+      "city": "Paute",
+      "html": "resources/Ecuador/Azuay/Paute/SERVIENTREGA.html"
+    },
+    {
+      "province": "Azuay",
+      "city": "Santa Isabel",
+      "html": "resources/Ecuador/Azuay/Santa Isabel/SERVIENTREGA.html"
+    },
+    {
+      "province": "Azuay",
+      "city": "Sevilla de Oro",
+      "html": "resources/Ecuador/Azuay/Sevilla de Oro/SERVIENTREGA.html"
+    },
+    {
+      "province": "Azuay",
+      "city": "Sígsig",
+      "html": "resources/Ecuador/Azuay/Sígsig/SERVIENTREGA.html"
+    },
+    {
+      "province": "Bolívar",
+      "city": "Caluma",
+      "html": "resources/Ecuador/Bolívar/Caluma/SERVIENTREGA.html"
+    },
+    {
+      "province": "Bolívar",
+      "city": "Chillanes",
+      "html": "resources/Ecuador/Bolívar/Chillanes/SERVIENTREGA.html"
+    },
+    {
+      "province": "Bolívar",
+      "city": "Echeandía",
+      "html": "resources/Ecuador/Bolívar/Echeandía/SERVIENTREGA.html"
+    },
+    {
+      "province": "Bolívar",
+      "city": "Guaranda",
+      "html": "resources/Ecuador/Bolívar/Guaranda/SERVIENTREGA.html"
+    },
+    {
+      "province": "Bolívar",
+      "city": "Las Naves",
+      "html": "resources/Ecuador/Bolívar/Las Naves/SERVIENTREGA.html"
+    },
+    {
+      "province": "Bolívar",
+      "city": "SAN LUIS DE PAMBIL",
+      "html": "resources/Ecuador/Bolívar/SAN LUIS DE PAMBIL/SERVIENTREGA.html"
+    },
+    {
+      "province": "Bolívar",
+      "city": "SAN MIGUEL DE BOLIVAR",
+      "html": "resources/Ecuador/Bolívar/SAN MIGUEL DE BOLIVAR/SERVIENTREGA.html"
+    },
+    {
+      "province": "Carchi",
+      "city": "SAN GABRIEL",
+      "html": "resources/Ecuador/Carchi/SAN GABRIEL/SERVIENTREGA.html"
+    },
+    {
+      "province": "Carchi",
+      "city": "Tulcán",
+      "html": "resources/Ecuador/Carchi/Tulcán/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cañar",
+      "city": "Azogues",
+      "html": "resources/Ecuador/Cañar/Azogues/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cañar",
+      "city": "Biblián",
+      "html": "resources/Ecuador/Cañar/Biblián/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cañar",
+      "city": "COCHANCAY",
+      "html": "resources/Ecuador/Cañar/COCHANCAY/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cañar",
+      "city": "Cañar",
+      "html": "resources/Ecuador/Cañar/Cañar/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cañar",
+      "city": "El Tambo",
+      "html": "resources/Ecuador/Cañar/El Tambo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cañar",
+      "city": "JAVIER LOYOLA",
+      "html": "resources/Ecuador/Cañar/JAVIER LOYOLA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cañar",
+      "city": "La Troncal",
+      "html": "resources/Ecuador/Cañar/La Troncal/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cañar",
+      "city": "Suscal",
+      "html": "resources/Ecuador/Cañar/Suscal/SERVIENTREGA.html"
+    },
+    {
+      "province": "Chimborazo",
+      "city": "Alausí",
+      "html": "resources/Ecuador/Chimborazo/Alausí/SERVIENTREGA.html"
+    },
+    {
+      "province": "Chimborazo",
+      "city": "Chambo",
+      "html": "resources/Ecuador/Chimborazo/Chambo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Chimborazo",
+      "city": "Chunchi",
+      "html": "resources/Ecuador/Chimborazo/Chunchi/SERVIENTREGA.html"
+    },
+    {
+      "province": "Chimborazo",
+      "city": "Cumandá",
+      "html": "resources/Ecuador/Chimborazo/Cumandá/SERVIENTREGA.html"
+    },
+    {
+      "province": "Chimborazo",
+      "city": "Guamote",
+      "html": "resources/Ecuador/Chimborazo/Guamote/SERVIENTREGA.html"
+    },
+    {
+      "province": "Chimborazo",
+      "city": "Guano",
+      "html": "resources/Ecuador/Chimborazo/Guano/SERVIENTREGA.html"
+    },
+    {
+      "province": "Chimborazo",
+      "city": "Pallatanga",
+      "html": "resources/Ecuador/Chimborazo/Pallatanga/SERVIENTREGA.html"
+    },
+    {
+      "province": "Chimborazo",
+      "city": "Riobamba",
+      "html": "resources/Ecuador/Chimborazo/Riobamba/SERVIENTREGA.html"
+    },
+    {
+      "province": "Chimborazo",
+      "city": "YARUQUIES",
+      "html": "resources/Ecuador/Chimborazo/YARUQUIES/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cotopaxi",
+      "city": "LASSO",
+      "html": "resources/Ecuador/Cotopaxi/LASSO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cotopaxi",
+      "city": "La Maná",
+      "html": "resources/Ecuador/Cotopaxi/La Maná/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cotopaxi",
+      "city": "Latacunga",
+      "html": "resources/Ecuador/Cotopaxi/Latacunga/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cotopaxi",
+      "city": "MORASPUNGO",
+      "html": "resources/Ecuador/Cotopaxi/MORASPUNGO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cotopaxi",
+      "city": "Pujilí",
+      "html": "resources/Ecuador/Cotopaxi/Pujilí/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cotopaxi",
+      "city": "Salcedo",
+      "html": "resources/Ecuador/Cotopaxi/Salcedo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cotopaxi",
+      "city": "Saquisilí",
+      "html": "resources/Ecuador/Cotopaxi/Saquisilí/SERVIENTREGA.html"
+    },
+    {
+      "province": "Cotopaxi",
+      "city": "Sigchos",
+      "html": "resources/Ecuador/Cotopaxi/Sigchos/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "Arenillas",
+      "html": "resources/Ecuador/El Oro/Arenillas/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "Balsas",
+      "html": "resources/Ecuador/El Oro/Balsas/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "EL CAMBIO",
+      "html": "resources/Ecuador/El Oro/EL CAMBIO/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "El Guabo",
+      "html": "resources/Ecuador/El Oro/El Guabo/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "HUERTAS",
+      "html": "resources/Ecuador/El Oro/HUERTAS/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "Huaquillas",
+      "html": "resources/Ecuador/El Oro/Huaquillas/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "Machala",
+      "html": "resources/Ecuador/El Oro/Machala/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "PACCHA",
+      "html": "resources/Ecuador/El Oro/PACCHA/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "PUERTO BOLIVAR",
+      "html": "resources/Ecuador/El Oro/PUERTO BOLIVAR/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "Pasaje",
+      "html": "resources/Ecuador/El Oro/Pasaje/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "Piñas",
+      "html": "resources/Ecuador/El Oro/Piñas/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "Portovelo",
+      "html": "resources/Ecuador/El Oro/Portovelo/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "Santa Rosa",
+      "html": "resources/Ecuador/El Oro/Santa Rosa/SERVIENTREGA.html"
+    },
+    {
+      "province": "El Oro",
+      "city": "Zaruma",
+      "html": "resources/Ecuador/El Oro/Zaruma/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "Atacames",
+      "html": "resources/Ecuador/Esmeraldas/Atacames/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "BORBON",
+      "html": "resources/Ecuador/Esmeraldas/BORBON/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "Esmeraldas",
+      "html": "resources/Ecuador/Esmeraldas/Esmeraldas/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "LA CONCORDIA",
+      "html": "resources/Ecuador/Esmeraldas/LA CONCORDIA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "LA UNION (QUININDE)",
+      "html": "resources/Ecuador/Esmeraldas/LA UNION (QUININDE)/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "LAGARTO",
+      "html": "resources/Ecuador/Esmeraldas/LAGARTO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "MOMPICHE",
+      "html": "resources/Ecuador/Esmeraldas/MOMPICHE/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "Muisne",
+      "html": "resources/Ecuador/Esmeraldas/Muisne/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "Quinindé",
+      "html": "resources/Ecuador/Esmeraldas/Quinindé/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "Rioverde",
+      "html": "resources/Ecuador/Esmeraldas/Rioverde/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "San Lorenzo",
+      "html": "resources/Ecuador/Esmeraldas/San Lorenzo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "TONCHIGUE",
+      "html": "resources/Ecuador/Esmeraldas/TONCHIGUE/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "TONSUPA",
+      "html": "resources/Ecuador/Esmeraldas/TONSUPA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Esmeraldas",
+      "city": "VICHE",
+      "html": "resources/Ecuador/Esmeraldas/VICHE/SERVIENTREGA.html"
+    },
+    {
+      "province": "Galápagos",
+      "city": "San Cristóbal",
+      "html": "resources/Ecuador/Galápagos/San Cristóbal/SERVIENTREGA.html"
+    },
+    {
+      "province": "Galápagos",
+      "city": "Santa Cruz",
+      "html": "resources/Ecuador/Galápagos/Santa Cruz/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "BUCAY",
+      "html": "resources/Ecuador/Guayas/BUCAY/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Balzar",
+      "html": "resources/Ecuador/Guayas/Balzar/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Colimes",
+      "html": "resources/Ecuador/Guayas/Colimes/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Coronel Marcelino Maridueña",
+      "html": "resources/Ecuador/Guayas/Coronel Marcelino Maridueña/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Daule",
+      "html": "resources/Ecuador/Guayas/Daule/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Durán",
+      "html": "resources/Ecuador/Guayas/Durán/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "EL DESEO",
+      "html": "resources/Ecuador/Guayas/EL DESEO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "El Empalme",
+      "html": "resources/Ecuador/Guayas/El Empalme/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "El Triunfo",
+      "html": "resources/Ecuador/Guayas/El Triunfo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Guayaquil",
+      "html": "resources/Ecuador/Guayas/Guayaquil/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Isidro Ayora",
+      "html": "resources/Ecuador/Guayas/Isidro Ayora/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "JUJAN",
+      "html": "resources/Ecuador/Guayas/JUJAN/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "LORENZO DE GARAICOA",
+      "html": "resources/Ecuador/Guayas/LORENZO DE GARAICOA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Lomas de Sargentillo",
+      "html": "resources/Ecuador/Guayas/Lomas de Sargentillo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Milagro",
+      "html": "resources/Ecuador/Guayas/Milagro/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Naranjal",
+      "html": "resources/Ecuador/Guayas/Naranjal/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Naranjito",
+      "html": "resources/Ecuador/Guayas/Naranjito/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Nobol",
+      "html": "resources/Ecuador/Guayas/Nobol/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "POSORJA",
+      "html": "resources/Ecuador/Guayas/POSORJA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "PROGRESO",
+      "html": "resources/Ecuador/Guayas/PROGRESO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Palestina",
+      "html": "resources/Ecuador/Guayas/Palestina/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Pedro Carbo",
+      "html": "resources/Ecuador/Guayas/Pedro Carbo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Playas",
+      "html": "resources/Ecuador/Guayas/Playas/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "ROBERTO ASTUDILLO",
+      "html": "resources/Ecuador/Guayas/ROBERTO ASTUDILLO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "SAN CARLOS (BALAO)",
+      "html": "resources/Ecuador/Guayas/SAN CARLOS (BALAO)/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Salitre",
+      "html": "resources/Ecuador/Guayas/Salitre/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Samborondón",
+      "html": "resources/Ecuador/Guayas/Samborondón/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "San Jacinto de Yaguachi",
+      "html": "resources/Ecuador/Guayas/San Jacinto de Yaguachi/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Santa Lucía",
+      "html": "resources/Ecuador/Guayas/Santa Lucía/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "Simón Bolívar",
+      "html": "resources/Ecuador/Guayas/Simón Bolívar/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "TENGUEL",
+      "html": "resources/Ecuador/Guayas/TENGUEL/SERVIENTREGA.html"
+    },
+    {
+      "province": "Guayas",
+      "city": "VIRGEN DE FATIMA KM 26",
+      "html": "resources/Ecuador/Guayas/VIRGEN DE FATIMA KM 26/SERVIENTREGA.html"
+    },
+    {
+      "province": "Imbabura",
+      "city": "ATUNTAQUI",
+      "html": "resources/Ecuador/Imbabura/ATUNTAQUI/SERVIENTREGA.html"
+    },
+    {
+      "province": "Imbabura",
+      "city": "Cotacachi",
+      "html": "resources/Ecuador/Imbabura/Cotacachi/SERVIENTREGA.html"
+    },
+    {
+      "province": "Imbabura",
+      "city": "Ibarra",
+      "html": "resources/Ecuador/Imbabura/Ibarra/SERVIENTREGA.html"
+    },
+    {
+      "province": "Imbabura",
+      "city": "Otavalo",
+      "html": "resources/Ecuador/Imbabura/Otavalo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Imbabura",
+      "city": "Pimampiro",
+      "html": "resources/Ecuador/Imbabura/Pimampiro/SERVIENTREGA.html"
+    },
+    {
+      "province": "Imbabura",
+      "city": "SAN ANTONIO DE IBARRA",
+      "html": "resources/Ecuador/Imbabura/SAN ANTONIO DE IBARRA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Imbabura",
+      "city": "San Miguel de Urcuquí",
+      "html": "resources/Ecuador/Imbabura/San Miguel de Urcuquí/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "ALAMOR",
+      "html": "resources/Ecuador/Loja/ALAMOR/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "CARIAMANGA",
+      "html": "resources/Ecuador/Loja/CARIAMANGA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Catamayo",
+      "html": "resources/Ecuador/Loja/Catamayo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Célica",
+      "html": "resources/Ecuador/Loja/Célica/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Gonzanamá",
+      "html": "resources/Ecuador/Loja/Gonzanamá/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Loja",
+      "html": "resources/Ecuador/Loja/Loja/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "MALACATOS",
+      "html": "resources/Ecuador/Loja/MALACATOS/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Macará",
+      "html": "resources/Ecuador/Loja/Macará/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Paltas",
+      "html": "resources/Ecuador/Loja/Paltas/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Pindal",
+      "html": "resources/Ecuador/Loja/Pindal/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Saraguro",
+      "html": "resources/Ecuador/Loja/Saraguro/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Sozoranga",
+      "html": "resources/Ecuador/Loja/Sozoranga/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "VILCABAMBA",
+      "html": "resources/Ecuador/Loja/VILCABAMBA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Loja",
+      "city": "Zapotillo",
+      "html": "resources/Ecuador/Loja/Zapotillo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Baba",
+      "html": "resources/Ecuador/Los Ríos/Baba/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Babahoyo",
+      "html": "resources/Ecuador/Los Ríos/Babahoyo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Buena Fe",
+      "html": "resources/Ecuador/Los Ríos/Buena Fe/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "ISLA DE BEJUCAL",
+      "html": "resources/Ecuador/Los Ríos/ISLA DE BEJUCAL/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "LA 14 VIA EL PARAISO",
+      "html": "resources/Ecuador/Los Ríos/LA 14 VIA EL PARAISO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "LA ESPERANZA",
+      "html": "resources/Ecuador/Los Ríos/LA ESPERANZA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "LA UNION (BABAHOYO)",
+      "html": "resources/Ecuador/Los Ríos/LA UNION (BABAHOYO)/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "MATA DE CACAO",
+      "html": "resources/Ecuador/Los Ríos/MATA DE CACAO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Mocache",
+      "html": "resources/Ecuador/Los Ríos/Mocache/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Montalvo",
+      "html": "resources/Ecuador/Los Ríos/Montalvo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "PATRICIA PILAR",
+      "html": "resources/Ecuador/Los Ríos/PATRICIA PILAR/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Palenque",
+      "html": "resources/Ecuador/Los Ríos/Palenque/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Puebloviejo",
+      "html": "resources/Ecuador/Los Ríos/Puebloviejo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Quevedo",
+      "html": "resources/Ecuador/Los Ríos/Quevedo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Quinsaloma",
+      "html": "resources/Ecuador/Los Ríos/Quinsaloma/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "SAN CAMILO",
+      "html": "resources/Ecuador/Los Ríos/SAN CAMILO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "SAN JOSE DEL TAMBO",
+      "html": "resources/Ecuador/Los Ríos/SAN JOSE DEL TAMBO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "SAN JUAN",
+      "html": "resources/Ecuador/Los Ríos/SAN JUAN/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Urdaneta",
+      "html": "resources/Ecuador/Los Ríos/Urdaneta/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Valencia",
+      "html": "resources/Ecuador/Los Ríos/Valencia/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Ventanas",
+      "html": "resources/Ecuador/Los Ríos/Ventanas/SERVIENTREGA.html"
+    },
+    {
+      "province": "Los Ríos",
+      "city": "Vinces",
+      "html": "resources/Ecuador/Los Ríos/Vinces/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "24 de Mayo",
+      "html": "resources/Ecuador/Manabí/24 de Mayo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "BAHIA DE CARAQUEZ",
+      "html": "resources/Ecuador/Manabí/BAHIA DE CARAQUEZ/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "CALCETA",
+      "html": "resources/Ecuador/Manabí/CALCETA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "CALDERON (MANABI)",
+      "html": "resources/Ecuador/Manabí/CALDERON (MANABI)/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "CASCOL",
+      "html": "resources/Ecuador/Manabí/CASCOL/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "CHARAPOTO",
+      "html": "resources/Ecuador/Manabí/CHARAPOTO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Chone",
+      "html": "resources/Ecuador/Manabí/Chone/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "El Carmen",
+      "html": "resources/Ecuador/Manabí/El Carmen/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Flavio Alfaro",
+      "html": "resources/Ecuador/Manabí/Flavio Alfaro/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Jaramijó",
+      "html": "resources/Ecuador/Manabí/Jaramijó/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Jipijapa",
+      "html": "resources/Ecuador/Manabí/Jipijapa/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Junín",
+      "html": "resources/Ecuador/Manabí/Junín/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Manta",
+      "html": "resources/Ecuador/Manabí/Manta/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Montecristi",
+      "html": "resources/Ecuador/Manabí/Montecristi/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Olmedo",
+      "html": "resources/Ecuador/Manabí/Olmedo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Paján",
+      "html": "resources/Ecuador/Manabí/Paján/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Pedernales",
+      "html": "resources/Ecuador/Manabí/Pedernales/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Pichincha",
+      "html": "resources/Ecuador/Manabí/Pichincha/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Portoviejo",
+      "html": "resources/Ecuador/Manabí/Portoviejo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Puerto López",
+      "html": "resources/Ecuador/Manabí/Puerto López/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Rocafuerte",
+      "html": "resources/Ecuador/Manabí/Rocafuerte/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "SAN ISIDRO (BAHIA)",
+      "html": "resources/Ecuador/Manabí/SAN ISIDRO (BAHIA)/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "SAN PLACIDO",
+      "html": "resources/Ecuador/Manabí/SAN PLACIDO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "San Vicente",
+      "html": "resources/Ecuador/Manabí/San Vicente/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Santa Ana",
+      "html": "resources/Ecuador/Manabí/Santa Ana/SERVIENTREGA.html"
+    },
+    {
+      "province": "Manabí",
+      "city": "Tosagua",
+      "html": "resources/Ecuador/Manabí/Tosagua/SERVIENTREGA.html"
+    },
+    {
+      "province": "Morona Santiago",
+      "city": "Gualaquiza",
+      "html": "resources/Ecuador/Morona Santiago/Gualaquiza/SERVIENTREGA.html"
+    },
+    {
+      "province": "Morona Santiago",
+      "city": "Limón Indanza",
+      "html": "resources/Ecuador/Morona Santiago/Limón Indanza/SERVIENTREGA.html"
+    },
+    {
+      "province": "Morona Santiago",
+      "city": "MACAS",
+      "html": "resources/Ecuador/Morona Santiago/MACAS/SERVIENTREGA.html"
+    },
+    {
+      "province": "Morona Santiago",
+      "city": "Sucúa",
+      "html": "resources/Ecuador/Morona Santiago/Sucúa/SERVIENTREGA.html"
+    },
+    {
+      "province": "Napo",
+      "city": "Archidona",
+      "html": "resources/Ecuador/Napo/Archidona/SERVIENTREGA.html"
+    },
+    {
+      "province": "Napo",
+      "city": "BAEZA",
+      "html": "resources/Ecuador/Napo/BAEZA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Napo",
+      "city": "Tena",
+      "html": "resources/Ecuador/Napo/Tena/SERVIENTREGA.html"
+    },
+    {
+      "province": "Orellana",
+      "city": "EL COCA",
+      "html": "resources/Ecuador/Orellana/EL COCA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Orellana",
+      "city": "La Joya de los Sachas",
+      "html": "resources/Ecuador/Orellana/La Joya de los Sachas/SERVIENTREGA.html"
+    },
+    {
+      "province": "Orellana",
+      "city": "Loreto",
+      "html": "resources/Ecuador/Orellana/Loreto/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pastaza",
+      "city": "PUYO",
+      "html": "resources/Ecuador/Pastaza/PUYO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "ALOAG",
+      "html": "resources/Ecuador/Pichincha/ALOAG/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "ASCAZUBI",
+      "html": "resources/Ecuador/Pichincha/ASCAZUBI/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "Cayambe",
+      "html": "resources/Ecuador/Pichincha/Cayambe/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "LA SEXTA",
+      "html": "resources/Ecuador/Pichincha/LA SEXTA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "MACHACHI",
+      "html": "resources/Ecuador/Pichincha/MACHACHI/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "NANEGALITO",
+      "html": "resources/Ecuador/Pichincha/NANEGALITO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "Pedro Vicente Maldonado",
+      "html": "resources/Ecuador/Pichincha/Pedro Vicente Maldonado/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "Puerto Quito",
+      "html": "resources/Ecuador/Pichincha/Puerto Quito/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "Quito",
+      "html": "resources/Ecuador/Pichincha/Quito/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "SANGOLQUI",
+      "html": "resources/Ecuador/Pichincha/SANGOLQUI/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "San Miguel de los Bancos",
+      "html": "resources/Ecuador/Pichincha/San Miguel de los Bancos/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "TABACUNDO",
+      "html": "resources/Ecuador/Pichincha/TABACUNDO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Pichincha",
+      "city": "TAMBILLO",
+      "html": "resources/Ecuador/Pichincha/TAMBILLO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "ANCON",
+      "html": "resources/Ecuador/Santa Elena/ANCON/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "CHANDUY",
+      "html": "resources/Ecuador/Santa Elena/CHANDUY/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "La Libertad",
+      "html": "resources/Ecuador/Santa Elena/La Libertad/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "MANGLARALTO",
+      "html": "resources/Ecuador/Santa Elena/MANGLARALTO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "MONTANITA",
+      "html": "resources/Ecuador/Santa Elena/MONTANITA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "MUEY",
+      "html": "resources/Ecuador/Santa Elena/MUEY/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "SAN PABLO (SANTA ELENA)",
+      "html": "resources/Ecuador/Santa Elena/SAN PABLO (SANTA ELENA)/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "SAN PEDRO",
+      "html": "resources/Ecuador/Santa Elena/SAN PEDRO/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "Salinas",
+      "html": "resources/Ecuador/Santa Elena/Salinas/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santa Elena",
+      "city": "Santa Elena",
+      "html": "resources/Ecuador/Santa Elena/Santa Elena/SERVIENTREGA.html"
+    },
+    {
+      "province": "Santo Domingo de los Tsáchilas",
+      "city": "Santo Domingo",
+      "html": "resources/Ecuador/Santo Domingo de los Tsáchilas/Santo Domingo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Sucumbíos",
+      "city": "Cascales",
+      "html": "resources/Ecuador/Sucumbíos/Cascales/SERVIENTREGA.html"
+    },
+    {
+      "province": "Sucumbíos",
+      "city": "LUMBAQUI",
+      "html": "resources/Ecuador/Sucumbíos/LUMBAQUI/SERVIENTREGA.html"
+    },
+    {
+      "province": "Sucumbíos",
+      "city": "Lago Agrio",
+      "html": "resources/Ecuador/Sucumbíos/Lago Agrio/SERVIENTREGA.html"
+    },
+    {
+      "province": "Sucumbíos",
+      "city": "PACAYACU",
+      "html": "resources/Ecuador/Sucumbíos/PACAYACU/SERVIENTREGA.html"
+    },
+    {
+      "province": "Sucumbíos",
+      "city": "Shushufindi",
+      "html": "resources/Ecuador/Sucumbíos/Shushufindi/SERVIENTREGA.html"
+    },
+    {
+      "province": "Sucumbíos",
+      "city": "TARAPOA",
+      "html": "resources/Ecuador/Sucumbíos/TARAPOA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Tungurahua",
+      "city": "Ambato",
+      "html": "resources/Ecuador/Tungurahua/Ambato/SERVIENTREGA.html"
+    },
+    {
+      "province": "Tungurahua",
+      "city": "Baños de Agua Santa",
+      "html": "resources/Ecuador/Tungurahua/Baños de Agua Santa/SERVIENTREGA.html"
+    },
+    {
+      "province": "Tungurahua",
+      "city": "Cevallos",
+      "html": "resources/Ecuador/Tungurahua/Cevallos/SERVIENTREGA.html"
+    },
+    {
+      "province": "Tungurahua",
+      "city": "Patate",
+      "html": "resources/Ecuador/Tungurahua/Patate/SERVIENTREGA.html"
+    },
+    {
+      "province": "Tungurahua",
+      "city": "QUISAPINCHA",
+      "html": "resources/Ecuador/Tungurahua/QUISAPINCHA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Tungurahua",
+      "city": "Quero",
+      "html": "resources/Ecuador/Tungurahua/Quero/SERVIENTREGA.html"
+    },
+    {
+      "province": "Tungurahua",
+      "city": "San Pedro de Pelileo",
+      "html": "resources/Ecuador/Tungurahua/San Pedro de Pelileo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Tungurahua",
+      "city": "Santiago de Píllaro",
+      "html": "resources/Ecuador/Tungurahua/Santiago de Píllaro/SERVIENTREGA.html"
+    },
+    {
+      "province": "Tungurahua",
+      "city": "Tisaleo",
+      "html": "resources/Ecuador/Tungurahua/Tisaleo/SERVIENTREGA.html"
+    },
+    {
+      "province": "Zamora Chinchipe",
+      "city": "El Pangui",
+      "html": "resources/Ecuador/Zamora Chinchipe/El Pangui/SERVIENTREGA.html"
+    },
+    {
+      "province": "Zamora Chinchipe",
+      "city": "GUAYZIMI",
+      "html": "resources/Ecuador/Zamora Chinchipe/GUAYZIMI/SERVIENTREGA.html"
+    },
+    {
+      "province": "Zamora Chinchipe",
+      "city": "PAQUIZHA",
+      "html": "resources/Ecuador/Zamora Chinchipe/PAQUIZHA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Zamora Chinchipe",
+      "city": "Palanda",
+      "html": "resources/Ecuador/Zamora Chinchipe/Palanda/SERVIENTREGA.html"
+    },
+    {
+      "province": "Zamora Chinchipe",
+      "city": "Yantzaza",
+      "html": "resources/Ecuador/Zamora Chinchipe/Yantzaza/SERVIENTREGA.html"
+    },
+    {
+      "province": "Zamora Chinchipe",
+      "city": "ZUMBA",
+      "html": "resources/Ecuador/Zamora Chinchipe/ZUMBA/SERVIENTREGA.html"
+    },
+    {
+      "province": "Zamora Chinchipe",
+      "city": "ZUMBI",
+      "html": "resources/Ecuador/Zamora Chinchipe/ZUMBI/SERVIENTREGA.html"
+    },
+    {
+      "province": "Zamora Chinchipe",
+      "city": "Zamora",
+      "html": "resources/Ecuador/Zamora Chinchipe/Zamora/SERVIENTREGA.html"
+    }
+  ],
+  "agencyRoot": "resources/Ecuador",
+  "provinces": [
+    "Azuay",
+    "Bolívar",
+    "Carchi",
+    "Cañar",
+    "Chimborazo",
+    "Cotopaxi",
+    "El Oro",
+    "Esmeraldas",
+    "Galápagos",
+    "Guayas",
+    "Imbabura",
+    "Loja",
+    "Los Ríos",
+    "Manabí",
+    "Morona Santiago",
+    "Napo",
+    "Orellana",
+    "Pastaza",
+    "Pichincha",
+    "Santa Elena",
+    "Santo Domingo de los Tsáchilas",
+    "Sucumbíos",
+    "Tungurahua",
+    "Zamora Chinchipe"
+  ],
+  "productSummary": [
+    {
+      "sku": "ACERN16Q13-NEG",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "ASUSC202S-NEG",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "ASUSC300S-NEG",
+      "images": 1,
+      "videos": 1
+    },
+    {
+      "sku": "DELL3180-NEG",
+      "images": 1,
+      "videos": 1
+    },
+    {
+      "sku": "DELLP22T-NEG",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "HP11G5-NEG",
+      "images": 1,
+      "videos": 1
+    },
+    {
+      "sku": "IMAC2011-250",
+      "images": 0,
+      "videos": 0
+    },
+    {
+      "sku": "IMAC2012-250",
+      "images": 0,
+      "videos": 0
+    },
+    {
+      "sku": "IPADAIR1-16-BLA",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "IPADAIR1-16-PLA",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "IPADAIR1-32-BLA",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "IPADAIR1-32-PLA",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "IPADAIR2-16-PLA",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "LENOVON22-20-NEG",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-1000-16Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-1000-8Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-160-4Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-160-8Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-250-16Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-250-8Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-320-16Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-320-4Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-320-8Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-500-4Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-500-8Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I5-750-8Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I7-1000-16Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I7-160-16Ram-15\"",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I7-250-16Ram",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I7-250-8Ram-15\"",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I7-500-4Ram-15\"",
+      "images": 2,
+      "videos": 1
+    },
+    {
+      "sku": "MAC-I7-750-4Ram",
+      "images": 2,
+      "videos": 1
+    }
+  ],
+  "locationSources": {
+    "ALIASES_UBICACIONES.json": {
+      "path": "resources/Ecuador/ALIASES_UBICACIONES.json",
+      "sha256": "4f6b0c64e0dd2fd4df6e9f9cd201b0777f79788ed0844719619853076bc5c707",
+      "aliases": {
+        "version": 1,
+        "politica": "Los nombres originales de las carpetas se conservan. Este archivo permite relacionar distintas formas de escribir una ubicación con un único nombre canónico.",
+        "provincias": {
+          "Santo Domingo de los Tsáchilas": [
+            "Santo Domingo de los Tsáchilas",
+            "Santo Domingo de los Tsachilas",
+            "Santo Domingo",
+            "SANTO DOMINGO"
+          ],
+          "Zamora Chinchipe": [
+            "Zamora Chinchipe",
+            "Zamora",
+            "ZAMORA"
+          ],
+          "Bolívar": [
+            "Bolívar",
+            "Bolivar"
+          ],
+          "Cañar": [
+            "Cañar",
+            "Canar"
+          ],
+          "Galápagos": [
+            "Galápagos",
+            "Galapagos"
+          ],
+          "Los Ríos": [
+            "Los Ríos",
+            "Los Rios"
+          ],
+          "Manabí": [
+            "Manabí",
+            "Manabi"
+          ],
+          "Sucumbíos": [
+            "Sucumbíos",
+            "Sucumbios"
+          ]
+        },
+        "ciudades": {
+          "Orellana/La Joya de los Sachas": [
+            "La Joya de los Sachas",
+            "Joya de los Sachas",
+            "JOYA DE LOS SACHAS"
+          ],
+          "Tungurahua/Baños de Agua Santa": [
+            "Baños de Agua Santa",
+            "Baños",
+            "Banos",
+            "BANOS"
+          ],
+          "Tungurahua/San Pedro de Pelileo": [
+            "San Pedro de Pelileo",
+            "Pelileo",
+            "PELILEO"
+          ],
+          "Tungurahua/Santiago de Píllaro": [
+            "Santiago de Píllaro",
+            "Píllaro",
+            "Pillaro",
+            "PILLARO"
+          ],
+          "Los Ríos/Puebloviejo": [
+            "Puebloviejo",
+            "Pueblo Viejo",
+            "PUEBLO VIEJO"
+          ],
+          "Esmeraldas/Rioverde": [
+            "Rioverde",
+            "Río Verde",
+            "Rio Verde",
+            "RIO VERDE"
+          ],
+          "Cañar/El Tambo": [
+            "El Tambo",
+            "Tambo",
+            "TAMBO"
+          ],
+          "Chimborazo/Guano": [
+            "Guano",
+            "El Guano",
+            "EL GUANO"
+          ],
+          "Azuay/Camilo Ponce Enríquez": [
+            "Camilo Ponce Enríquez",
+            "Camilo Ponce Enriquez",
+            "Ponce Enríquez",
+            "Ponce Enriquez",
+            "PONCE ENRIQUEZ"
+          ],
+          "Guayas/Coronel Marcelino Maridueña": [
+            "Coronel Marcelino Maridueña",
+            "Coronel Marcelino Mariduena",
+            "Marcelino Maridueña",
+            "Marcelino Mariduena",
+            "MARCELINO MARIDUENA"
+          ],
+          "Guayas/San Jacinto de Yaguachi": [
+            "San Jacinto de Yaguachi",
+            "Yaguachi",
+            "YAGUACHI"
+          ],
+          "El Oro/Santa Rosa": [
+            "Santa Rosa",
+            "SANTA ROSA (EL ORO)"
+          ],
+          "Manabí/Santa Ana": [
+            "Santa Ana",
+            "SANTA ANA (MANABI)"
+          ],
+          "Manabí/Olmedo": [
+            "Olmedo",
+            "OLMEDO (MANABI)"
+          ],
+          "Imbabura/San Miguel de Urcuquí": [
+            "San Miguel de Urcuquí",
+            "San Miguel de Urcuqui",
+            "Urcuquí",
+            "Urcuqui",
+            "URCUQUI"
+          ],
+          "Santa Elena/Salinas": [
+            "Salinas",
+            "SALINAS (SANTA ELENA)"
+          ]
+        }
+      }
+    },
+    "MANIFIESTO_ECUADOR.json": {
+      "path": "resources/Ecuador/MANIFIESTO_ECUADOR.json",
+      "sha256": "d1b43a8838de27f4a291dc70ed0eb7f0f76d6fb5dd609b08d1391a3a631c3055",
+      "validation": {
+        "files": 234,
+        "mismatches": []
+      }
+    }
+  },
+  "reusedMedia": [
+    {
+      "sha256": "1164986f3343d3f30cd0e9c9e35ddac66aeb8db6a5435e88dda4d316ff51f946",
+      "files": [
+        {
+          "sku": "IPADAIR1-16-BLA",
+          "path": "resources/productos/IPADAIR1-16-BLA/imagen/IPADAIR1-16-BLA-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "IPADAIR1-16-PLA",
+          "path": "resources/productos/IPADAIR1-16-PLA/imagen/IPADAIR1-16-PLA-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "IPADAIR1-32-BLA",
+          "path": "resources/productos/IPADAIR1-32-BLA/imagen/IPADAIR1-32-BLA-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "IPADAIR1-32-PLA",
+          "path": "resources/productos/IPADAIR1-32-PLA/imagen/IPADAIR1-32-PLA-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "IPADAIR2-16-PLA",
+          "path": "resources/productos/IPADAIR2-16-PLA/imagen/IPADAIR2-16-PLA-foto-1.jpg",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "sha256": "3e118757cbabf9c696d5d651ddb96dbe4fcd9a35dc00790a6314e4f66e16d275",
+      "files": [
+        {
+          "sku": "IPADAIR1-16-BLA",
+          "path": "resources/productos/IPADAIR1-16-BLA/imagen/IPADAIR1-16-BLA-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "IPADAIR1-16-PLA",
+          "path": "resources/productos/IPADAIR1-16-PLA/imagen/IPADAIR1-16-PLA-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "IPADAIR1-32-BLA",
+          "path": "resources/productos/IPADAIR1-32-BLA/imagen/IPADAIR1-32-BLA-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "IPADAIR1-32-PLA",
+          "path": "resources/productos/IPADAIR1-32-PLA/imagen/IPADAIR1-32-PLA-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "IPADAIR2-16-PLA",
+          "path": "resources/productos/IPADAIR2-16-PLA/imagen/IPADAIR2-16-PLA-foto-2.jpg",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "sha256": "0b1ff168ffb9ebbfc2a056f3056caeba343e73b7a40f5130c2a499549db1539d",
+      "files": [
+        {
+          "sku": "IPADAIR1-16-BLA",
+          "path": "resources/productos/IPADAIR1-16-BLA/video/IPADAIR1-16-BLA-video.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "IPADAIR1-16-PLA",
+          "path": "resources/productos/IPADAIR1-16-PLA/video/IPADAIR1-16-PLA-video.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "IPADAIR1-32-BLA",
+          "path": "resources/productos/IPADAIR1-32-BLA/video/IPADAIR1-32-BLA-video.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "IPADAIR1-32-PLA",
+          "path": "resources/productos/IPADAIR1-32-PLA/video/IPADAIR1-32-PLA-video.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "IPADAIR2-16-PLA",
+          "path": "resources/productos/IPADAIR2-16-PLA/video/IPADAIR2-16-PLA-video.mp4",
+          "type": "video"
+        }
+      ]
+    },
+    {
+      "sha256": "5374b0ea9bc593cd9657f052b5ebd9b05bf6d866a483f760a3276d72afe57725",
+      "files": [
+        {
+          "sku": "MAC-I5-1000-16Ram",
+          "path": "resources/productos/MAC-I5-1000-16Ram/imagen/MAC-I5-1000-16Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-1000-8Ram",
+          "path": "resources/productos/MAC-I5-1000-8Ram/imagen/MAC-I5-1000-8Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-160-4Ram",
+          "path": "resources/productos/MAC-I5-160-4Ram/imagen/MAC-I5-160-4Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-160-8Ram",
+          "path": "resources/productos/MAC-I5-160-8Ram/imagen/MAC-I5-160-8Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-250-16Ram",
+          "path": "resources/productos/MAC-I5-250-16Ram/imagen/MAC-I5-250-16Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-250-8Ram",
+          "path": "resources/productos/MAC-I5-250-8Ram/imagen/MAC-I5-250-8Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-320-16Ram",
+          "path": "resources/productos/MAC-I5-320-16Ram/imagen/MAC-I5-320-16Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-320-4Ram",
+          "path": "resources/productos/MAC-I5-320-4Ram/imagen/MAC-I5-320-4Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-320-8Ram",
+          "path": "resources/productos/MAC-I5-320-8Ram/imagen/MAC-I5-320-8Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-500-4Ram",
+          "path": "resources/productos/MAC-I5-500-4Ram/imagen/MAC-I5-500-4Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-500-8Ram",
+          "path": "resources/productos/MAC-I5-500-8Ram/imagen/MAC-I5-500-8Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-750-8Ram",
+          "path": "resources/productos/MAC-I5-750-8Ram/imagen/MAC-I5-750-8Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-1000-16Ram",
+          "path": "resources/productos/MAC-I7-1000-16Ram/imagen/MAC-I7-1000-16Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-250-16Ram",
+          "path": "resources/productos/MAC-I7-250-16Ram/imagen/MAC-I7-250-16Ram-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-750-4Ram",
+          "path": "resources/productos/MAC-I7-750-4Ram/imagen/MAC-I7-750-4Ram-foto-1.jpg",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "sha256": "201cf7e33bd12fd0d40918ea4b48719b3a9298628be30b971e47481a9fbe55a2",
+      "files": [
+        {
+          "sku": "MAC-I5-1000-16Ram",
+          "path": "resources/productos/MAC-I5-1000-16Ram/imagen/MAC-I5-1000-16Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-1000-8Ram",
+          "path": "resources/productos/MAC-I5-1000-8Ram/imagen/MAC-I5-1000-8Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-160-4Ram",
+          "path": "resources/productos/MAC-I5-160-4Ram/imagen/MAC-I5-160-4Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-160-8Ram",
+          "path": "resources/productos/MAC-I5-160-8Ram/imagen/MAC-I5-160-8Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-250-16Ram",
+          "path": "resources/productos/MAC-I5-250-16Ram/imagen/MAC-I5-250-16Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-250-8Ram",
+          "path": "resources/productos/MAC-I5-250-8Ram/imagen/MAC-I5-250-8Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-320-16Ram",
+          "path": "resources/productos/MAC-I5-320-16Ram/imagen/MAC-I5-320-16Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-320-4Ram",
+          "path": "resources/productos/MAC-I5-320-4Ram/imagen/MAC-I5-320-4Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-320-8Ram",
+          "path": "resources/productos/MAC-I5-320-8Ram/imagen/MAC-I5-320-8Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-500-4Ram",
+          "path": "resources/productos/MAC-I5-500-4Ram/imagen/MAC-I5-500-4Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-500-8Ram",
+          "path": "resources/productos/MAC-I5-500-8Ram/imagen/MAC-I5-500-8Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I5-750-8Ram",
+          "path": "resources/productos/MAC-I5-750-8Ram/imagen/MAC-I5-750-8Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-1000-16Ram",
+          "path": "resources/productos/MAC-I7-1000-16Ram/imagen/MAC-I7-1000-16Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-250-16Ram",
+          "path": "resources/productos/MAC-I7-250-16Ram/imagen/MAC-I7-250-16Ram-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-750-4Ram",
+          "path": "resources/productos/MAC-I7-750-4Ram/imagen/MAC-I7-750-4Ram-foto-2.jpg",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "sha256": "d0a14f258a8209715a950f4dd955ea40c8f84371a6bbb8129ab159c8e217c8bf",
+      "files": [
+        {
+          "sku": "MAC-I5-1000-16Ram",
+          "path": "resources/productos/MAC-I5-1000-16Ram/video/MAC-I5-1000-16Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-1000-8Ram",
+          "path": "resources/productos/MAC-I5-1000-8Ram/video/MAC-I5-1000-8Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-160-4Ram",
+          "path": "resources/productos/MAC-I5-160-4Ram/video/MAC-I5-160-4Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-160-8Ram",
+          "path": "resources/productos/MAC-I5-160-8Ram/video/MAC-I5-160-8Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-250-16Ram",
+          "path": "resources/productos/MAC-I5-250-16Ram/video/MAC-I5-250-16Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-250-8Ram",
+          "path": "resources/productos/MAC-I5-250-8Ram/video/MAC-I5-250-8Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-320-16Ram",
+          "path": "resources/productos/MAC-I5-320-16Ram/video/MAC-I5-320-16Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-320-4Ram",
+          "path": "resources/productos/MAC-I5-320-4Ram/video/MAC-I5-320-4Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-320-8Ram",
+          "path": "resources/productos/MAC-I5-320-8Ram/video/MAC-I5-320-8Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-500-4Ram",
+          "path": "resources/productos/MAC-I5-500-4Ram/video/MAC-I5-500-4Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-500-8Ram",
+          "path": "resources/productos/MAC-I5-500-8Ram/video/MAC-I5-500-8Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I5-750-8Ram",
+          "path": "resources/productos/MAC-I5-750-8Ram/video/MAC-I5-750-8Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I7-1000-16Ram",
+          "path": "resources/productos/MAC-I7-1000-16Ram/video/MAC-I7-1000-16Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I7-250-16Ram",
+          "path": "resources/productos/MAC-I7-250-16Ram/video/MAC-I7-250-16Ram-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I7-750-4Ram",
+          "path": "resources/productos/MAC-I7-750-4Ram/video/MAC-I7-750-4Ram-video-1.mp4",
+          "type": "video"
+        }
+      ]
+    },
+    {
+      "sha256": "9c65f82df215eeef48ca781a32a833f68703ea6e4b14d9bc138c27603caf5d3e",
+      "files": [
+        {
+          "sku": "MAC-I7-160-16Ram-15\"",
+          "path": "resources/productos/MAC-I7-160-16Ram-15\"/imagen/MAC-I7-160-16Ram-15\"-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-250-8Ram-15\"",
+          "path": "resources/productos/MAC-I7-250-8Ram-15\"/imagen/MAC-I7-250-8Ram-15\"-foto-1.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-500-4Ram-15\"",
+          "path": "resources/productos/MAC-I7-500-4Ram-15\"/imagen/MAC-I7-500-4Ram-15\"-foto-1.jpg",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "sha256": "fdec53c5daa8612c25a24684b69c0fde4a6a5ab5d4a870bb7e3877f40801063f",
+      "files": [
+        {
+          "sku": "MAC-I7-160-16Ram-15\"",
+          "path": "resources/productos/MAC-I7-160-16Ram-15\"/imagen/MAC-I7-160-16Ram-15\"-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-250-8Ram-15\"",
+          "path": "resources/productos/MAC-I7-250-8Ram-15\"/imagen/MAC-I7-250-8Ram-15\"-foto-2.jpg",
+          "type": "image"
+        },
+        {
+          "sku": "MAC-I7-500-4Ram-15\"",
+          "path": "resources/productos/MAC-I7-500-4Ram-15\"/imagen/MAC-I7-500-4Ram-15\"-foto-2.jpg",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "sha256": "7dbe4668f82a615538ebf1ff283d302c9b60778e35169c95a545fcaa4f5c0b86",
+      "files": [
+        {
+          "sku": "MAC-I7-160-16Ram-15\"",
+          "path": "resources/productos/MAC-I7-160-16Ram-15\"/video/MAC-I7-160-16Ram-15\"-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I7-250-8Ram-15\"",
+          "path": "resources/productos/MAC-I7-250-8Ram-15\"/video/MAC-I7-250-8Ram-15\"-video-1.mp4",
+          "type": "video"
+        },
+        {
+          "sku": "MAC-I7-500-4Ram-15\"",
+          "path": "resources/productos/MAC-I7-500-4Ram-15\"/video/MAC-I7-500-4Ram-15\"-video-1.mp4",
+          "type": "video"
+        }
+      ]
+    }
+  ],
+  "diagnostics": {
+    "missingImages": [
+      "IMAC2011-250",
+      "IMAC2012-250"
+    ],
+    "missingVideos": [
+      "IMAC2011-250",
+      "IMAC2012-250"
+    ],
+    "transcriptsMissing": [],
+    "oversizedMedia": [],
+    "missingAgencyFont": false,
+    "agencyFont": "lib/assets/fonts/NotoSans.ttf",
+    "mediaMismatches": [],
+    "mediaFactsFiles": 87
+  }
+}

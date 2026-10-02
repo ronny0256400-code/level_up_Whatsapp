@@ -53,13 +53,13 @@ async function waiting(price = 100, options = {}) {
   const read = e.sheets.spreadsheets.values.get;
   e.sheets.spreadsheets.values.get = async (args) => {
     const result = await read(args);
-    if (args.range === "'PAGINA DE STOCK'!A3:G") {
+    if (args.range === "'PAGINA DE STOCK'!A3:H") {
       const sales = (await read({ range: "'REGISTRO DE VENTAS'!A5:W" })).data
         .values;
       result.data.values = result.data.values.map((row) => {
         const v = [...row];
         if (v[0] === "EQUIPO")
-          v[4] =
+          v[5] =
             3 -
             sales
               .filter(
@@ -232,7 +232,7 @@ test("no queda regla de purga/límite en runtime", () => {
     );
 });
 const agencies = createAgencies(
-  path.join(__dirname, "../resources/agencias/Ecuador"),
+  path.join(__dirname, "../resources/Ecuador"),
 );
 for (const city of ["Guayaquil", "Guayaqui", "Cuenca"])
   test(`ciudad inequívoca ${city} resuelve provincia`, () => {
@@ -420,8 +420,8 @@ test("stock desaparece después de confirmar y GUIA no escribe", async () => {
   const e = await waiting();
   await e.message("confirmo");
   await e.sheets.spreadsheets.values.update({
-    range: "'PAGINA DE STOCK'!A3:G",
-    requestBody: { values: [["OTRO", "Otro", "32 GB", "plata", 1, 100, ""]] },
+    range: "'PAGINA DE STOCK'!A3:H",
+    requestBody: { values: [["OTRO", "Otro", "32 GB", "", "plata", 1, 100, ""]] },
   });
   await e.message("GUIA (CH000001) (SIN-STOCK)", { from: ADMIN });
   assert.equal(

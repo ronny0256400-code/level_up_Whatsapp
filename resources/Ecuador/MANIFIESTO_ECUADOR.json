@@ -1,0 +1,942 @@
+{
+  "version": 2,
+  "estado": "estructura_final_limpia",
+  "archivos": {
+    "ALIASES_UBICACIONES.json": {
+      "sha256": "4f6b0c64e0dd2fd4df6e9f9cd201b0777f79788ed0844719619853076bc5c707",
+      "bytes": 2720
+    },
+    "Azuay/Camilo Ponce Enríquez/SERVIENTREGA.html": {
+      "sha256": "1efde23752a433f37fccaa70424df908ed53325abd88597d77de72ec702b3a92",
+      "bytes": 2518
+    },
+    "Azuay/Chordeleg/SERVIENTREGA.html": {
+      "sha256": "90068f110ba725ac19105459971450651671c87023225100ebe50b3388ac217e",
+      "bytes": 2394
+    },
+    "Azuay/Cuenca/SERVIENTREGA.html": {
+      "sha256": "9c8f75869d5e8334d6e8f0506d28d6745f8fb80370db90be092c94e535d2efff",
+      "bytes": 13254
+    },
+    "Azuay/Girón/SERVIENTREGA.html": {
+      "sha256": "d2f493a4b523d1765fffde546194af390beb108b0d1656554d5f134873d224a2",
+      "bytes": 2405
+    },
+    "Azuay/Gualaceo/SERVIENTREGA.html": {
+      "sha256": "8d69cdb424a77a0aa1ed605779655e108c21f646c95d85e1f4bd9053c691ccbb",
+      "bytes": 2766
+    },
+    "Azuay/Oña/SERVIENTREGA.html": {
+      "sha256": "7c223e4776692f0105c71f4f7a4b6406dee0300173cb9ab70e894f1b13ec6835",
+      "bytes": 2372
+    },
+    "Azuay/Paute/SERVIENTREGA.html": {
+      "sha256": "ac0467bac80d2149cb2376a31c79c983abbca0489a3ca462d473882acfb6019e",
+      "bytes": 2375
+    },
+    "Azuay/Santa Isabel/SERVIENTREGA.html": {
+      "sha256": "057ddb4a2b8fa9dce6f6e08ba6ae6c1f284c54c7f8c32d3a60a04c62c9cce77c",
+      "bytes": 2405
+    },
+    "Azuay/Sevilla de Oro/SERVIENTREGA.html": {
+      "sha256": "4cb80db9562a39967a10666d6451afcb494ff30c8c8da4cccd979f3573b9940f",
+      "bytes": 2416
+    },
+    "Azuay/Sígsig/SERVIENTREGA.html": {
+      "sha256": "b8e8558e15692468fd9cd43e737e27107aa31ad6ab2274bd42f30539952f4cdc",
+      "bytes": 2440
+    },
+    "Bolívar/Caluma/SERVIENTREGA.html": {
+      "sha256": "ecee4fd18463a8b0c5b84df6e40c314b77ead4287df72326db626e312408f824",
+      "bytes": 2421
+    },
+    "Bolívar/Chillanes/SERVIENTREGA.html": {
+      "sha256": "08cf830e2f7691f875faf687e105cedb1c5b5484b0f19a3cfbe1291c32ea9254",
+      "bytes": 2409
+    },
+    "Bolívar/Echeandía/SERVIENTREGA.html": {
+      "sha256": "0500a21fec2abe7bea30a2854b3a71c1f4526464253c0b1beef2981a6ab1ef4c",
+      "bytes": 2422
+    },
+    "Bolívar/Guaranda/SERVIENTREGA.html": {
+      "sha256": "93f5a5a3d0774b593cb9e0883e535483e8381af7ed94dda9ba0b0a822971862b",
+      "bytes": 2849
+    },
+    "Bolívar/Las Naves/SERVIENTREGA.html": {
+      "sha256": "aeefca296e406b36e970411019a9ea69bea7749f4f51e8da5b80d0ebbd5dcdeb",
+      "bytes": 2441
+    },
+    "Bolívar/SAN LUIS DE PAMBIL/SERVIENTREGA.html": {
+      "sha256": "5ac0b8444bf8d9f1eef720552cdb5e4c0b6f901a003cd4981e19207165ea6145",
+      "bytes": 2474
+    },
+    "Bolívar/SAN MIGUEL DE BOLIVAR/SERVIENTREGA.html": {
+      "sha256": "967eb6bba1274904b30c8595ef53b6718c460ef28521662b62365583587fc069",
+      "bytes": 2444
+    },
+    "Carchi/SAN GABRIEL/SERVIENTREGA.html": {
+      "sha256": "6da11bf1dcda1a85f3860dcc47d76631abd0629f7f1f8f89d26e8c16ef954ffb",
+      "bytes": 2419
+    },
+    "Carchi/Tulcán/SERVIENTREGA.html": {
+      "sha256": "d7fcbb2bc2ced6c61e52bb275d29fec34b3feb48407e5eec694114a0b091369c",
+      "bytes": 3827
+    },
+    "Cañar/Azogues/SERVIENTREGA.html": {
+      "sha256": "c1abf6f17e73c39c11a297e3aef91aa9a3877d72ffa969f967dfda6cbbfc9823",
+      "bytes": 2769
+    },
+    "Cañar/Biblián/SERVIENTREGA.html": {
+      "sha256": "a5d1bfc31b4ed4a2b3ed85d1e34c28589fa40bae5a6fc85ecf38de94e39f0c5f",
+      "bytes": 2411
+    },
+    "Cañar/COCHANCAY/SERVIENTREGA.html": {
+      "sha256": "abc5fb150c09f880b9bca262a5036a69944d7ab557d818dd84d5851fd6c2a425",
+      "bytes": 2424
+    },
+    "Cañar/Cañar/SERVIENTREGA.html": {
+      "sha256": "e4a3ede310f87af7beb301a2589345f1964349277b61b8790cc37466308765da",
+      "bytes": 2398
+    },
+    "Cañar/El Tambo/SERVIENTREGA.html": {
+      "sha256": "4dbcd8a94b5a46b9e64c00672ce486108e3123778b6bd3d20300d2fdfc9698ab",
+      "bytes": 2453
+    },
+    "Cañar/JAVIER LOYOLA/SERVIENTREGA.html": {
+      "sha256": "4aea065584cee29667e4fb571b98769f3eb6826e7678991d28633801ea57e45b",
+      "bytes": 2463
+    },
+    "Cañar/La Troncal/SERVIENTREGA.html": {
+      "sha256": "bf5e026750ddb67ec35494b8434774cf74e8f5ad3e9c7526c08024d2bd490551",
+      "bytes": 2388
+    },
+    "Cañar/Suscal/SERVIENTREGA.html": {
+      "sha256": "a7c52168511afd68c13c14ce4c363429af3bb60ac8f36c930b4b6bd140864645",
+      "bytes": 2450
+    },
+    "Chimborazo/Alausí/SERVIENTREGA.html": {
+      "sha256": "d670410d6a86ac3fbdf212c674244b4f3c5a359bf4a476bb1ec0cf22254780a3",
+      "bytes": 2409
+    },
+    "Chimborazo/Chambo/SERVIENTREGA.html": {
+      "sha256": "1c5e1efa5a01cd418a3425e2eceab18fb90a432fea4fb85818d7b47d2a853fd9",
+      "bytes": 2422
+    },
+    "Chimborazo/Chunchi/SERVIENTREGA.html": {
+      "sha256": "ad3012f1c6bd7bf4c0ac014ebd8fcf4622947cdb2b404b7c8341fbb45e97a176",
+      "bytes": 2388
+    },
+    "Chimborazo/Cumandá/SERVIENTREGA.html": {
+      "sha256": "79e149ba589552076cc29afa634f687a7535f2205499b773619eb2b62ed8cc1e",
+      "bytes": 2480
+    },
+    "Chimborazo/Guamote/SERVIENTREGA.html": {
+      "sha256": "40ba6e55eebb156302fa8d4bedb63c3f59bbbc3223892535b395454a476a501b",
+      "bytes": 2409
+    },
+    "Chimborazo/Guano/SERVIENTREGA.html": {
+      "sha256": "95eb7c3126d5e39d716541f9a17266df6475d5e66215756f84e594624b749094",
+      "bytes": 2411
+    },
+    "Chimborazo/Pallatanga/SERVIENTREGA.html": {
+      "sha256": "f59efa1b81ddfa2fb76010c52804e5518d3298290f5e51bea20b955826ce4e9b",
+      "bytes": 2407
+    },
+    "Chimborazo/Riobamba/SERVIENTREGA.html": {
+      "sha256": "d2fbf8779d594c955c5fe30add568a332945a2e2e96ae57a79a1d96287a8cb4c",
+      "bytes": 7314
+    },
+    "Chimborazo/YARUQUIES/SERVIENTREGA.html": {
+      "sha256": "cd6e83c8ef5c0a3f395366d4b2b8dab2e53a7798ed7cd6225ac6d901e4cd4a50",
+      "bytes": 2413
+    },
+    "Cotopaxi/LASSO/SERVIENTREGA.html": {
+      "sha256": "7a016a2f5367dcc9cae90401dd7bb21a0ee2cb333ebfb5da10f62a5cf4a7883d",
+      "bytes": 2371
+    },
+    "Cotopaxi/La Maná/SERVIENTREGA.html": {
+      "sha256": "d20e55d20267c826866eae3ac3816766ae4d9074c0a3eeb3e4e76f991642a5ef",
+      "bytes": 2818
+    },
+    "Cotopaxi/Latacunga/SERVIENTREGA.html": {
+      "sha256": "508e25eaefdab9e0b4715b31b83149aa3a388ba0ff59ddefdcc0e791405eb45d",
+      "bytes": 4338
+    },
+    "Cotopaxi/MORASPUNGO/SERVIENTREGA.html": {
+      "sha256": "5befee22ec68955b7625b2ddb61b4a2c6f4aeb38d5a127296589f931696d2f00",
+      "bytes": 2475
+    },
+    "Cotopaxi/Pujilí/SERVIENTREGA.html": {
+      "sha256": "7eaf92a3bc664696ebe39771870cac7230aeeb1947b44997544ae510a31e58d6",
+      "bytes": 2367
+    },
+    "Cotopaxi/Salcedo/SERVIENTREGA.html": {
+      "sha256": "0453f055438228dc700725597ce6cb5baf9627ac480e03c8aa84c7f8000b2614",
+      "bytes": 2409
+    },
+    "Cotopaxi/Saquisilí/SERVIENTREGA.html": {
+      "sha256": "4073357f855e8e1bf629200efd3007289c2065af577c9fa2c81fdece4645f4a4",
+      "bytes": 2385
+    },
+    "Cotopaxi/Sigchos/SERVIENTREGA.html": {
+      "sha256": "c9343871dd7dea8a11459ef7f9525dc8de6da46a936b17debef09d57444b77fb",
+      "bytes": 2395
+    },
+    "El Oro/Arenillas/SERVIENTREGA.html": {
+      "sha256": "893508271babf2296c19ffa42ed670ecf9a2d591e351550be9cbc2d5bd82275d",
+      "bytes": 2443
+    },
+    "El Oro/Balsas/SERVIENTREGA.html": {
+      "sha256": "5a175ff8dd9717e6861b363c6757c431a4f92a9230e351bc0a2205c0b1ab6555",
+      "bytes": 2386
+    },
+    "El Oro/EL CAMBIO/SERVIENTREGA.html": {
+      "sha256": "33f6274702cf23e3cb34be1a5c4ce5ff956eeaaf92a31fc8eaa432c80b2d4f3a",
+      "bytes": 2439
+    },
+    "El Oro/El Guabo/SERVIENTREGA.html": {
+      "sha256": "e2b4cecd62743bc4409cc4814493a4a5b55e1ad426dbf5b58d4e893820f3b226",
+      "bytes": 2421
+    },
+    "El Oro/HUERTAS/SERVIENTREGA.html": {
+      "sha256": "875a295769a50daedeb87a2e91847578c623d42cfb2424169e64a5468fec03dc",
+      "bytes": 2373
+    },
+    "El Oro/Huaquillas/SERVIENTREGA.html": {
+      "sha256": "141d6f13b2b79d482b5bef2f088d71ba920229531c246818729660a48fdd0cdd",
+      "bytes": 2789
+    },
+    "El Oro/Machala/SERVIENTREGA.html": {
+      "sha256": "b35364fa288a0132d41b6925eac149ee3bf253aff5613e53029ec527ddf2a760",
+      "bytes": 10257
+    },
+    "El Oro/PACCHA/SERVIENTREGA.html": {
+      "sha256": "896a22df7de2181ea3e141515c50c10abae537dab0cec73deb70758e716cfd55",
+      "bytes": 2392
+    },
+    "El Oro/PUERTO BOLIVAR/SERVIENTREGA.html": {
+      "sha256": "89bb17f0f5d5af9122ed92fb8c8325831f76df3376b5df8ae395c7a0d2835867",
+      "bytes": 2436
+    },
+    "El Oro/Pasaje/SERVIENTREGA.html": {
+      "sha256": "6eb234e23d6d395623a4d805c99fb00a2d1fda5ca99f6cb28a9ca18c1d12dc59",
+      "bytes": 2755
+    },
+    "El Oro/Piñas/SERVIENTREGA.html": {
+      "sha256": "af04a7b35bef41274d8de75ae83c9e0612f307a22f787dc1840ae081b71eba02",
+      "bytes": 2455
+    },
+    "El Oro/Portovelo/SERVIENTREGA.html": {
+      "sha256": "2a20ea5265771f221ba13883a274a59a2553768d375509101ebb77cb87050df2",
+      "bytes": 2392
+    },
+    "El Oro/Santa Rosa/SERVIENTREGA.html": {
+      "sha256": "697f44528a2cdf0622096fc4e6d87b89bacb473e965b9c17f0bbf05f73dfeff0",
+      "bytes": 2848
+    },
+    "El Oro/Zaruma/SERVIENTREGA.html": {
+      "sha256": "58701226b63e664e413d164e0f40340e9d86507613da2ff4d2359c7a38f5c656",
+      "bytes": 2382
+    },
+    "Esmeraldas/Atacames/SERVIENTREGA.html": {
+      "sha256": "a7b97d4a2495f0b0b7f3585cea3f09ea8b7549d72216e8b253c7c2670e40d38f",
+      "bytes": 2424
+    },
+    "Esmeraldas/BORBON/SERVIENTREGA.html": {
+      "sha256": "aa0ebfdc82ef46ebff08544d3c323568621a6ea15b387ad29fdd8445e12772b5",
+      "bytes": 2389
+    },
+    "Esmeraldas/Esmeraldas/SERVIENTREGA.html": {
+      "sha256": "f6826e1a5295f7dc7f8ffd39ee06257bfe42f45976ce13e48cdd546141e22505",
+      "bytes": 4326
+    },
+    "Esmeraldas/LA CONCORDIA/SERVIENTREGA.html": {
+      "sha256": "f59f02d5a3854e7c7b4737fce5217ac06aaf47f2796c99e62af1e80d2bfd5f08",
+      "bytes": 2433
+    },
+    "Esmeraldas/LA UNION (QUININDE)/SERVIENTREGA.html": {
+      "sha256": "d867c0d46d11ec1a153ac1369df3b8c364761fa1cbbef2d14c03da1b5b02a03f",
+      "bytes": 2422
+    },
+    "Esmeraldas/LAGARTO/SERVIENTREGA.html": {
+      "sha256": "6f5b0e8256242e9a54a8af7c7e7fc28fbcfaedf2f55db8bb6c2ba6ad86aaa47e",
+      "bytes": 2399
+    },
+    "Esmeraldas/MOMPICHE/SERVIENTREGA.html": {
+      "sha256": "280831a475d96abe69375795bbc3fd47ace374453917a01fff2ed98b91f77ff6",
+      "bytes": 2435
+    },
+    "Esmeraldas/Muisne/SERVIENTREGA.html": {
+      "sha256": "010ec490fcc1fadd4c68fbea31da03d7d8810d0c418efd952faf114287c7e4d4",
+      "bytes": 2802
+    },
+    "Esmeraldas/Quinindé/SERVIENTREGA.html": {
+      "sha256": "6b16a6a12233baa4ec93d311dce997de38537ce6a885421f019b72526a3d69ae",
+      "bytes": 2403
+    },
+    "Esmeraldas/Rioverde/SERVIENTREGA.html": {
+      "sha256": "db63196b0d2a5794e69ade09e02fae15c89d6c5fe6954ca28806799d0a343cd8",
+      "bytes": 2407
+    },
+    "Esmeraldas/San Lorenzo/SERVIENTREGA.html": {
+      "sha256": "58a85414135ef12c21091612036c8611e23d3301cb2fa7ca5b4e34186206b753",
+      "bytes": 2429
+    },
+    "Esmeraldas/TONCHIGUE/SERVIENTREGA.html": {
+      "sha256": "4421ae8d062101234be5a92e30054611f787311cda2de6392767f671cfdb9ddd",
+      "bytes": 2408
+    },
+    "Esmeraldas/TONSUPA/SERVIENTREGA.html": {
+      "sha256": "b225894bd7c96c538a711a504876c3cc884dd82ef67370e505487dbd93f69b1d",
+      "bytes": 2400
+    },
+    "Esmeraldas/VICHE/SERVIENTREGA.html": {
+      "sha256": "38dae287deefcd78ac6f67a444df7d09a41c5877183763fe972554c9d5675896",
+      "bytes": 2403
+    },
+    "Galápagos/San Cristóbal/SERVIENTREGA.html": {
+      "sha256": "859d0288ea25f1ac13a827b65da8b1fd68dcd877a04fb9d3c5c825f425f11be2",
+      "bytes": 2420
+    },
+    "Galápagos/Santa Cruz/SERVIENTREGA.html": {
+      "sha256": "acc7518709280d6441984b4e4941d63ef4c6db96ba5301b6a7225da5717655f8",
+      "bytes": 2420
+    },
+    "Guayas/BUCAY/SERVIENTREGA.html": {
+      "sha256": "2847b1af70e3eabb25a4a2747676ac424ce494e9db1c504af3076b87acbada8f",
+      "bytes": 2368
+    },
+    "Guayas/Balzar/SERVIENTREGA.html": {
+      "sha256": "3882ed0ab5739c19518dbb746cb2f25f9bc59fefb5fa086a8022fdb67a0a54ba",
+      "bytes": 2382
+    },
+    "Guayas/Colimes/SERVIENTREGA.html": {
+      "sha256": "18d05dea801bb9f22890b822e0d1c19ea20745375c2a4a1d6a265c724da851a8",
+      "bytes": 2380
+    },
+    "Guayas/Coronel Marcelino Maridueña/SERVIENTREGA.html": {
+      "sha256": "1d07fc1895bcbaecf6d2ad3ef917955fcf16a90a3a16768c91644deb50fcce91",
+      "bytes": 2437
+    },
+    "Guayas/Daule/SERVIENTREGA.html": {
+      "sha256": "825b0784ebdb6d156edda5b8afd2531768b21ee3000b0571089b5ce46cfc8047",
+      "bytes": 4337
+    },
+    "Guayas/Durán/SERVIENTREGA.html": {
+      "sha256": "1692bba3a7e16f7b88ce40c2645b30261ac730b8e4f7d5827a63ae19fc1f222b",
+      "bytes": 4266
+    },
+    "Guayas/EL DESEO/SERVIENTREGA.html": {
+      "sha256": "443c86ff48385f9810fb20af31c89ccc1d16fbbdafe38268407f9d138e9fb13d",
+      "bytes": 2413
+    },
+    "Guayas/El Empalme/SERVIENTREGA.html": {
+      "sha256": "b2722507e682e99dd6b48e571c68578fb9b74635ae30f7ed101cb082d379e34a",
+      "bytes": 2831
+    },
+    "Guayas/El Triunfo/SERVIENTREGA.html": {
+      "sha256": "6bfff34f997432aced4ce0c9348ea42badbfc34b1ae51abca13d017ce6129910",
+      "bytes": 2433
+    },
+    "Guayas/Guayaquil/SERVIENTREGA.html": {
+      "sha256": "2feda22898f201857fae723bd3dfc2e2ab1a833d3ab82fe58fd6b6e6c4a52da7",
+      "bytes": 38557
+    },
+    "Guayas/Isidro Ayora/SERVIENTREGA.html": {
+      "sha256": "afbc882faacb775e9d339cfab2edbdabb1757d2230f2694b339dd5ad304d15a6",
+      "bytes": 2413
+    },
+    "Guayas/JUJAN/SERVIENTREGA.html": {
+      "sha256": "6eb6fb280eb522d7fb86980b97bf9b1eb88845a7d1efd1709598bc8b6ecfc6cc",
+      "bytes": 2423
+    },
+    "Guayas/LORENZO DE GARAICOA/SERVIENTREGA.html": {
+      "sha256": "dbc42425672e59eb807616b40c0befa0325cd9715bf1c0aa0caffd77b2c0f05e",
+      "bytes": 2439
+    },
+    "Guayas/Lomas de Sargentillo/SERVIENTREGA.html": {
+      "sha256": "7c1469bc19e1bc8e436b80bd56a939441387ac4868bdfdbae3eef4a4b20adcb6",
+      "bytes": 2414
+    },
+    "Guayas/Milagro/SERVIENTREGA.html": {
+      "sha256": "4b747e9f3513f79d769d618fbeb5882e45e4a656afab5a2e50a49a4e8f03e16a",
+      "bytes": 6342
+    },
+    "Guayas/Naranjal/SERVIENTREGA.html": {
+      "sha256": "c1ea928c657672755066b343927b82f127df0db223d3b99e6ec5c51bda6ec554",
+      "bytes": 2369
+    },
+    "Guayas/Naranjito/SERVIENTREGA.html": {
+      "sha256": "c3417015edd0d101c88848b3f604324f6e940782446cfd1198c15fa32864bea3",
+      "bytes": 2430
+    },
+    "Guayas/Nobol/SERVIENTREGA.html": {
+      "sha256": "34f14758a4ded371e6dd28ec8b0444cce98cb8fdedb7c5aa4c794c236c9cb873",
+      "bytes": 2424
+    },
+    "Guayas/POSORJA/SERVIENTREGA.html": {
+      "sha256": "5b367659c15597efb60fa757781295b2f4b4d92fcabb98a9eead5320fc796937",
+      "bytes": 2397
+    },
+    "Guayas/PROGRESO/SERVIENTREGA.html": {
+      "sha256": "c1b7f58e140133bec3ebfdb30216b6ea0240760c6cf3f3cc23bb323b0e5eda87",
+      "bytes": 2418
+    },
+    "Guayas/Palestina/SERVIENTREGA.html": {
+      "sha256": "e5454d347375bd203a42ebb9694270b2488b091a6a77ceee4e4b9b0feebcb8a8",
+      "bytes": 2400
+    },
+    "Guayas/Pedro Carbo/SERVIENTREGA.html": {
+      "sha256": "daeb2f3c1f0645765e82ed75b7dce9447a2f9f76cc5d0edfdc6a1264e940e8fb",
+      "bytes": 2404
+    },
+    "Guayas/Playas/SERVIENTREGA.html": {
+      "sha256": "39309e680eaf3b012771e784ce26020c3f38485fa64b98b9de24762e572bb651",
+      "bytes": 2750
+    },
+    "Guayas/ROBERTO ASTUDILLO/SERVIENTREGA.html": {
+      "sha256": "fd9a01f5d8de15baa8842f31947a287c12c94fc540f9c8536989ffaa8ceb2bf8",
+      "bytes": 2410
+    },
+    "Guayas/SAN CARLOS (BALAO)/SERVIENTREGA.html": {
+      "sha256": "345b0827b3ddb56f67f3f75d7e0b97b1772469278d79e898e7146da45bebca49",
+      "bytes": 2440
+    },
+    "Guayas/Salitre/SERVIENTREGA.html": {
+      "sha256": "87ddde10d896cd024fc3299bb2a1ae4ba4eb53fd2cb009ebceed1cf3f6ce30f0",
+      "bytes": 2375
+    },
+    "Guayas/Samborondón/SERVIENTREGA.html": {
+      "sha256": "9123d5e9b02d0264461ecb94904dd1773322fe51ee5d1d85d99948bc96ffaa31",
+      "bytes": 3995
+    },
+    "Guayas/San Jacinto de Yaguachi/SERVIENTREGA.html": {
+      "sha256": "5769605d9b32f6c540f646161e1b3c78c5169f1dcb5cda9b8690007af67e7407",
+      "bytes": 2369
+    },
+    "Guayas/Santa Lucía/SERVIENTREGA.html": {
+      "sha256": "526d4e6d4c7b3e9ab03d58a4feef6ee35fe4c2c81e053a2bec28955fbe2af610",
+      "bytes": 2444
+    },
+    "Guayas/Simón Bolívar/SERVIENTREGA.html": {
+      "sha256": "c77cbfd3b1d046b5a4550255d3ed7732c81dcde519b176771d97670a720fe0e2",
+      "bytes": 2406
+    },
+    "Guayas/TENGUEL/SERVIENTREGA.html": {
+      "sha256": "1dacc615376d2af6322dc81acc84bc990559a626f0e173ec7a702a9587ac47ea",
+      "bytes": 2377
+    },
+    "Guayas/VIRGEN DE FATIMA KM 26/SERVIENTREGA.html": {
+      "sha256": "bf91adb250ae5e461bff2f2370bdcc0763279872769035177858bc9d5322f187",
+      "bytes": 2436
+    },
+    "Imbabura/ATUNTAQUI/SERVIENTREGA.html": {
+      "sha256": "63dae3a3b010533d53b6fe7f32fafcc17df3c6989e3aa899bec239f237ecb684",
+      "bytes": 2779
+    },
+    "Imbabura/Cotacachi/SERVIENTREGA.html": {
+      "sha256": "5ff0b9f5c40e9ee2b1a77c9ed6c4ccf2d317d780f082dec947004180311070b6",
+      "bytes": 2432
+    },
+    "Imbabura/Ibarra/SERVIENTREGA.html": {
+      "sha256": "13c54aea5d41f7fa05e0195e8cf553c26815a66383054aad6e6eb9ca4dfb5b4e",
+      "bytes": 5315
+    },
+    "Imbabura/Otavalo/SERVIENTREGA.html": {
+      "sha256": "60ef49dc14db30774b14aeabffe7829b9a8e988a301f8f9e6d87e1f690274c54",
+      "bytes": 2789
+    },
+    "Imbabura/Pimampiro/SERVIENTREGA.html": {
+      "sha256": "c51aef3cf849e4cd1ec13c16796de60f5be3f06c7197632462f11a02b12e04ef",
+      "bytes": 2394
+    },
+    "Imbabura/SAN ANTONIO DE IBARRA/SERVIENTREGA.html": {
+      "sha256": "fae76e66d8127cb3578632fb0484b921ed89cc140dde5b5c57d8622b67fa1322",
+      "bytes": 2436
+    },
+    "Imbabura/San Miguel de Urcuquí/SERVIENTREGA.html": {
+      "sha256": "5d2791930517acc08fbd0d70bf240110d59739bd6d506c1d0ad265509258e355",
+      "bytes": 2398
+    },
+    "Loja/ALAMOR/SERVIENTREGA.html": {
+      "sha256": "f2c583a6963d7ad86a693b6112d829e02d4852bb379e6029cebd112d38cd0eb7",
+      "bytes": 2392
+    },
+    "Loja/CARIAMANGA/SERVIENTREGA.html": {
+      "sha256": "e4a145227f3d44ea77c74e2cc2f9c4315c319fbfd1bb944729d4abec7ca93199",
+      "bytes": 2413
+    },
+    "Loja/Catamayo/SERVIENTREGA.html": {
+      "sha256": "8bcb00b7627972b9e18a2c40f46758fbae18e1468c4227a324ab72b7fc646a7c",
+      "bytes": 2374
+    },
+    "Loja/Célica/SERVIENTREGA.html": {
+      "sha256": "b28eed47e49777958d44bfe940a370d37938f44edd7a6a7efd57ea57fd9742e3",
+      "bytes": 2383
+    },
+    "Loja/Gonzanamá/SERVIENTREGA.html": {
+      "sha256": "7ab38496aef36403a7bda2391cfa9e25f3954136dcdd5928719431ff9df2ff91",
+      "bytes": 2439
+    },
+    "Loja/Loja/SERVIENTREGA.html": {
+      "sha256": "c7d073975c078e11252dd55c41bb46bb7fb97ec4412072a0baba9d2f7e3952d9",
+      "bytes": 5725
+    },
+    "Loja/MALACATOS/SERVIENTREGA.html": {
+      "sha256": "deb3a7c79e9db96835c21ec7d00377e296da3729e8b72ebbbbd2d150f07d1bd5",
+      "bytes": 2405
+    },
+    "Loja/Macará/SERVIENTREGA.html": {
+      "sha256": "ec5f7b9eb8b3599fce91e2162b5c76ff1189f1f63292a02b011c6fca58801695",
+      "bytes": 2374
+    },
+    "Loja/Paltas/SERVIENTREGA.html": {
+      "sha256": "27694839dc9d2768a4388e6a8a22b4910c60f4517cf364cf7a0066d9376a154c",
+      "bytes": 2390
+    },
+    "Loja/Pindal/SERVIENTREGA.html": {
+      "sha256": "81dc9c40a28917e537019e21d1ff5ab0d311b6d71908a2c269a1ae200b50c40c",
+      "bytes": 2366
+    },
+    "Loja/Saraguro/SERVIENTREGA.html": {
+      "sha256": "05e39347f92f3a3ffd357ca83ea280a7e91ddb9d5989bf53785dfe5c9993e44e",
+      "bytes": 2423
+    },
+    "Loja/Sozoranga/SERVIENTREGA.html": {
+      "sha256": "4944703f46265a18316b15c166965e1a687b1498f9d29976072cecbf068a9fc6",
+      "bytes": 2411
+    },
+    "Loja/VILCABAMBA/SERVIENTREGA.html": {
+      "sha256": "20e9dc7cbcbbb5f17323a3d61a8b5dca4ef2f94124d32e6990c7d1b2ea247af9",
+      "bytes": 2410
+    },
+    "Loja/Zapotillo/SERVIENTREGA.html": {
+      "sha256": "4a7b9958259e95810da332d8177b78edfb9f8254bf7ffb81f1f64edd1f5cb894",
+      "bytes": 2380
+    },
+    "Los Ríos/Baba/SERVIENTREGA.html": {
+      "sha256": "2e2639dc492864d6108460a5f78b602f8df7141779b0e85a5ed8c71259d4a534",
+      "bytes": 2438
+    },
+    "Los Ríos/Babahoyo/SERVIENTREGA.html": {
+      "sha256": "56a083edd38ec304f6c8fa851406e08391af9d99beddc2c8652bcd2523fc97f3",
+      "bytes": 5087
+    },
+    "Los Ríos/Buena Fe/SERVIENTREGA.html": {
+      "sha256": "4c151b86cdd59b2d7e95274b5075c46bb94c912ec66653dfe333931e65e89970",
+      "bytes": 2413
+    },
+    "Los Ríos/ISLA DE BEJUCAL/SERVIENTREGA.html": {
+      "sha256": "b3481690d5cea207c25fc314e3ae46566197fb79dc9c95cb077560495866ffcd",
+      "bytes": 2448
+    },
+    "Los Ríos/LA 14 VIA EL PARAISO/SERVIENTREGA.html": {
+      "sha256": "74e2a6e201919fa93af6894105de6e1a5f5170b44a767fc7d51af45c222983cd",
+      "bytes": 2489
+    },
+    "Los Ríos/LA ESPERANZA/SERVIENTREGA.html": {
+      "sha256": "1901edabd31db26b3070b979328afbe8abdc02bb9937c258134ecdf2df2eebd3",
+      "bytes": 2448
+    },
+    "Los Ríos/LA UNION (BABAHOYO)/SERVIENTREGA.html": {
+      "sha256": "4d5dbd10114eaf319f79eb14f41519f5d3c6305a1741d4528044a4d7f2eb4672",
+      "bytes": 2458
+    },
+    "Los Ríos/MATA DE CACAO/SERVIENTREGA.html": {
+      "sha256": "ac09c7555714bc105993616451b30fb055c146c229a98b782d7de67aabefaf43",
+      "bytes": 2405
+    },
+    "Los Ríos/Mocache/SERVIENTREGA.html": {
+      "sha256": "7423c5c761fabce58844887526bb7420e8667af2f3ee62be9fdeffe2428a2fa5",
+      "bytes": 2415
+    },
+    "Los Ríos/Montalvo/SERVIENTREGA.html": {
+      "sha256": "31c7d1db6ed096feda926c5169d8c406ca7800bfdca636e46b1a14fcb5dc0aa5",
+      "bytes": 2418
+    },
+    "Los Ríos/PATRICIA PILAR/SERVIENTREGA.html": {
+      "sha256": "0be8b1c440934b158837512b1d5f9e9cd665a02eb06c88600beeec872aa8d748",
+      "bytes": 2425
+    },
+    "Los Ríos/Palenque/SERVIENTREGA.html": {
+      "sha256": "8430e5fc113c5099708dd254b2f58a7f96e1d3cf7fe9b5996ce931bd5789774c",
+      "bytes": 2435
+    },
+    "Los Ríos/Puebloviejo/SERVIENTREGA.html": {
+      "sha256": "54343500c6d654864baaf9adcb1059ed5d22d01854ad54c597055aee4b1935a4",
+      "bytes": 2440
+    },
+    "Los Ríos/Quevedo/SERVIENTREGA.html": {
+      "sha256": "b095d597757a8a7e6348c95c0ad9b83cc6d385b9887bd041880498aeec1c5c02",
+      "bytes": 5178
+    },
+    "Los Ríos/Quinsaloma/SERVIENTREGA.html": {
+      "sha256": "2070494077c84112ad66d5529223ff0f89e8d55b00a778273ecf51c23bc56a95",
+      "bytes": 2420
+    },
+    "Los Ríos/SAN CAMILO/SERVIENTREGA.html": {
+      "sha256": "21bb67034a5428d959cfec977126dd12251afdd2605c1d83236eb9c4224c0f64",
+      "bytes": 2376
+    },
+    "Los Ríos/SAN JOSE DEL TAMBO/SERVIENTREGA.html": {
+      "sha256": "181084db3321f6162ea0b74bea915fb3fcfab739873f70e2f3e76dcc0803ab9d",
+      "bytes": 2447
+    },
+    "Los Ríos/SAN JUAN/SERVIENTREGA.html": {
+      "sha256": "8aca3bc4e5a8d1fa5325bdf1f36231be96fa519182d61b229eb0297d97e97bdb",
+      "bytes": 2468
+    },
+    "Los Ríos/Urdaneta/SERVIENTREGA.html": {
+      "sha256": "c8f295c7fe59e0ffd03edc17045c4103f809591f47b1e4c531e313fbf168e90e",
+      "bytes": 2408
+    },
+    "Los Ríos/Valencia/SERVIENTREGA.html": {
+      "sha256": "3bb6e0aab6cb08e54d148d61369b17f2bea15c16dddd3a01979f4920b0f6b36c",
+      "bytes": 2489
+    },
+    "Los Ríos/Ventanas/SERVIENTREGA.html": {
+      "sha256": "248ffac87c4452f1db9f2218d0d6038c20401152acfd4e7a509bc53a105b5512",
+      "bytes": 2477
+    },
+    "Los Ríos/Vinces/SERVIENTREGA.html": {
+      "sha256": "89811f4221e0600f1113a5e0f285c29d8306ab767c62bba77286c0874e5415bd",
+      "bytes": 3220
+    },
+    "Manabí/24 de Mayo/SERVIENTREGA.html": {
+      "sha256": "25fea4474a159550fc978889a2ec47554ecb56517ed176507d7cab4f2410d596",
+      "bytes": 2410
+    },
+    "Manabí/BAHIA DE CARAQUEZ/SERVIENTREGA.html": {
+      "sha256": "dc5ebf6188117ce0fe491c3648032860d8c4f1d66b79c4386e4265587f986ee4",
+      "bytes": 2441
+    },
+    "Manabí/CALCETA/SERVIENTREGA.html": {
+      "sha256": "1c53e77a0e007eb0aadc8d3cd99ff5877a22b91ce1b85eea267b456600233821",
+      "bytes": 2384
+    },
+    "Manabí/CALDERON (MANABI)/SERVIENTREGA.html": {
+      "sha256": "d55237f6b9abfea4ac4608b471984676e539af1fa8a763d13dc0d36387761ba6",
+      "bytes": 2440
+    },
+    "Manabí/CASCOL/SERVIENTREGA.html": {
+      "sha256": "10983784665ace3e0f02a1dbaa8286e4eb1b2653647c100c260b056ffdca1950",
+      "bytes": 2431
+    },
+    "Manabí/CHARAPOTO/SERVIENTREGA.html": {
+      "sha256": "2685994832ebe8455a9536f8ae31091c04fd32612cc300df3d935ac2541f0e8a",
+      "bytes": 2400
+    },
+    "Manabí/Chone/SERVIENTREGA.html": {
+      "sha256": "070c1099948990cc2042cc2111bcbd6e640a96d2fe5580c339e69b2c7b7cd6b1",
+      "bytes": 2744
+    },
+    "Manabí/El Carmen/SERVIENTREGA.html": {
+      "sha256": "05ed54f8bc911694b3c1e648744cdc6c21d523b4160d3d02d65d46b2ad2e9ab4",
+      "bytes": 2412
+    },
+    "Manabí/Flavio Alfaro/SERVIENTREGA.html": {
+      "sha256": "b17b975ab05620cbd6485f298d796531c69b6e65ddd578f3ca26462c98625e0b",
+      "bytes": 2410
+    },
+    "Manabí/Jaramijó/SERVIENTREGA.html": {
+      "sha256": "449cdec5054bd54e5bd2bdc4515197a1108719fb108781a4cb814b7323f8e790",
+      "bytes": 2432
+    },
+    "Manabí/Jipijapa/SERVIENTREGA.html": {
+      "sha256": "03bdd0768e37b352d8466dde49b39f2f52b97a3970a23b8e871fa8db0ce8ce04",
+      "bytes": 2449
+    },
+    "Manabí/Junín/SERVIENTREGA.html": {
+      "sha256": "fe5c117791cb0ccb88e1363c526f0289c1f502268f8c2f8056010552f4166fd4",
+      "bytes": 2391
+    },
+    "Manabí/Manta/SERVIENTREGA.html": {
+      "sha256": "9a6c71d60d2f3148765d79a4aad69636d94b8497154b8f63f2348a9c31c3db74",
+      "bytes": 5953
+    },
+    "Manabí/Montecristi/SERVIENTREGA.html": {
+      "sha256": "bdc57d9d02f3c1c62c5166eb029d261fc669afd321895657b718e27d7503d214",
+      "bytes": 3166
+    },
+    "Manabí/Olmedo/SERVIENTREGA.html": {
+      "sha256": "cf6d2a903d7f4a5b801add057be0236a85edd1eb5fe84785b03a27dc915ba2cc",
+      "bytes": 2428
+    },
+    "Manabí/Paján/SERVIENTREGA.html": {
+      "sha256": "9c1fe23269c6e5ca91f238b5cd1e8bee4e5ff3e607b9aa46792c53d1c675e4c0",
+      "bytes": 2406
+    },
+    "Manabí/Pedernales/SERVIENTREGA.html": {
+      "sha256": "5b6e6feaba6e3486a63e1732d1def6a9cd21e7a4536ba48cc9ef1158bdc5a536",
+      "bytes": 2428
+    },
+    "Manabí/Pichincha/SERVIENTREGA.html": {
+      "sha256": "362490475cc77c8aa0a85b94794bc10250cce5352b38639c5e0fd40ea5b47558",
+      "bytes": 2388
+    },
+    "Manabí/Portoviejo/SERVIENTREGA.html": {
+      "sha256": "54a581b7dd39494aeda64bf3de29890bd85477f316281634c82c07c654bd0a47",
+      "bytes": 5408
+    },
+    "Manabí/Puerto López/SERVIENTREGA.html": {
+      "sha256": "9d7e77843113ff73bb00d5a71ba2f5e9f9da83124e348143e7b1aac457320d72",
+      "bytes": 2421
+    },
+    "Manabí/Rocafuerte/SERVIENTREGA.html": {
+      "sha256": "7f5d053ebeb35cd94481dc27c34f8abd13171da96fd98116c76c774983a6fd1a",
+      "bytes": 2381
+    },
+    "Manabí/SAN ISIDRO (BAHIA)/SERVIENTREGA.html": {
+      "sha256": "9df7b0f8c4037d944c716f4aa83389b760feb6b50e8c58ce8b5d140bf6701f81",
+      "bytes": 2458
+    },
+    "Manabí/SAN PLACIDO/SERVIENTREGA.html": {
+      "sha256": "be9eceeda285a9fb7518799569f99e4dccc34fd71b485eae54d4c96389ebe2e4",
+      "bytes": 2430
+    },
+    "Manabí/San Vicente/SERVIENTREGA.html": {
+      "sha256": "50750a53878317a03cc64481dd98b67aa0b489a03a81369ad0831950a3e1bff9",
+      "bytes": 2427
+    },
+    "Manabí/Santa Ana/SERVIENTREGA.html": {
+      "sha256": "48346902068162c01f8c390b7f7353db4ed2e1b19217f1cd3e83721ab3c56417",
+      "bytes": 2477
+    },
+    "Manabí/Tosagua/SERVIENTREGA.html": {
+      "sha256": "7c12f2c9b35467000a409d7306eb879e7b0e98bdafc73abb45db091a4d4fa3bb",
+      "bytes": 2391
+    },
+    "Morona Santiago/Gualaquiza/SERVIENTREGA.html": {
+      "sha256": "d565598a5d891c4e01595b9eb8353b2b4ecf278f6840d2fc5707b762dc8ecc01",
+      "bytes": 2474
+    },
+    "Morona Santiago/Limón Indanza/SERVIENTREGA.html": {
+      "sha256": "129fa913640ea7296f625ee28a1262fdee7aa1499c6a58c4a68c73c15fc92758",
+      "bytes": 2434
+    },
+    "Morona Santiago/MACAS/SERVIENTREGA.html": {
+      "sha256": "686c6eeea76d9080ff7369af015c380216d3fa22d8b1290a69afaecb816f890c",
+      "bytes": 2388
+    },
+    "Morona Santiago/Sucúa/SERVIENTREGA.html": {
+      "sha256": "41cfa12dfdc8abe9582b5d76114b502503b36638fb56d92c93ab09306c4b7f0f",
+      "bytes": 2391
+    },
+    "Napo/Archidona/SERVIENTREGA.html": {
+      "sha256": "b421f05b4df683d9003d2e0cd8b23d31bd714e3768fccbf4d6453368cd2b1ed2",
+      "bytes": 2409
+    },
+    "Napo/BAEZA/SERVIENTREGA.html": {
+      "sha256": "b8819bbb058c3bb489c7fcb405b94b30af1ec622333e9ee3f6ba47890849c67b",
+      "bytes": 2380
+    },
+    "Napo/Tena/SERVIENTREGA.html": {
+      "sha256": "2abce6e6823f7e1066c417826607136140be164d71c788c61d50f2bcc0dfcdc8",
+      "bytes": 2368
+    },
+    "Orellana/EL COCA/SERVIENTREGA.html": {
+      "sha256": "0042d1fb358140362dca28f29c4d258342694be99e38dfffdda84e9252f50db8",
+      "bytes": 2391
+    },
+    "Orellana/La Joya de los Sachas/SERVIENTREGA.html": {
+      "sha256": "131d6200a81f7601db98f8398852c802ccaee804d70cd553e35f7c59e7d09510",
+      "bytes": 2432
+    },
+    "Orellana/Loreto/SERVIENTREGA.html": {
+      "sha256": "8dc81e573d8825b21d684a1e6638f4a8e470d45f2b02c2ac85f87114a6d247c2",
+      "bytes": 2409
+    },
+    "Pastaza/PUYO/SERVIENTREGA.html": {
+      "sha256": "24f744fe7690afc139bd013d88c46e400f41266766fc7b1f1f7630081940234f",
+      "bytes": 2742
+    },
+    "Pichincha/ALOAG/SERVIENTREGA.html": {
+      "sha256": "9a29d0fa9c65d7947724af1996d715d53af012b3012a7bfe6678ac8939088d62",
+      "bytes": 2393
+    },
+    "Pichincha/ASCAZUBI/SERVIENTREGA.html": {
+      "sha256": "1a265b636929545f8d39b9c4d378e4bb0144c0133059c4d6979adbbd8f6903ef",
+      "bytes": 2409
+    },
+    "Pichincha/Cayambe/SERVIENTREGA.html": {
+      "sha256": "fd8dda0bc62aa5a1e1530dfa2ee54b2d5cd716143a4f89d5261bc78d98e52065",
+      "bytes": 3135
+    },
+    "Pichincha/LA SEXTA/SERVIENTREGA.html": {
+      "sha256": "9279ae9ba8c36141cbd67ee3f5312888fab0b9356bb671df309135093caf10f3",
+      "bytes": 2380
+    },
+    "Pichincha/MACHACHI/SERVIENTREGA.html": {
+      "sha256": "c9c21e98c87cde6f6dc87155806fbbec9f552f96ec268ee76e12994df984f03f",
+      "bytes": 2414
+    },
+    "Pichincha/NANEGALITO/SERVIENTREGA.html": {
+      "sha256": "213c7835ecfc5be0c21dda9e17d394eb6094bdaa93e5b3df1c3d25beada2e0a7",
+      "bytes": 2396
+    },
+    "Pichincha/Pedro Vicente Maldonado/SERVIENTREGA.html": {
+      "sha256": "f861cc3ce66bb6c9c31ec2d20bb461aa50ab40f9356c7f7c542f733e3b725e68",
+      "bytes": 2442
+    },
+    "Pichincha/Puerto Quito/SERVIENTREGA.html": {
+      "sha256": "3d3bf664e3edd24446f54a80083975a28d9c6a7eb37030314d09038d4c0c538d",
+      "bytes": 2405
+    },
+    "Pichincha/Quito/SERVIENTREGA.html": {
+      "sha256": "7f7e831ad56400db5e7e470a95403c3460673420f2bda5d9b1c7fdb739fbbdb0",
+      "bytes": 53448
+    },
+    "Pichincha/SANGOLQUI/SERVIENTREGA.html": {
+      "sha256": "c6dadf8caf50f69af3c7d6f59b7cec14111392075f0f01b3873d1059edf4bf17",
+      "bytes": 4160
+    },
+    "Pichincha/San Miguel de los Bancos/SERVIENTREGA.html": {
+      "sha256": "09af6a25bdfa98f7c175a4b63ca423b7c42ac8ead92b32c79bb4e9d309f37b4c",
+      "bytes": 2439
+    },
+    "Pichincha/TABACUNDO/SERVIENTREGA.html": {
+      "sha256": "ad774a86aad765f066e172f8983a6d2fa91c624c5d1db11725df0d199fa7f856",
+      "bytes": 2421
+    },
+    "Pichincha/TAMBILLO/SERVIENTREGA.html": {
+      "sha256": "4a56317d4b8ba7abfcbdc64a145a11842da0c27b6ec22c8ad5986041c46062be",
+      "bytes": 2395
+    },
+    "Santa Elena/ANCON/SERVIENTREGA.html": {
+      "sha256": "6f72fe62f22eb645eeb54d4ef3e799ec83350905d0a856893f6bc51ce1ba7b57",
+      "bytes": 2392
+    },
+    "Santa Elena/CHANDUY/SERVIENTREGA.html": {
+      "sha256": "303702a6521979f8a4efda94e72a65db1c836cace78f60d4517f2fa06ef49ca5",
+      "bytes": 2402
+    },
+    "Santa Elena/La Libertad/SERVIENTREGA.html": {
+      "sha256": "f2f95d867aef9f2cb5863fbdcc5deb0150a5a09c12944a37d782f3ac0f763993",
+      "bytes": 4132
+    },
+    "Santa Elena/MANGLARALTO/SERVIENTREGA.html": {
+      "sha256": "2ebd96a122ab899da081ff97db3af500fe2b6aee79638a850696bd204b1451cf",
+      "bytes": 2401
+    },
+    "Santa Elena/MONTANITA/SERVIENTREGA.html": {
+      "sha256": "fdeb5ac1f0bb1822642873d3e2bf60ba0cbb4c4264222ea622df7e9d7e6abd88",
+      "bytes": 2461
+    },
+    "Santa Elena/MUEY/SERVIENTREGA.html": {
+      "sha256": "75df3750ac14355177eb5e1630c91429e71cf839abc806907d286ef425f45d5e",
+      "bytes": 2416
+    },
+    "Santa Elena/SAN PABLO (SANTA ELENA)/SERVIENTREGA.html": {
+      "sha256": "499b1160d8306da46db071d6f223bce9c2b34e0fa7122cd84664cead5d83cd9d",
+      "bytes": 2491
+    },
+    "Santa Elena/SAN PEDRO/SERVIENTREGA.html": {
+      "sha256": "a8c95de13111ade074f8fff954d90bf366adcb19e096fb80c6732d82ba9e740b",
+      "bytes": 2448
+    },
+    "Santa Elena/Salinas/SERVIENTREGA.html": {
+      "sha256": "72cd8fc1bfb197f853db236ffc059db6fead36709b5a47af160df0b0cdf6cfca",
+      "bytes": 2913
+    },
+    "Santa Elena/Santa Elena/SERVIENTREGA.html": {
+      "sha256": "cd56ce6d3aa9b5789e1858f339a66c45a1fcdbfd9e7f04eb2a88524e812b4d4b",
+      "bytes": 2812
+    },
+    "Santo Domingo de los Tsáchilas/Santo Domingo/SERVIENTREGA.html": {
+      "sha256": "e4c2b01f8ce3449228f9471e983c016335044aeab24be062326fed934d2a16f2",
+      "bytes": 5968
+    },
+    "Sucumbíos/Cascales/SERVIENTREGA.html": {
+      "sha256": "92231337d2174ca0be3930333abbe1f61b617bd8ad1aa8309c993f7204d2fd1f",
+      "bytes": 2398
+    },
+    "Sucumbíos/LUMBAQUI/SERVIENTREGA.html": {
+      "sha256": "5bd8c909271f1b13800cd48a7ffcaeb9e410e81a59e48a7e807cec8604e5109a",
+      "bytes": 2406
+    },
+    "Sucumbíos/Lago Agrio/SERVIENTREGA.html": {
+      "sha256": "0bb2a2374bb0ce6e086b0eb90c53f34ea6994cc1b01245d8f87fa0d44c043b70",
+      "bytes": 2782
+    },
+    "Sucumbíos/PACAYACU/SERVIENTREGA.html": {
+      "sha256": "ceda8f419205bf951678dda96aeddcc874a89aa9375974281a672bbc675bee0d",
+      "bytes": 2388
+    },
+    "Sucumbíos/Shushufindi/SERVIENTREGA.html": {
+      "sha256": "1fadce8cc927d0557d6e16615f22a3d2dc515774453d702926835a8a13a45f44",
+      "bytes": 2406
+    },
+    "Sucumbíos/TARAPOA/SERVIENTREGA.html": {
+      "sha256": "2ebdc55d31d27ccfb56d70cb34a540d66e76f909546e871a7b43cc62ff76bb90",
+      "bytes": 2394
+    },
+    "Tungurahua/Ambato/SERVIENTREGA.html": {
+      "sha256": "a0ff131b90acb460dae3b4e9f2fe0bada8ae4244dd4c2626af80eed03480b26e",
+      "bytes": 9031
+    },
+    "Tungurahua/Baños de Agua Santa/SERVIENTREGA.html": {
+      "sha256": "9bf4c86528d11d14bebccba4b691aa8d7148034b48bac07eddd208fbe4f80d24",
+      "bytes": 2393
+    },
+    "Tungurahua/Cevallos/SERVIENTREGA.html": {
+      "sha256": "ac397b80b10a5a2f750f1badb8537e8c67842523daa54b9afb06acf1587d54c8",
+      "bytes": 2408
+    },
+    "Tungurahua/Patate/SERVIENTREGA.html": {
+      "sha256": "821900d528a813ab1c4dc16ee307b3613f6d30f60ba729d2faec312ec346e553",
+      "bytes": 2385
+    },
+    "Tungurahua/QUISAPINCHA/SERVIENTREGA.html": {
+      "sha256": "b3c49255fb67c497922f8db4677624dd1120c3afde6e2c8d5bd6ed043baebba0",
+      "bytes": 2426
+    },
+    "Tungurahua/Quero/SERVIENTREGA.html": {
+      "sha256": "11b37ce654ddde3e2c0debbf37a64132c283f500ab32b2133c78c890343b8f8d",
+      "bytes": 2392
+    },
+    "Tungurahua/San Pedro de Pelileo/SERVIENTREGA.html": {
+      "sha256": "13e343154c8cbfdfc53169754eb2e8bc8bac4325183f6d6f5644ce0c3819669a",
+      "bytes": 2412
+    },
+    "Tungurahua/Santiago de Píllaro/SERVIENTREGA.html": {
+      "sha256": "1479aecf42c4ce7c1e82b5508054bb4f54ebffd30657de462656f08b95d961e3",
+      "bytes": 2430
+    },
+    "Tungurahua/Tisaleo/SERVIENTREGA.html": {
+      "sha256": "33cce7d41be140f7b7bcd8de68ba5bc4e5fb8b3065a23e8d87d0cb5c74656c62",
+      "bytes": 2400
+    },
+    "Zamora Chinchipe/El Pangui/SERVIENTREGA.html": {
+      "sha256": "5784e36a6ade3477bc11056acb0f453d257a27868c89df8d1062afa6ac6e93f7",
+      "bytes": 2434
+    },
+    "Zamora Chinchipe/GUAYZIMI/SERVIENTREGA.html": {
+      "sha256": "2dd929ee6d5d36de408cb549b5272975ae084203dae0d8f9a8a26428a4748799",
+      "bytes": 2374
+    },
+    "Zamora Chinchipe/PAQUIZHA/SERVIENTREGA.html": {
+      "sha256": "0cf750636eef85d7f578e4f79c0965dc9bf34babe27e03d6a35828c4d20c1f4f",
+      "bytes": 2418
+    },
+    "Zamora Chinchipe/Palanda/SERVIENTREGA.html": {
+      "sha256": "7bdbd8480805ee96a55d413f222fa36f99f4eae12f0292962c9c46abccf58003",
+      "bytes": 2403
+    },
+    "Zamora Chinchipe/Yantzaza/SERVIENTREGA.html": {
+      "sha256": "9e7044f67a87b86c75e2a11d34cdc12ad606fbc07e54280235206c49767fd7ed",
+      "bytes": 2407
+    },
+    "Zamora Chinchipe/ZUMBA/SERVIENTREGA.html": {
+      "sha256": "4a2463e53d77113e6e21d33cdfc779dab3ea6b45241bb59013f0d8c0de96b85f",
+      "bytes": 2419
+    },
+    "Zamora Chinchipe/ZUMBI/SERVIENTREGA.html": {
+      "sha256": "22135e82ae211cc8892b810e4a73640cd1c9086f103f2c589e2afa941d777236",
+      "bytes": 2423
+    },
+    "Zamora Chinchipe/Zamora/SERVIENTREGA.html": {
+      "sha256": "30c4312f72ffb92b6fa67e74f86350aea99518f586a3da906f83a85e14dfcd54",
+      "bytes": 2419
+    }
+  }
+}

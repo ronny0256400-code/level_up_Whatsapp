@@ -1,6 +1,8 @@
 'use strict';
 const { memorySheets } = require('../../lib/v2-storage');
-const HEADERS = ['ID-PRODUCTO','PRODUCTO','CAPACIDAD','COLOR','STOCK','PRECIO','INFORMACION DEL PRODUCTO'];
+const HEADERS = ['ID-PRODUCTO','PRODUCTO','CAPACIDAD','RAM','COLOR','STOCK','PRECIO','INFORMACION DEL PRODUCTO'];
+// Archived fixtures retain their original seven-column literals; adapt only test data.
+const legacyStockRow = row => !row.length || row[0] === 'ID-PRODUCTO' ? row : [...row.slice(0,3), '', ...row.slice(3)];
 const PRODUCTS = [
   ['EQUIPO','Equipo de prueba','32 GB','plateado',20,100,'Equipo de prueba'],
   ['IPADAIR1-32-PLA','iPad Air 1','32 GB','plateado',20,100,'Para lectura; incluye cable'],
@@ -10,10 +12,10 @@ function seedInventory(sheets, products = PRODUCTS) {
   // memorySheets applies updates synchronously and returns fulfilled promises.
   const updates = [
     sheets.spreadsheets.values.update({range:'DATOS!L2:R',requestBody:{values:products}}),
-    sheets.spreadsheets.values.update({range:"'PAGINA DE STOCK'!A2:G",requestBody:{values:[HEADERS,...products,...Array.from({length:Math.max(0,100-products.length)},()=>Array(7).fill(''))]}}),
+    sheets.spreadsheets.values.update({range:"'PAGINA DE STOCK'!A2:H",requestBody:{values:[HEADERS,...products.map(legacyStockRow),...Array.from({length:Math.max(0,100-products.length)},()=>Array(8).fill(''))]}}),
     sheets.spreadsheets.values.update({range:"'REGISTRO DE VENTAS'!A5:W24",requestBody:{values:Array.from({length:20},(_,i)=>Array.from({length:23},(_,col)=>[15,16,17,19,20,22].includes(col)?`=FORMULA_${col}(${i+5})`:''))}})
   ];
   return Promise.all(updates);
 }
 function inventoryFixture() { const sheets=memorySheets();const ready=seedInventory(sheets);return {sheets,ready}; }
-module.exports={HEADERS,PRODUCTS,seedInventory,inventoryFixture};
+module.exports={legacyStockRow,HEADERS,PRODUCTS,seedInventory,inventoryFixture};
