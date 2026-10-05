@@ -24,12 +24,14 @@ function createApp({
   fetchImpl = globalThis.fetch,
   interpret,
   v4Interpret,
+  v5Interpret,
   store: injectedStore,
   resources: injectedResources,
   wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
 } = {}) {
   const testMode = env.TEST_MODE === "true";
-  const useV4 = env.USE_V4 === "true";
+  const useV5 = env.USE_V5 === "true";
+  const useV4 = useV5 || env.USE_V4 === "true";
   if (!sheets) {
     if (testMode) sheets = memorySheets();
     else {
@@ -202,7 +204,18 @@ function createApp({
         resources,
         ycloud,
         wait,
-        interpret: v4Interpret,
+        interpret: useV5
+          ? v5Interpret ||
+            require("./lib/v5-seller").createInterpreter(openai, env)
+          : v4Interpret,
+        flowFactory: useV5
+          ? (options) =>
+              require("./lib/v5-seller").createFlow({
+                ...options,
+                agencies,
+                answer: require("./lib/v5-seller").createAnswer(openai, env),
+              })
+          : undefined,
         log: (diagnostic) => console.warn("V4 diagnostic", diagnostic),
       })
     : null;
@@ -374,6 +387,7 @@ function createApp({
     v4,
     drainV4,
     useV4,
+    useV5,
   };
 }
 if (require.main === module) {

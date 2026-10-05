@@ -9,13 +9,14 @@
     "check": "node scripts/check-syntax.js",
     "test:integrations": "node scripts/test-integrations.js",
     "test:ycloud": "node --test scripts/test-ycloud-webhook.js scripts/test-ycloud-audio.js",
-    "test": "node --test scripts/test-v1.js scripts/test-venta-real.js scripts/test-ciclo-administrativo.js scripts/test-ycloud-webhook.js scripts/test-v2-policy.js scripts/test-v2-runtime.js scripts/test-ai-orchestrator.js scripts/test-ai-sandbox.js scripts/test-ai-worker-antigravity.js scripts/test-ai-manual.js scripts/test-v2-inventory.js scripts/test-v2-guia.js scripts/test-v2-diagnostics.js scripts/test-ycloud-audio.js scripts/test-confirmacion-guia.js scripts/test-admin-notice.js scripts/test-confirmacion-deterministica.js scripts/test-flujo-progresivo.js scripts/test-v25.js scripts/test-v25-final.js scripts/test-v25-hotfix.js scripts/test-sales.js scripts/test-sales-webhook.js scripts/test-v4.js",
+    "test": "node --test scripts/test-v1.js scripts/test-venta-real.js scripts/test-ciclo-administrativo.js scripts/test-ycloud-webhook.js scripts/test-v2-policy.js scripts/test-v2-runtime.js scripts/test-ai-orchestrator.js scripts/test-ai-sandbox.js scripts/test-ai-worker-antigravity.js scripts/test-ai-manual.js scripts/test-v2-inventory.js scripts/test-v2-guia.js scripts/test-v2-diagnostics.js scripts/test-ycloud-audio.js scripts/test-confirmacion-guia.js scripts/test-admin-notice.js scripts/test-confirmacion-deterministica.js scripts/test-flujo-progresivo.js scripts/test-v25.js scripts/test-v25-final.js scripts/test-v25-hotfix.js scripts/test-sales.js scripts/test-sales-webhook.js scripts/test-v4.js scripts/test-v5.js",
     "test:v2": "node --test scripts/test-v2-policy.js scripts/test-v2-runtime.js scripts/test-v2-inventory.js scripts/test-v2-guia.js scripts/test-v2-diagnostics.js scripts/test-ycloud-audio.js scripts/test-confirmacion-guia.js scripts/test-admin-notice.js scripts/test-confirmacion-deterministica.js scripts/test-flujo-progresivo.js scripts/test-v25.js scripts/test-v25-final.js scripts/test-v25-hotfix.js",
     "test:legacy": "node --test scripts/test-v1.js scripts/test-venta-real.js scripts/test-ciclo-administrativo.js scripts/test-ycloud-webhook.js scripts/test-v2-policy.js scripts/test-v2-runtime.js scripts/test-ai-orchestrator.js scripts/test-ai-sandbox.js scripts/test-ai-worker-antigravity.js scripts/test-ai-manual.js scripts/test-v2-inventory.js scripts/test-v2-guia.js scripts/test-v2-diagnostics.js scripts/test-ycloud-audio.js scripts/test-confirmacion-guia.js scripts/test-admin-notice.js scripts/test-confirmacion-deterministica.js scripts/test-flujo-progresivo.js scripts/test-v25.js scripts/test-v25-final.js scripts/test-v25-hotfix.js",
     "test:sales": "node --test scripts/test-sales.js scripts/test-sales-webhook.js",
     "test:v25": "node --test scripts/test-v25.js scripts/test-v25-final.js scripts/test-v25-hotfix.js",
     "audit:resources": "node scripts/audit-sales-resources.js",
-    "test:v4": "node --test scripts/test-v4.js"
+    "test:v4": "node --test scripts/test-v4.js",
+    "test:v5": "node --test scripts/test-v5.js"
   },
   "engines": {
     "node": ">=18"
