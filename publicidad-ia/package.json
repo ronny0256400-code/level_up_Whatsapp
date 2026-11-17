@@ -9,6 +9,7 @@
   },
   "private": true,
   "dependencies": {
+    "@fal-ai/client": "^1.11.0",
     "@remotion/cli": "4.0.544",
     "react": "19.3.1",
     "react-dom": "19.3.1",
@@ -26,7 +27,11 @@
     "dev": "remotion studio",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src && tsc",
+    "fal:check": "node --use-env-proxy --disable-warning=UNDICI-EHPA --env-file-if-exists=.env fal/cli.mjs check",
+    "fal:estimate": "node --use-env-proxy --disable-warning=UNDICI-EHPA --env-file-if-exists=.env fal/cli.mjs estimate",
+    "fal:generate": "node --use-env-proxy --disable-warning=UNDICI-EHPA --env-file-if-exists=.env fal/cli.mjs generate",
+    "fal:ledger": "node --use-env-proxy --disable-warning=UNDICI-EHPA --env-file-if-exists=.env fal/cli.mjs ledger"
   },
   "allowScripts": {
     "esbuild": false
