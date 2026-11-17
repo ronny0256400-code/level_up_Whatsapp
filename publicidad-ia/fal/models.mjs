@@ -87,6 +87,6 @@ export function buildInput(model, job) {
     if (!model.endImageField) throw new Error(`${model.id} no admite fotograma final`);
     input[model.endImageField] = job.endImage;
   }
-  if (model.id.includes("kling") || model.id.includes("veo")) input.negative_prompt = NEGATIVE;
+  if (model.id.includes("kling") || model.id.includes("veo")) input.negative_prompt = job.negative ?? NEGATIVE;
   return input;
 }

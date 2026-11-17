@@ -58,5 +58,15 @@ export const SCENES = [
   },
 ];
 
+/** Prueba autorizada (2026-11-17): cierre de 5 s = 3 s de video IA + 2 s de marca en Remotion. */
+export const CLOSING_TEST = {
+  n: "cierre", name: "Cierre: café premium + funda", model: "klingEco", duration: 5,
+  keyframe: "Vertical 9:16 hyperrealistic cinematic coffee commercial still. A freshly brewed cup of black coffee in an elegant clear glass cup on a dark walnut table, rich crema, delicate visible steam rising, warm golden side light from a window on the left, dark warm brown background with soft bokeh, premium and elegant mood. The cup sits on the left third of the frame; the right half of the table is empty, clean and softly lit, reserved for a product. Shallow depth of field, shot on ARRI Alexa with a 65mm lens, natural color grade in charcoal black, coffee brown, warm gold and beige. No text, no logos, no packaging.",
+  // El fotograma inicial del video es el keyframe con la funda REAL compuesta encima.
+  startImage: "keyframe_composite.jpg",
+  motion: "Locked-off tripod shot, completely static camera. Delicate steam rises naturally from the coffee cup and drifts in the warm light. A relaxed human hand enters gently from the left edge and rests its fingers around the cup, lifting it a few millimeters and setting it back down naturally. The coffee pouch on the right stays perfectly still and unchanged. Subtle flicker of warm window light. Photorealistic, premium coffee commercial, natural physics.",
+  negative: "text, letters, new logos, warping, morphing, deformed packaging, deformed hands, extra fingers, camera movement, zoom, flicker, cartoon, CGI look, plastic texture",
+};
+
 /** Prueba inicial propuesta: escena 4 (sin personas, prueba realismo macro). */
 export const FIRST_TEST = { scene: 4 };

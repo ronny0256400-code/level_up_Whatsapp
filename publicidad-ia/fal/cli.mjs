@@ -12,7 +12,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { fal } from "@fal-ai/client";
 import { MODELS, billableUnits, buildInput } from "./models.mjs";
-import { SCENES, FIRST_TEST } from "./storyboard.mjs";
+import { SCENES, FIRST_TEST, CLOSING_TEST } from "./storyboard.mjs";
 import {
   appendLedger, assertAffordable, budget, catalogStatus, estimate,
   readLedger, unitPrices, updateLedger, usd,
@@ -30,7 +30,7 @@ const opt = (n) => {
 };
 
 const sceneById = (id) => {
-  const s = SCENES.find((x) => String(x.n) === String(id));
+  const s = [...SCENES, CLOSING_TEST].find((x) => String(x.n) === String(id));
   if (!s) throw new Error(`Escena desconocida: ${id}`);
   return s;
 };
@@ -41,7 +41,7 @@ function jobsFor(scene) {
   const jobs = [];
   if (scene.keyframe) jobs.push({ step: "keyframe", model: MODELS.keyframe, prompt: scene.keyframe });
   if (scene.endKeyframe) jobs.push({ step: "endKeyframe", model: MODELS.keyframe, prompt: scene.endKeyframe });
-  jobs.push({ step: "video", model: MODELS[scene.model], prompt: scene.motion, duration: scene.duration });
+  jobs.push({ step: "video", model: MODELS[scene.model], prompt: scene.motion, duration: scene.duration, negative: scene.negative });
   return jobs;
 }
 
@@ -132,7 +132,7 @@ async function generate() {
   fs.mkdirSync(dir, { recursive: true });
 
   if (job.model.kind === "video") {
-    let start = path.join(dir, "keyframe.jpg");
+    let start = path.join(dir, scene.startImage ?? "keyframe.jpg");
     if (scene.startFrom) {
       const prev = path.join(OUT, `scene-${scene.startFrom}`, "clip.mp4");
       if (!fs.existsSync(prev)) throw new Error(`Primero genera el clip de la escena ${scene.startFrom}`);
@@ -193,6 +193,6 @@ if (!cmds[cmd]) {
   process.exit(1);
 }
 Promise.resolve(cmds[cmd]()).catch((e) => {
-  console.error("ERROR:", e.message);
+  console.error("ERROR:", e.message, e.status ?? "", e.body ? JSON.stringify(e.body).slice(0, 500) : "");
   process.exit(1);
 });
